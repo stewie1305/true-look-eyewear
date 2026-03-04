@@ -13,7 +13,11 @@ import NotFoundPage from "@/features/auth/pages/NotFoundPage";
 import DashboardPage from "@/features/dashboards/pages/DashBoardPage";
 import UserManagementPage from "@/features/users/pages/UserManagementPage";
 import ForgotPasswordPage from "@/features/auth/pages/ForgotPasswordPage";
-import ShoppingPage from "@/features/landing/pages/ShoppingPage";
+import { ProductsCatalog } from "@/features/products/pages/ProductsCatalog";
+import { ProductDetail } from "@/features/products/pages/ProductDetail";
+import ManageProductList from "@/features/products/pages/ManageProductList";
+import ManageProductCreate from "@/features/products/pages/ManageProductCreate";
+import ManageProductEdit from "@/features/products/pages/ManageProductEdit";
 //1. Su dung createBrowserRouter - API moi nhat cua v6
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -21,7 +25,8 @@ export const router = createBrowserRouter([
     element: <UserLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: "shopping", element: <ShoppingPage /> },
+      { path: "products", element: <ProductsCatalog /> },
+      { path: "products/:id", element: <ProductDetail /> },
       {
         path: "login",
         element: (
@@ -70,6 +75,9 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <DashboardPage /> },
       { path: "users", element: <UserManagementPage /> },
+      { path: "products", element: <ManageProductList /> },
+      { path: "products/create", element: <ManageProductCreate /> },
+      { path: "products/:id", element: <ManageProductEdit /> },
     ],
   },
 ]);

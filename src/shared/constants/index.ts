@@ -9,4 +9,12 @@ export const API_ENDPOINTS = {
     RESET_PASSWORD: "/auth/reset-password",
     CHANGE_PASSWORD: "/auth/change-password",
   },
+  PRODUCTS: {
+    BASE: "/product-variants",
+  },
+};
+
+export const QUERY_KEYS = {
+  PRODUCTS: ["products"],
+  PRODUCT_DETAIL: (id: string) => ["products", id],
 };

@@ -22,15 +22,38 @@ const Header = () => {
       )}
     >
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
+        {/* ================= LOGO ================= */}
         <Link
           to="/"
-          className="text-xl font-bold tracking-tight text-primary hover:opacity-80 transition"
+          className="flex flex-col leading-none hover:opacity-80 transition"
         >
-          True Look
+          {/* Main Brand */}
+          <div
+            className="flex items-center text-[34px] tracking-[4px] text-primary"
+            style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 600 }}
+          >
+            TRUE&nbsp;L
+            {/* OO thành kính */}
+            <span className="relative flex items-center mx-1">
+              <span className="w-5 h-5 border border-current rounded-full"></span>
+              <span className="w-5 h-5 border border-current rounded-full -ml-[4px]"></span>
+
+              {/* Bridge */}
+              <span className="absolute w-3 h-[1px] bg-current left-1/2 -translate-x-1/2"></span>
+            </span>
+            K
+          </div>
+
+          {/* Subtitle */}
+          <span
+            className="text-[10px] tracking-[6px] text-muted-foreground mt-1"
+            style={{ fontFamily: "Montserrat, sans-serif" }}
+          >
+            EYEWEAR
+          </span>
         </Link>
 
-        {/* Navigation */}
+        {/* ================= NAVIGATION ================= */}
         <nav className="flex items-center gap-1">
           <Link
             to="/"
@@ -45,15 +68,15 @@ const Header = () => {
           </Link>
 
           <Link
-            to="/shopping"
+            to="/products"
             className={cn(
               "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-              isActive("/shopping")
+              isActive("/products")
                 ? "bg-primary/10 text-primary underline underline-offset-4"
                 : "text-foreground hover:text-primary hover:bg-muted",
             )}
           >
-            Shopping
+            EyeWears
           </Link>
 
           {token && (
@@ -67,20 +90,6 @@ const Header = () => {
               )}
             >
               Profile
-            </Link>
-          )}
-
-          {token && (
-            <Link
-              to="/eyewear"
-              className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                isActive("/eyewear")
-                  ? "bg-primary/10 text-primary underline underline-offset-4"
-                  : "text-foreground hover:text-primary hover:bg-muted",
-              )}
-            >
-              EyeWear
             </Link>
           )}
 
@@ -105,7 +114,7 @@ const Header = () => {
             </button>
           )}
 
-          {/* Theme Toggle - Grouped with nav */}
+          {/* Theme Toggle */}
           <div className="ml-2 pl-2 border-l border-border/40">
             <ModeToggle />
           </div>

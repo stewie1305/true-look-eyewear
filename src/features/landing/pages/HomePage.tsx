@@ -1,304 +1,198 @@
-import { Button } from "@/shared/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef } from "react";
+import Lenis from "@studio-freight/lenis";
 
-import { ArrowRight, Sparkles, Shield, Truck, Star } from "lucide-react";
-
-/* ================= IMPORT IMAGES ================= */
-
-import heroImg from "@/shared/pictures/h3.jpg";
-import product1 from "@/shared/pictures/he1.jpg";
-import product2 from "@/shared/pictures/h2.jpg";
-import product3 from "@/shared/pictures/h4.jpg";
-
-/* ================= DATA ================= */
-
-const products = [
-  {
-    name: "Classic Black Frame",
-    price: "$120",
-    image: product1,
-  },
-  {
-    name: "Transparent Frame",
-    price: "$140",
-    image: product2,
-  },
-  {
-    name: "Round Vintage Frame",
-    price: "$160",
-    image: product3,
-  },
-];
-
-const features = [
-  {
-    title: "Premium Quality",
-    description: "Crafted with high quality materials.",
-    icon: Sparkles,
-  },
-  {
-    title: "Free Shipping",
-    description: "Free delivery on all orders.",
-    icon: Truck,
-  },
-  {
-    title: "Warranty",
-    description: "2 year official warranty.",
-    icon: Shield,
-  },
-];
-
-/* ================= PAGE ================= */
+// Asset paths (Ensure these point to your actual local images)
+const IMG_ASSETS = {
+  hero: "src/shared/pictures/h3.jpg",
+  lookbook1: "src/shared/pictures/h5.jpg",
+  lookbook2: "src/shared/pictures/h6.jpg",
+  craft: "src/shared/pictures/R.jpg",
+};
 
 export default function HomePage() {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Inject luxury serif font for the "Cormorant Garamond" look
+    const link = document.createElement("link");
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+
+    // Initialize Lenis Smooth Scroll
+    const lenis = new Lenis({
+      duration: 1.4,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+    return () => lenis.destroy();
+  }, []);
+
+  const { scrollYProgress } = useScroll();
+  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.3]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+
   return (
-    <div className="flex flex-col">
-      {/* ================= HERO ================= */}
+    <div className="bg-[#050505] text-white selection:bg-white selection:text-black w-full min-h-screen overflow-x-hidden p-0 m-0 font-light">
+      {/* ================= SECTION 1: HERO FULL SCREEN ================= */}
+      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+        <motion.div
+          style={{ scale: heroScale, opacity: heroOpacity }}
+          className="absolute inset-0 w-full h-full"
+        >
+          <img
+            src={IMG_ASSETS.hero}
+            className="w-full h-full object-cover brightness-[0.35]"
+            alt="Cinematic Hero"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/40" />
+        </motion.div>
 
-      <section className="bg-background border-b">
-        <div className="container mx-auto px-6 py-16 grid lg:grid-cols-[0.9fr_1.1fr] gap-8 items-center">
-          {/* LEFT */}
+        <div className="relative z-10 text-center w-full">
+          <motion.h1
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[18vw] leading-none italic"
+            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+          >
+            True Look
+          </motion.h1>
+          <p className="text-[10px] tracking-[1.5em] uppercase mt-4 opacity-30 font-sans">
+            Timeless Vision • Modern Luxury
+          </p>
+        </div>
+      </section>
 
-          <div className="space-y-6">
-            <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-foreground">
-              Discover Your{" "}
-              <span className="text-primary">Perfect Eyewear</span>
-            </h1>
-
-            <p className="text-muted-foreground max-w-lg">
-              Premium eyewear crafted for comfort, clarity, and style. Designed
-              for modern lifestyle.
+      {/* ================= SECTION 2: PHILOSOPHY FULL WIDTH ================= */}
+      <section className="relative min-h-[80vh] w-full flex items-center bg-[#050505] py-32 px-10 md:px-20">
+        <div className="w-full">
+          <motion.h2
+            whileInView={{ opacity: [0, 1], y: [30, 0] }}
+            viewport={{ once: true }}
+            className="text-[7vw] font-light italic leading-tight mb-16"
+            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+          >
+            Vision defines <br />{" "}
+            <span className="not-italic opacity-40">your aura.</span>
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 text-white/40 text-xl font-light max-w-6xl">
+            <p className="leading-relaxed">
+              True Look Eyewear was born with a mission to redefine
+              sophistication. Each design is a fusion of premium Titanium and
+              minimalist architectural inspiration.
             </p>
-
-            <div className="flex gap-4">
-              <Button
-                size="lg"
-                className="gap-2"
-                onClick={() => navigate("/shopping")}
-              >
-                Shop Now
-                <ArrowRight size={18} />
-              </Button>
-
-              <Button size="lg" variant="outline">
-                Learn More
-              </Button>
-            </div>
-
-            {/* STATS */}
-
-            <div className="flex gap-8 pt-4">
-              <Stat number="500+" label="Products" />
-              <Stat number="10K+" label="Customers" />
-              <Stat number="23" label="Stores" />
-            </div>
+            <p className="leading-relaxed">
+              We do not mass produce. Every frame undergoes 48 hours of
+              artisanal hand-crafting to ensure absolute comfort and a bespoke
+              fit for your face.
+            </p>
           </div>
+        </div>
+      </section>
 
-          {/* RIGHT IMAGE — FIXED */}
-
-          <div className="relative w-full aspect-video min-h-72 lg:min-h-96 overflow-hidden rounded-xl">
+      {/* ================= SECTION 3: ASYMMETRIC GRID FULL SCREEN ================= */}
+      <section className="w-full bg-black">
+        {/* Gap-0 ensures the images touch the edges of the screen */}
+        <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-0 items-stretch">
+          {/* Left Item */}
+          <motion.div
+            className="relative h-[100vh] w-full overflow-hidden group border-r border-white/5"
+            whileInView={{ opacity: [0, 1] }}
+            viewport={{ once: true }}
+          >
             <img
-              src={heroImg}
-              alt="Hero Glasses"
-              className="
-                w-full h-full
-                object-cover
-                transition-transform duration-700
-                hover:scale-105
-              "
+              src={IMG_ASSETS.lookbook1}
+              className="w-full h-full object-cover grayscale transition-all duration-1000 group-hover:scale-105 group-hover:grayscale-0"
+              alt="A-Series Collection"
             />
-          </div>
-        </div>
-      </section>
-
-      {/* ================= FEATURES ================= */}
-
-      <section className="bg-muted/40">
-        <div className="container mx-auto px-6 py-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground">
-              Why Choose True Look
-            </h2>
-
-            <p className="text-muted-foreground">
-              Best quality eyewear with premium service.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {features.map((feature, index) => (
-              <FeatureCard key={index} feature={feature} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= PRODUCTS ================= */}
-
-      <section className="bg-background">
-        <div className="container mx-auto px-6 py-20">
-          <div className="flex justify-between items-center mb-10">
-            <h2 className="text-3xl font-bold text-foreground">
-              Featured Products
-            </h2>
-
-            <Button
-              variant="outline"
-              className="gap-2"
-              onClick={() => navigate("/shopping")}
+            <div
+              className="absolute bottom-12 left-12 italic text-[5vw] font-serif leading-none z-20"
+              style={{ fontFamily: "'Cormorant Garamond', serif" }}
             >
-              View All
-              <ArrowRight size={16} />
-            </Button>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {products.map((product, index) => (
-              <ProductCard
-                key={index}
-                product={product}
-                onAddToCart={() => navigate("/login")}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= TESTIMONIAL ================= */}
-
-      <section className="bg-muted/40">
-        <div className="container mx-auto px-6 py-20 text-center">
-          <h2 className="text-3xl font-bold text-foreground mb-10">
-            What Our Customers Say
-          </h2>
-
-          <div className="max-w-xl mx-auto">
-            <Card>
-              <CardContent className="pt-6 space-y-4">
-                <div className="flex justify-center gap-1">
-                  <Star className="fill-primary text-primary" size={18} />
-                  <Star className="fill-primary text-primary" size={18} />
-                  <Star className="fill-primary text-primary" size={18} />
-                  <Star className="fill-primary text-primary" size={18} />
-                  <Star className="fill-primary text-primary" size={18} />
-                </div>
-
-                <p className="text-muted-foreground">
-                  Amazing quality and fast delivery. Highly recommended!
-                </p>
-
-                <div className="font-medium text-foreground">— Minh Hoàng</div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* ================= NEWSLETTER ================= */}
-
-      <section className="bg-primary">
-        <div className="container mx-auto px-6 py-20">
-          <div className="max-w-md mx-auto text-center space-y-4">
-            <h2 className="text-2xl font-bold text-primary-foreground">
-              Subscribe for Updates
-            </h2>
-
-            <p className="text-primary-foreground/80">
-              Get updates and special offers.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                placeholder="Enter your email"
-                className="
-                  flex-1 px-4 py-2 rounded-md border border-border
-                  bg-background text-foreground
-                  focus:outline-none focus:ring-2 focus:ring-ring
-                "
-              />
-
-              <Button variant="secondary">Subscribe</Button>
+              A-Series 2026
             </div>
-          </div>
+          </motion.div>
+
+          {/* Right Item - Offset vertically for a cinematic rhythm */}
+          <motion.div
+            className="relative h-[100vh] w-full overflow-hidden group md:mt-[20vh]"
+            whileInView={{ opacity: [0, 1] }}
+            viewport={{ once: true }}
+          >
+            <img
+              src={IMG_ASSETS.lookbook2}
+              className="w-full h-full object-cover grayscale transition-all duration-1000 group-hover:scale-105 group-hover:grayscale-0"
+              alt="Gold Tint Edition"
+            />
+            <div
+              className="absolute bottom-12 left-12 italic text-[5vw] font-serif leading-none z-20"
+              style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            >
+              Gold Tint Edition
+            </div>
+          </motion.div>
         </div>
       </section>
+
+      {/* ================= SECTION 4: CRAFTSMANSHIP FULL BACKGROUND ================= */}
+      <section className="relative h-screen w-full flex items-center overflow-hidden">
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src={IMG_ASSETS.craft}
+            className="w-full h-full object-cover opacity-20"
+            alt="Craftsmanship Details"
+          />
+        </div>
+        <div className="relative z-10 px-10 md:px-24 w-full">
+          <h2
+            className="text-[10vw] italic font-serif leading-none mb-10"
+            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+          >
+            Meticulous <br /> Craft.
+          </h2>
+          <button
+            onClick={() => navigate("/products")}
+            className="group flex items-center gap-6 border border-white/20 px-12 py-6 text-[10px] tracking-[0.5em] uppercase hover:bg-white hover:text-black transition-all duration-700"
+          >
+            Explore Collection
+            <div className="w-8 h-[1px] bg-white group-hover:bg-black transition-all duration-500" />
+          </button>
+        </div>
+      </section>
+
+      {/* ================= FOOTER ================= */}
+      <footer className="py-32 border-t border-white/5 text-center relative overflow-hidden bg-[#050505]">
+        {/* Giant Watermark Background Text */}
+        <h2 className="text-[20vw] opacity-[0.02] font-serif italic absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none">
+          TRUE LOOK
+        </h2>
+
+        <div className="relative z-10 space-y-12">
+          <div className="flex justify-center gap-12 text-[10px] tracking-[0.5em] uppercase text-white/30">
+            <a href="#" className="hover:text-white transition-colors">
+              Instagram
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              TikTok
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              Vogue Journal
+            </a>
+          </div>
+          <p className="text-[9px] text-white/10 tracking-[0.3em] uppercase italic font-sans">
+            © 2026 True Look Eyewear. Engineered for the Visionaries.
+          </p>
+        </div>
+      </footer>
     </div>
-  );
-}
-
-/* ================= COMPONENTS ================= */
-
-function Stat({ number, label }: any) {
-  return (
-    <div>
-      <div className="font-bold text-lg text-foreground">{number}</div>
-
-      <div className="text-sm text-muted-foreground">{label}</div>
-    </div>
-  );
-}
-
-function FeatureCard({ feature }: any) {
-  const Icon = feature.icon;
-
-  return (
-    <Card className="text-center">
-      <CardHeader>
-        <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit">
-          <Icon size={20} />
-        </div>
-
-        <CardTitle>{feature.title}</CardTitle>
-      </CardHeader>
-
-      <CardContent className="text-muted-foreground">
-        {feature.description}
-      </CardContent>
-    </Card>
-  );
-}
-
-function ProductCard({ product, onAddToCart }: any) {
-  return (
-    <Card className="overflow-hidden hover:shadow-lg transition">
-      {/* IMAGE — FIXED FULL */}
-
-      <div className="w-full h-55 overflow-hidden">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="
-            w-full h-full
-            object-cover
-            hover:scale-110
-            transition duration-500
-          "
-        />
-      </div>
-
-      <CardContent className="p-6 space-y-4">
-        <div>
-          <div className="font-medium text-foreground">{product.name}</div>
-
-          <div className="text-muted-foreground text-sm">Premium eyewear</div>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <div className="font-bold text-foreground">{product.price}</div>
-
-          <Button size="sm" onClick={onAddToCart}>
-            Add to Cart
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
   );
 }
