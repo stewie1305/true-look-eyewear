@@ -18,6 +18,9 @@ export const API_ENDPOINTS = {
   CATEGORIES: {
     BASE: "/categories",
   },
+  FRAME_SPECS: {
+    BASE: "/frame-spec",
+  },
   CART: {
     BASE: "/carts",
     MY_CART: "/carts/my-cart",
@@ -38,6 +41,8 @@ export const QUERY_KEYS = {
   BRAND_DETAIL: (id: string) => ["brands", id],
   CATEGORIES: ["categories"],
   CATEGORY_DETAIL: (id: string) => ["categories", id],
+  FRAME_SPECS: ["frame-specs"],
+  FRAME_SPEC_DETAIL: (id: string) => ["frame-specs", id],
   CART: ["cart"],
   CART_ITEMS: ["cart-items"],
 };

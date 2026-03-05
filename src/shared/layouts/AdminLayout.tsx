@@ -1,15 +1,25 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "@/features/auth/hooks/useAuthMutation";
-import { LayoutDashboard, Glasses, LogOut, Menu, X, Building2, Tag } from "lucide-react";
+import {
+  LayoutDashboard,
+  Glasses,
+  LogOut,
+  Menu,
+  X,
+  Building2,
+  Tag,
+  Ruler,
+} from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Quản lý Sản phẩm", href: "/admin/products", icon: Glasses },
-  { name: "Quản lý Thương hiệu", href: "/admin/brands", icon: Building2 },
-  { name: "Quản lý Danh mục", href: "/admin/categories", icon: Tag },
+  { name: "Quan ly San pham", href: "/admin/products", icon: Glasses },
+  { name: "Quan ly Thuong hieu", href: "/admin/brands", icon: Building2 },
+  { name: "Quan ly Danh muc", href: "/admin/categories", icon: Tag },
+  { name: "Quan ly Frame Specs", href: "/admin/frame-specs", icon: Ruler },
 ];
 
 export default function AdminLayout() {
@@ -25,7 +35,6 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
@@ -33,15 +42,13 @@ export default function AdminLayout() {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 transform bg-card border-r transition-transform duration-200 lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-64 transform border-r bg-card transition-transform duration-200 lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <div className="flex h-full flex-col">
-          {/* Logo */}
           <div className="flex h-16 items-center justify-between border-b px-6">
             <Link to="/admin" className="flex items-center gap-2">
               <Glasses className="h-6 w-6 text-primary" />
@@ -57,7 +64,6 @@ export default function AdminLayout() {
             </Button>
           </div>
 
-          {/* Navigation */}
           <nav className="flex-1 space-y-1 px-3 py-4">
             {navigation.map((item) => {
               const isActive =
@@ -82,7 +88,6 @@ export default function AdminLayout() {
             })}
           </nav>
 
-          {/* Logout */}
           <div className="border-t p-4">
             <Button
               variant="outline"
@@ -91,15 +96,13 @@ export default function AdminLayout() {
               disabled={logoutMutation.isPending}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Đăng xuất
+              Dang xuat
             </Button>
           </div>
         </div>
       </aside>
 
-      {/* Main content */}
       <div className="lg:pl-64">
-        {/* Top bar */}
         <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-6">
           <Button
             variant="ghost"
@@ -118,7 +121,6 @@ export default function AdminLayout() {
           </h1>
         </header>
 
-        {/* Page content */}
         <main className="p-6">
           <Outlet />
         </main>
