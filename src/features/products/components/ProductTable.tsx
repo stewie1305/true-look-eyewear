@@ -24,7 +24,9 @@ const statusVariant: Record<
   "default" | "secondary" | "destructive" | "outline"
 > = {
   active: "default",
+  Active: "default",
   inactive: "secondary",
+  Inactive: "secondary",
   out_of_stock: "destructive",
 };
 

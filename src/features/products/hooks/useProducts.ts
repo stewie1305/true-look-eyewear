@@ -47,8 +47,16 @@ export function useProducts(options?: { forceActive?: boolean }) {
   const query = useQuery({
     queryKey: [...QUERY_KEYS.PRODUCTS, filters],
     queryFn: async () => {
+      console.log("🔍 Sending filters to API:", filters);
       const response = await productService.getAll(filters);
-      console.log("Products API Response:", response);
+      console.log("📦 Products API Response:", response);
+      console.log(
+        "📊 Response data type:",
+        Array.isArray(response) ? "Array" : "Object",
+      );
+      if (!Array.isArray(response) && response?.data) {
+        console.log("📝 Response.data:", response.data);
+      }
       return response;
     },
     placeholderData: (prev) => prev,
@@ -58,11 +66,21 @@ export function useProducts(options?: { forceActive?: boolean }) {
     ? query.data
     : (query.data?.data ?? []);
 
-  const products = options?.forceActive
-    ? rawProducts.filter(
-        (product) => String(product.status || "").toLowerCase() === "active",
-      )
-    : rawProducts;
+  // Client-side filtering cho status vì backend chưa hỗ trợ
+  let products = rawProducts;
+
+  if (options?.forceActive) {
+    products = products.filter(
+      (product) => String(product.status || "").toLowerCase() === "active",
+    );
+  } else if (filters.status) {
+    // Filter theo status từ URL params
+    products = products.filter(
+      (product) =>
+        String(product.status || "").toLowerCase() ===
+        filters.status?.toLowerCase(),
+    );
+  }
 
   return {
     products,

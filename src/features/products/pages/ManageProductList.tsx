@@ -1,12 +1,19 @@
 import { useState, useCallback, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Package, Activity } from "lucide-react";
 
 import { useProducts, useDeleteProduct } from "../hooks/useProducts";
 import { ProductTable } from "../components/ProductTable";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import {
   LoadingSpinner,
@@ -107,32 +114,43 @@ export default function ManageProductList() {
           />
         </div>
 
-        <select
-          value={searchParams.get("product_type") || ""}
-          onChange={(e) =>
-            handleFilterChange("product_type", e.target.value || undefined)
+        <Select
+          value={searchParams.get("product_type") || "all"}
+          onValueChange={(value) =>
+            handleFilterChange(
+              "product_type",
+              value === "all" ? undefined : value,
+            )
           }
-          className="h-10 rounded-md border border-input bg-background px-3 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <option value="">Tất cả loại sản phẩm</option>
-          {PRODUCT_TYPES.map((item) => (
-            <option key={item.value} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-[220px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tất cả loại sản phẩm</SelectItem>
+            {PRODUCT_TYPES.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        <select
-          value={searchParams.get("status") || ""}
-          onChange={(e) =>
-            handleFilterChange("status", e.target.value || undefined)
+        <Select
+          value={searchParams.get("status") || "all"}
+          onValueChange={(value) =>
+            handleFilterChange("status", value === "all" ? undefined : value)
           }
-          className="h-10 rounded-md border border-input bg-background px-3 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <option value="">Tất cả trạng thái</option>
-          <option value="active">Hoạt động</option>
-          <option value="inactive">Không hoạt động</option>
-        </select>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tất cả trạng thái</SelectItem>
+            <SelectItem value="active">Hoạt động</SelectItem>
+            <SelectItem value="inactive">Không hoạt động</SelectItem>
+          </SelectContent>
+        </Select>
 
         {pagination && (
           <Badge variant="secondary" className="ml-auto">
