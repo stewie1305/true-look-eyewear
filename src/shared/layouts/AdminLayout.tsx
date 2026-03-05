@@ -16,10 +16,10 @@ import { useState } from "react";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Quan ly San pham", href: "/admin/products", icon: Glasses },
-  { name: "Quan ly Thuong hieu", href: "/admin/brands", icon: Building2 },
-  { name: "Quan ly Danh muc", href: "/admin/categories", icon: Tag },
-  { name: "Quan ly Frame Specs", href: "/admin/frame-specs", icon: Ruler },
+  { name: "Quản lý Sản phẩm", href: "/admin/products", icon: Glasses },
+  { name: "Quản lý Thương hiệu", href: "/admin/brands", icon: Building2 },
+  { name: "Quản lý Danh mục", href: "/admin/categories", icon: Tag },
+  { name: "Quản lý Gọng kính", href: "/admin/frame-specs", icon: Ruler },
 ];
 
 export default function AdminLayout() {
@@ -96,7 +96,7 @@ export default function AdminLayout() {
               disabled={logoutMutation.isPending}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Dang xuat
+              Đăng xuất
             </Button>
           </div>
         </div>

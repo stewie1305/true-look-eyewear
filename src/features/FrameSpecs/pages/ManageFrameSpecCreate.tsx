@@ -18,16 +18,16 @@ export function ManageFrameSpecCreate() {
       <Button variant="ghost" size="sm" asChild className="mb-6">
         <Link to="/admin/frame-specs">
           <ArrowLeft className="mr-1 h-4 w-4" />
-          Quay lai danh sach
+          Quay lại danh sách
         </Link>
       </Button>
 
-      <h2 className="mb-6 text-2xl font-bold">Tao frame spec moi</h2>
+      <h2 className="mb-6 text-2xl font-bold">Tạo gọng kính mới</h2>
 
       <FrameSpecForm
         onSubmit={handleSubmit}
         isPending={isPending}
-        submitLabel="Tao frame spec"
+        submitLabel="Tạo gọng kính"
       />
     </div>
   );

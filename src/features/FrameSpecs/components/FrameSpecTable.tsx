@@ -40,13 +40,13 @@ export function FrameSpecTable({
         <TableHeader>
           <TableRow>
             <TableHead>Product ID</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Material</TableHead>
+            <TableHead>Loại</TableHead>
+            <TableHead>Chất liệu</TableHead>
             <TableHead>A x B x DBL</TableHead>
-            <TableHead>Shape</TableHead>
-            <TableHead>Weight</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Thao tac</TableHead>
+            <TableHead>Dáng kính</TableHead>
+            <TableHead>Khối lượng</TableHead>
+            <TableHead>Trạng thái</TableHead>
+            <TableHead className="text-right">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -66,7 +66,7 @@ export function FrameSpecTable({
                   <Button variant="outline" size="sm" asChild>
                     <Link to={`/admin/frame-specs/${item.id}`}>
                       <Pencil className="mr-1 h-3 w-3" />
-                      Sua
+                      Sửa
                     </Link>
                   </Button>
                   <Button
@@ -74,14 +74,14 @@ export function FrameSpecTable({
                     size="sm"
                     className="border-destructive/30 text-destructive hover:bg-destructive/10"
                     onClick={() => {
-                      if (window.confirm(`Ban co chac muon xoa frame spec ${item.id}?`)) {
+                      if (window.confirm(`Bạn có chắc muốn xoá gọng kính ${item.id}?`)) {
                         onDelete(item.id);
                       }
                     }}
                     disabled={isDeleting}
                   >
                     <Trash2 className="mr-1 h-3 w-3" />
-                    Xoa
+                    Xoá
                   </Button>
                 </div>
               </TableCell>
@@ -93,7 +93,7 @@ export function FrameSpecTable({
       {frameSpecs.length === 0 && (
         <div className="flex items-center justify-center gap-2 py-12 text-muted-foreground">
           <Ruler className="h-5 w-5" />
-          <span>Khong co frame spec</span>
+          <span>Không có gọng kính</span>
         </div>
       )}
     </div>

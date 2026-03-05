@@ -32,7 +32,7 @@ export function FrameSpecForm({
   defaultValues,
   onSubmit,
   isPending = false,
-  submitLabel = "Luu",
+  submitLabel = "Lưu",
 }: FrameSpecFormProps) {
   const {
     register,
@@ -59,8 +59,8 @@ export function FrameSpecForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Thong tin frame spec</CardTitle>
-          <CardDescription>Nhap thong so khung kinh cho san pham</CardDescription>
+          <CardTitle>Thông tin gọng kính</CardTitle>
+          <CardDescription>Nhập thông số gọng kính cho sản phẩm</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -69,8 +69,8 @@ export function FrameSpecForm({
             </Label>
             <Input
               id="product_id"
-              {...register("product_id", { required: "Product ID la bat buoc" })}
-              placeholder="Nhap product id"
+              {...register("product_id", { required: "Product ID là bắt buộc" })}
+              placeholder="Nhập product id"
             />
             {errors.product_id && (
               <p className="text-sm text-destructive">{errors.product_id.message}</p>
@@ -80,12 +80,12 @@ export function FrameSpecForm({
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="type">
-                Type <span className="text-destructive">*</span>
+                Loại <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="type"
-                {...register("type", { required: "Type la bat buoc" })}
-                placeholder="Vi du: Full Rim"
+                {...register("type", { required: "Loại là bắt buộc" })}
+                placeholder="Ví dụ: Full Rim"
               />
               {errors.type && (
                 <p className="text-sm text-destructive">{errors.type.message}</p>
@@ -94,12 +94,12 @@ export function FrameSpecForm({
 
             <div className="space-y-2">
               <Label htmlFor="material">
-                Material <span className="text-destructive">*</span>
+                Chất liệu <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="material"
-                {...register("material", { required: "Material la bat buoc" })}
-                placeholder="Vi du: Titanium"
+                {...register("material", { required: "Chất liệu là bắt buộc" })}
+                placeholder="Ví dụ: Titanium"
               />
               {errors.material && (
                 <p className="text-sm text-destructive">{errors.material.message}</p>
@@ -117,9 +117,9 @@ export function FrameSpecForm({
                 type="number"
                 step="0.1"
                 {...register("a", {
-                  required: "A la bat buoc",
+                  required: "A là bắt buộc",
                   valueAsNumber: true,
-                  min: { value: 0, message: "A phai >= 0" },
+                  min: { value: 0, message: "A phải >= 0" },
                 })}
               />
               {errors.a && <p className="text-sm text-destructive">{errors.a.message}</p>}
@@ -134,9 +134,9 @@ export function FrameSpecForm({
                 type="number"
                 step="0.1"
                 {...register("b", {
-                  required: "B la bat buoc",
+                  required: "B là bắt buộc",
                   valueAsNumber: true,
-                  min: { value: 0, message: "B phai >= 0" },
+                  min: { value: 0, message: "B phải >= 0" },
                 })}
               />
               {errors.b && <p className="text-sm text-destructive">{errors.b.message}</p>}
@@ -151,9 +151,9 @@ export function FrameSpecForm({
                 type="number"
                 step="0.1"
                 {...register("dbl", {
-                  required: "DBL la bat buoc",
+                  required: "DBL là bắt buộc",
                   valueAsNumber: true,
-                  min: { value: 0, message: "DBL phai >= 0" },
+                  min: { value: 0, message: "DBL phải >= 0" },
                 })}
               />
               {errors.dbl && (
@@ -163,16 +163,16 @@ export function FrameSpecForm({
 
             <div className="space-y-2">
               <Label htmlFor="weight">
-                Weight <span className="text-destructive">*</span>
+                Khối lượng <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="weight"
                 type="number"
                 step="0.1"
                 {...register("weight", {
-                  required: "Weight la bat buoc",
+                  required: "Khối lượng là bắt buộc",
                   valueAsNumber: true,
-                  min: { value: 0, message: "Weight phai >= 0" },
+                  min: { value: 0, message: "Khối lượng phải >= 0" },
                 })}
               />
               {errors.weight && (
@@ -184,12 +184,12 @@ export function FrameSpecForm({
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="shape">
-                Shape <span className="text-destructive">*</span>
+                Dáng kính <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="shape"
-                {...register("shape", { required: "Shape la bat buoc" })}
-                placeholder="Vi du: Rectangle"
+                {...register("shape", { required: "Dáng kính là bắt buộc" })}
+                placeholder="Ví dụ: Rectangle"
               />
               {errors.shape && (
                 <p className="text-sm text-destructive">{errors.shape.message}</p>
@@ -197,7 +197,7 @@ export function FrameSpecForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">Trang thai</Label>
+              <Label htmlFor="status">Trạng thái</Label>
               <Select
                 value={watch("status")}
                 onValueChange={(value) => setValue("status", value)}
@@ -206,8 +206,8 @@ export function FrameSpecForm({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Hoat dong</SelectItem>
-                  <SelectItem value="inactive">Khong hoat dong</SelectItem>
+                  <SelectItem value="active">Hoạt động</SelectItem>
+                  <SelectItem value="inactive">Không hoạt động</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -217,7 +217,7 @@ export function FrameSpecForm({
 
       <div className="flex justify-end gap-4">
         <Button type="button" variant="outline" asChild>
-          <Link to="/admin/frame-specs">Huy</Link>
+          <Link to="/admin/frame-specs">Huỷ</Link>
         </Button>
         <Button type="submit" disabled={isPending}>
           {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

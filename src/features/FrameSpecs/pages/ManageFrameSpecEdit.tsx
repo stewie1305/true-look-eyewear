@@ -26,9 +26,9 @@ export default function ManageFrameSpecEdit() {
   if (!frameSpec) {
     return (
       <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground">Khong tim thay frame spec</p>
+        <p className="text-muted-foreground">Không tìm thấy gọng kính</p>
         <Button asChild>
-          <Link to="/admin/frame-specs">Quay lai danh sach</Link>
+          <Link to="/admin/frame-specs">Quay lại danh sách</Link>
         </Button>
       </div>
     );
@@ -39,11 +39,11 @@ export default function ManageFrameSpecEdit() {
       <Button variant="ghost" size="sm" asChild className="mb-6">
         <Link to="/admin/frame-specs">
           <ArrowLeft className="mr-1 h-4 w-4" />
-          Quay lai danh sach
+          Quay lại danh sách
         </Link>
       </Button>
 
-      <h2 className="mb-6 text-2xl font-bold">Chinh sua frame spec</h2>
+      <h2 className="mb-6 text-2xl font-bold">Chỉnh sửa gọng kính</h2>
 
       <FrameSpecForm
         defaultValues={{
@@ -59,7 +59,7 @@ export default function ManageFrameSpecEdit() {
         }}
         onSubmit={handleSubmit}
         isPending={isPending}
-        submitLabel="Cap nhat"
+        submitLabel="Cập nhật"
       />
     </div>
   );

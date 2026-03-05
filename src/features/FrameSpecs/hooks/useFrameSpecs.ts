@@ -84,7 +84,7 @@ export function useCreateFrameSpec() {
   return useMutation({
     mutationFn: (data: CreateFrameSpecDto) => adminFrameSpecService.create(data),
     onSuccess: () => {
-      toast.success("Tao frame spec thanh cong!");
+      toast.success("Tạo gọng kính thành công!");
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FRAME_SPECS });
       navigate("/admin/frame-specs");
     },
@@ -99,7 +99,7 @@ export function useUpdateFrameSpec() {
     mutationFn: ({ id, data }: { id: string; data: UpdateFrameSpecDto }) =>
       adminFrameSpecService.update(id, data),
     onSuccess: (_data, variables) => {
-      toast.success("Cap nhat frame spec thanh cong!");
+      toast.success("Cập nhật gọng kính thành công!");
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FRAME_SPECS });
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.FRAME_SPEC_DETAIL(variables.id),
@@ -115,7 +115,7 @@ export function useDeleteFrameSpec() {
   return useMutation({
     mutationFn: (id: string) => adminFrameSpecService.remove(id),
     onSuccess: () => {
-      toast.success("Xoa frame spec thanh cong!");
+      toast.success("Xoá gọng kính thành công!");
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FRAME_SPECS });
     },
   });

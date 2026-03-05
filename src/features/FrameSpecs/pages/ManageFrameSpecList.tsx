@@ -81,16 +81,16 @@ export default function ManageFrameSpecList() {
         <div>
           <h2 className="flex items-center gap-2 text-2xl font-bold">
             <Ruler className="h-6 w-6" />
-            Quan ly Frame Specs
+            Quản lý Gọng kính
           </h2>
           <p className="text-sm text-muted-foreground">
-            Tao, sua, xoa thong so gong kinh trong he thong
+            Tạo, sửa, xoá thông số gọng kính trong hệ thống
           </p>
         </div>
         <Button asChild>
           <Link to="/admin/frame-specs/create">
             <Plus className="mr-2 h-4 w-4" />
-            Tao frame spec
+            Tạo gọng kính
           </Link>
         </Button>
       </div>
@@ -100,7 +100,7 @@ export default function ManageFrameSpecList() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Tim theo product id, type, material, shape..."
+              placeholder="Tìm theo product id, loại, chất liệu, dáng..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="pl-10"
@@ -113,7 +113,7 @@ export default function ManageFrameSpecList() {
           onChange={(e) =>
             handleFilterChange("product_id", e.target.value || undefined)
           }
-          placeholder="Loc theo product id"
+          placeholder="Lọc theo product id"
           className="md:w-52"
         />
 
@@ -127,9 +127,9 @@ export default function ManageFrameSpecList() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tat ca trang thai</SelectItem>
-            <SelectItem value="active">Hoat dong</SelectItem>
-            <SelectItem value="inactive">Khong hoat dong</SelectItem>
+            <SelectItem value="all">Tất cả trạng thái</SelectItem>
+            <SelectItem value="active">Hoạt động</SelectItem>
+            <SelectItem value="inactive">Không hoạt động</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -138,13 +138,13 @@ export default function ManageFrameSpecList() {
         <LoadingSpinner />
       ) : frameSpecData.length === 0 ? (
         <EmptyState
-          title="Chua co frame spec"
-          description="Hay tao frame spec dau tien cua ban"
+          title="Chưa có gọng kính"
+          description="Hãy tạo gọng kính đầu tiên của bạn"
         >
           <Button asChild>
             <Link to="/admin/frame-specs/create">
               <Plus className="mr-2 h-4 w-4" />
-              Tao frame spec
+              Tạo gọng kính
             </Link>
           </Button>
         </EmptyState>
