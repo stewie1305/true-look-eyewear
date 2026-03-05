@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "@/features/auth/hooks/useAuthMutation";
-import { LayoutDashboard, Glasses, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Glasses, LogOut, Menu, X, Building2 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -8,6 +8,7 @@ import { useState } from "react";
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Quản lý Sản phẩm", href: "/admin/products", icon: Glasses },
+  { name: "Quản lý Thương hiệu", href: "/admin/brands", icon: Building2 },
 ];
 
 export default function AdminLayout() {

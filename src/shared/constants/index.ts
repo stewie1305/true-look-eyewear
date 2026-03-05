@@ -12,9 +12,14 @@ export const API_ENDPOINTS = {
   PRODUCTS: {
     BASE: "/product-variants",
   },
+  BRANDS: {
+    BASE: "/brands",
+  },
 };
 
 export const QUERY_KEYS = {
   PRODUCTS: ["products"],
   PRODUCT_DETAIL: (id: string) => ["products", id],
+  BRANDS: ["brands"],
+  BRAND_DETAIL: (id: string) => ["brands", id],
 };
