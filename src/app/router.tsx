@@ -31,6 +31,9 @@ import ManageFrameSpecEdit from "@/features/FrameSpecs/pages/ManageFrameSpecEdit
 import ManageRxLensSpecList from "@/features/RxLenSpecs/pages/ManageRxLensSpecList";
 import ManageRxLensSpecCreate from "@/features/RxLenSpecs/pages/ManageRxLensSpecCreate";
 import ManageRxLensSpecEdit from "@/features/RxLenSpecs/pages/ManageRxLensSpecEdit";
+import { ManageContactLensAxisList } from "@/features/ContactLensAxis/pages/ManageContactLensAxisList";
+import { ManageContactLensAxisCreate } from "@/features/ContactLensAxis/pages/ManageContactLensAxisCreate";
+import { ManageContactLensAxisEdit } from "@/features/ContactLensAxis/pages/ManageContactLensAxisEdit";
 //1. Su dung createBrowserRouter - API moi nhat cua v6
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -111,6 +114,12 @@ export const router = createBrowserRouter([
       { path: "rx-lens-specs", element: <ManageRxLensSpecList /> },
       { path: "rx-lens-specs/create", element: <ManageRxLensSpecCreate /> },
       { path: "rx-lens-specs/:id", element: <ManageRxLensSpecEdit /> },
+      { path: "contact-lens-axis", element: <ManageContactLensAxisList /> },
+      {
+        path: "contact-lens-axis/create",
+        element: <ManageContactLensAxisCreate />,
+      },
+      { path: "contact-lens-axis/:id", element: <ManageContactLensAxisEdit /> },
     ],
   },
 ]);

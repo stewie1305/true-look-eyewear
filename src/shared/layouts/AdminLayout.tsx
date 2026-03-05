@@ -22,6 +22,7 @@ const navigation = [
   { name: "Quản lý Danh mục", href: "/admin/categories", icon: Tag },
   { name: "Quản lý Gọng kính", href: "/admin/frame-specs", icon: Ruler },
   { name: "Quản lý Tròng kính", href: "/admin/rx-lens-specs", icon: Eye },
+  { name: "Quản lý Axis", href: "/admin/contact-lens-axis", icon: Eye },
 ];
 
 export default function AdminLayout() {
