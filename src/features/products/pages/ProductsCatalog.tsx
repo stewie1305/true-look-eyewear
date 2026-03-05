@@ -14,6 +14,7 @@ import {
 import { useProducts } from "../hooks/useProducts";
 import { ProductCard } from "../components/ProductCard";
 import { useBrands } from "@/features/brands/hooks/useBrands";
+import { useActiveCategories } from "@/features/categories/hooks/useCategories";
 
 /**
  * Trang danh sách sản phẩm cho User – có search, filter, pagination.
@@ -26,6 +27,7 @@ export function ProductsCatalog() {
   const { products, pagination, isLoading } = useProducts({
     forceActive: true,
   });
+  const { categories: activeCategories } = useActiveCategories();
 
   // Fetch tất cả brands active cho dropdown
   const { brands } = useBrands({ forceActive: true });
@@ -40,14 +42,10 @@ export function ProductsCatalog() {
   }, [products]);
 
   const categoryNameOptions = useMemo(() => {
-    const set = new Set<string>();
-    products?.forEach((item) => {
-      item.product?.categories?.forEach((cat: { name: string }) => {
-        if (cat.name) set.add(cat.name);
-      });
-    });
-    return Array.from(set);
-  }, [products]);
+    return Array.from(
+      new Set(activeCategories.map((category) => category.name).filter(Boolean)),
+    );
+  }, [activeCategories]);
 
   /**
    * Local search state + Debounce pattern:

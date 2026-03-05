@@ -134,18 +134,16 @@ export default function ManageBrandList() {
         <LoadingSpinner />
       ) : brandsData.length === 0 ? (
         <EmptyState
-          icon={Building2}
           title="Chưa có thương hiệu"
           description="Hãy tạo thương hiệu đầu tiên của bạn"
-          action={
+        >
             <Button asChild>
               <Link to="/admin/brands/create">
                 <Plus className="mr-2 h-4 w-4" />
                 Tạo thương hiệu
               </Link>
             </Button>
-          }
-        />
+        </EmptyState>
       ) : (
         <>
           {/* Table */}
@@ -156,13 +154,8 @@ export default function ManageBrandList() {
           />
 
           {/* Pagination */}
-          {pagination && pagination.total > 10 && (
-            <Pagination
-              page={pagination.current_page}
-              pageSize={pagination.per_page}
-              total={pagination.total}
-              onPageChange={handlePageChange}
-            />
+          {pagination && pagination.totalPages > 1 && (
+            <Pagination meta={pagination} onPageChange={handlePageChange} />
           )}
         </>
       )}

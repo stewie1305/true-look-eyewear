@@ -1,12 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Tag } from "lucide-react";
 
-import { useProducts, useDeleteProduct } from "../hooks/useProducts";
-import { ProductTable } from "../components/ProductTable";
+import { useCategories, useDeleteCategory } from "../hooks/useCategories";
+import { CategoryTable } from "../components/CategoryTable";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { Badge } from "@/shared/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -20,19 +19,13 @@ import {
   EmptyState,
   Pagination,
 } from "@/shared/components/common";
-import type { ProductVariant } from "../types";
+import type { Category } from "../types";
 
-const PRODUCT_TYPES = [
-  { value: "eyeglasses", label: "Kính mắt" },
-  { value: "sunglasses", label: "Kính râm" },
-  { value: "contact_lens", label: "Kính áp tròng" },
-];
-
-export default function ManageProductList() {
+export default function ManageCategoryList() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { products, pagination, isLoading } = useProducts();
-  const deleteMutation = useDeleteProduct();
+  const { categories, pagination, isLoading } = useCategories();
+  const deleteMutation = useDeleteCategory();
 
   const [searchInput, setSearchInput] = useState(
     searchParams.get("search") || "",
@@ -76,9 +69,9 @@ export default function ManageProductList() {
     setSearchParams(params);
   };
 
-  const productsData = (
-    Array.isArray(products) ? products : []
-  ) as ProductVariant[];
+  const categoriesData = (
+    Array.isArray(categories) ? categories : []
+  ) as Category[];
 
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
@@ -89,52 +82,35 @@ export default function ManageProductList() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Quản lý sản phẩm</h2>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Tag className="h-6 w-6" />
+            Quản lý danh mục
+          </h2>
           <p className="text-sm text-muted-foreground">
-            Tạo, sửa, xoá các sản phẩm trong hệ thống
+            Tạo, sửa, xoá các danh mục trong hệ thống
           </p>
         </div>
         <Button asChild>
-          <Link to="/admin/products/create">
+          <Link to="/admin/categories/create">
             <Plus className="mr-2 h-4 w-4" />
-            Tạo sản phẩm
+            Tạo danh mục
           </Link>
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Tìm kiếm theo tên hoặc mã..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="pl-10"
-          />
+      <div className="flex flex-col gap-4 md:flex-row md:items-center">
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Tìm kiếm danh mục..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
-
-        <Select
-          value={searchParams.get("product_type") || "all"}
-          onValueChange={(value) =>
-            handleFilterChange(
-              "product_type",
-              value === "all" ? undefined : value,
-            )
-          }
-        >
-          <SelectTrigger className="w-[220px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Tất cả loại sản phẩm</SelectItem>
-            {PRODUCT_TYPES.map((item) => (
-              <SelectItem key={item.value} value={item.value}>
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
 
         <Select
           value={searchParams.get("status") || "all"}
@@ -142,7 +118,7 @@ export default function ManageProductList() {
             handleFilterChange("status", value === "all" ? undefined : value)
           }
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-40">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -151,38 +127,34 @@ export default function ManageProductList() {
             <SelectItem value="inactive">Không hoạt động</SelectItem>
           </SelectContent>
         </Select>
-
-        {pagination && (
-          <Badge variant="secondary" className="ml-auto">
-            Tổng: {pagination.totalItems}
-          </Badge>
-        )}
       </div>
 
-      {/* Table */}
+      {/* Loading */}
       {isLoading ? (
-        <LoadingSpinner className="py-16" size="lg" />
-      ) : !productsData.length ? (
+        <LoadingSpinner />
+      ) : categoriesData.length === 0 ? (
         <EmptyState
-          title="Chưa có sản phẩm nào"
-          description="Bắt đầu bằng cách tạo sản phẩm đầu tiên."
+          title="Chưa có danh mục"
+          description="Hãy tạo danh mục đầu tiên của bạn"
         >
-          <Button asChild>
-            <Link to="/admin/products/create">
-              <Plus className="mr-2 h-4 w-4" />
-              Tạo sản phẩm
-            </Link>
-          </Button>
+            <Button asChild>
+              <Link to="/admin/categories/create">
+                <Plus className="mr-2 h-4 w-4" />
+                Tạo danh mục
+              </Link>
+            </Button>
         </EmptyState>
       ) : (
         <>
-          <ProductTable
-            products={productsData}
+          {/* Table */}
+          <CategoryTable
+            categories={categoriesData}
             onDelete={handleDelete}
             isDeleting={deleteMutation.isPending}
           />
 
-          {pagination && (
+          {/* Pagination */}
+          {pagination && pagination.totalPages > 1 && (
             <Pagination meta={pagination} onPageChange={handlePageChange} />
           )}
         </>

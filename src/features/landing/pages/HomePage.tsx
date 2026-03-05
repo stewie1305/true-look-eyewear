@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Lenis from "@studio-freight/lenis";
 
 // Asset paths (Ensure these point to your actual local images)
