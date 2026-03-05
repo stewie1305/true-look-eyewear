@@ -13,6 +13,7 @@ import {
 } from "@/shared/components/common";
 import { useProducts } from "../hooks/useProducts";
 import { ProductCard } from "../components/ProductCard";
+import { useBrands } from "@/features/brands/hooks/useBrands";
 
 /**
  * Trang danh sách sản phẩm cho User – có search, filter, pagination.
@@ -26,19 +27,13 @@ export function ProductsCatalog() {
     forceActive: true,
   });
 
+  // Fetch tất cả brands active cho dropdown
+  const { brands } = useBrands({ forceActive: true });
+
   const productTypeOptions = useMemo(() => {
     const set = new Set<string>();
     products?.forEach((item) => {
       const value = item.product?.product_type;
-      if (value) set.add(value);
-    });
-    return Array.from(set);
-  }, [products]);
-
-  const brandNameOptions = useMemo(() => {
-    const set = new Set<string>();
-    products?.forEach((item) => {
-      const value = item.product?.brand?.name;
       if (value) set.add(value);
     });
     return Array.from(set);
@@ -200,9 +195,9 @@ export function ProductsCatalog() {
             className="h-9 w-44 rounded-lg border border-input bg-background px-3 text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <option value="">Brand</option>
-            {brandNameOptions.map((brand) => (
-              <option key={brand} value={brand}>
-                {brand}
+            {brands?.map((brand) => (
+              <option key={brand.id} value={brand.name}>
+                {brand.name}
               </option>
             ))}
           </select>
