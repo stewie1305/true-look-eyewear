@@ -28,6 +28,9 @@ import ManageCategoryEdit from "@/features/categories/pages/ManageCategoryEdit";
 import ManageFrameSpecList from "@/features/FrameSpecs/pages/ManageFrameSpecList";
 import ManageFrameSpecCreate from "@/features/FrameSpecs/pages/ManageFrameSpecCreate";
 import ManageFrameSpecEdit from "@/features/FrameSpecs/pages/ManageFrameSpecEdit";
+import ManageRxLensSpecList from "@/features/RxLenSpecs/pages/ManageRxLensSpecList";
+import ManageRxLensSpecCreate from "@/features/RxLenSpecs/pages/ManageRxLensSpecCreate";
+import ManageRxLensSpecEdit from "@/features/RxLenSpecs/pages/ManageRxLensSpecEdit";
 //1. Su dung createBrowserRouter - API moi nhat cua v6
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -105,6 +108,9 @@ export const router = createBrowserRouter([
       { path: "frame-specs", element: <ManageFrameSpecList /> },
       { path: "frame-specs/create", element: <ManageFrameSpecCreate /> },
       { path: "frame-specs/:id", element: <ManageFrameSpecEdit /> },
+      { path: "rx-lens-specs", element: <ManageRxLensSpecList /> },
+      { path: "rx-lens-specs/create", element: <ManageRxLensSpecCreate /> },
+      { path: "rx-lens-specs/:id", element: <ManageRxLensSpecEdit /> },
     ],
   },
 ]);

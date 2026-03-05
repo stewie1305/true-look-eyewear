@@ -21,6 +21,9 @@ export const API_ENDPOINTS = {
   FRAME_SPECS: {
     BASE: "/frame-spec",
   },
+  RX_LENS_SPECS: {
+    BASE: "/rx-lens-specs",
+  },
   CART: {
     BASE: "/carts",
     MY_CART: "/carts/my-cart",
@@ -43,6 +46,8 @@ export const QUERY_KEYS = {
   CATEGORY_DETAIL: (id: string) => ["categories", id],
   FRAME_SPECS: ["frame-specs"],
   FRAME_SPEC_DETAIL: (id: string) => ["frame-specs", id],
+  RX_LENS_SPECS: ["rx-lens-specs"],
+  RX_LENS_SPEC_DETAIL: (id: string) => ["rx-lens-specs", id],
   CART: ["cart"],
   CART_ITEMS: ["cart-items"],
 };

@@ -9,6 +9,7 @@ import {
   Building2,
   Tag,
   Ruler,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Quản lý Thương hiệu", href: "/admin/brands", icon: Building2 },
   { name: "Quản lý Danh mục", href: "/admin/categories", icon: Tag },
   { name: "Quản lý Gọng kính", href: "/admin/frame-specs", icon: Ruler },
+  { name: "Quản lý Tròng kính", href: "/admin/rx-lens-specs", icon: Eye },
 ];
 
 export default function AdminLayout() {
