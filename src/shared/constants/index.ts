@@ -36,4 +36,8 @@ export const QUERY_KEYS = {
   PRODUCT_DETAIL: (id: string) => ["products", id],
   BRANDS: ["brands"],
   BRAND_DETAIL: (id: string) => ["brands", id],
+  CATEGORIES: ["categories"],
+  CATEGORY_DETAIL: (id: string) => ["categories", id],
+  CART: ["cart"],
+  CART_ITEMS: ["cart-items"],
 };
