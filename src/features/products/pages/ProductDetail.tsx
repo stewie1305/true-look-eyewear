@@ -12,6 +12,7 @@ import { Badge } from "@/shared/components/ui/badge";
 import { LoadingSpinner, EmptyState } from "@/shared/components/common";
 import { useProductDetail } from "../hooks/useProducts";
 import type { ProductVariant } from "../types";
+import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -209,14 +210,11 @@ export function ProductDetail() {
 
           {/* Action Buttons */}
           <div className="space-y-2 border-t pt-4">
-            <Button
-              className="w-full"
+            <AddToCartButton
+              variantId={variant.id}
               size="lg"
-              disabled={variant.quantity <= 0}
-            >
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              Thêm vào giỏ hàng
-            </Button>
+              className="w-full"
+            />
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useLogoutMutation } from "@/features/auth/hooks/useAuthMutation";
 import { ModeToggle } from "@/shared/components/common/mode-toggle";
+import { CartIcon } from "@/features/cart/components/CartIcon";
 
 const Header = () => {
   const location = useLocation();
@@ -114,8 +115,9 @@ const Header = () => {
             </button>
           )}
 
-          {/* Theme Toggle */}
-          <div className="ml-2 pl-2 border-l border-border/40">
+          {/* Cart & Theme Toggle */}
+          <div className="ml-2 pl-2 border-l border-border/40 flex items-center gap-3">
+            {token && <CartIcon />}
             <ModeToggle />
           </div>
         </nav>
