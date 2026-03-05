@@ -21,6 +21,9 @@ import ManageProductEdit from "@/features/products/pages/ManageProductEdit";
 import ManageBrandList from "@/features/brands/pages/ManageBrandList";
 import ManageBrandCreate from "@/features/brands/pages/ManageBrandCreate";
 import ManageBrandEdit from "@/features/brands/pages/ManageBrandEdit";
+import ManageCategoryList from "@/features/categories/pages/ManageCategoryList";
+import ManageCategoryCreate from "@/features/categories/pages/ManageCategoryCreate";
+import ManageCategoryEdit from "@/features/categories/pages/ManageCategoryEdit";
 //1. Su dung createBrowserRouter - API moi nhat cua v6
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -84,6 +87,9 @@ export const router = createBrowserRouter([
       { path: "brands", element: <ManageBrandList /> },
       { path: "brands/create", element: <ManageBrandCreate /> },
       { path: "brands/:id", element: <ManageBrandEdit /> },
+      { path: "categories", element: <ManageCategoryList /> },
+      { path: "categories/create", element: <ManageCategoryCreate /> },
+      { path: "categories/:id", element: <ManageCategoryEdit /> },
     ],
   },
 ]);
