@@ -41,6 +41,18 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/cart-items/update/${id}`,
     REMOVE: (id: string) => `/cart-items/remove/${id}`,
   },
+  USERS: {
+    BASE: "/users",
+    ME: "/users/me",
+    STAFF: "/users/staff",
+  },
+  USER_ROLES: {
+    BASE: "/user-roles",
+    USER: (userId: string) => `/user-roles/user/${userId}`,
+    SYNC: (userId: string) => `/user-roles/${userId}/sync`,
+    REMOVE: (userId: string, roleId: string) =>
+      `/user-roles/${userId}/${roleId}`,
+  },
 };
 
 export const QUERY_KEYS = {
@@ -60,4 +72,7 @@ export const QUERY_KEYS = {
   CONTACT_LENS_SPEC_DETAIL: (id: string) => ["contact-lens-specs", id],
   CART: ["cart"],
   CART_ITEMS: ["cart-items"],
+  USERS: ["users"],
+  USER_DETAIL: (id: string) => ["users", id],
+  USER_ROLES: ["user-roles"],
 };

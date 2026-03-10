@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { authService } from "../services";
 import { useChangePasswordMutation } from "../hooks/useAuthMutation";
+import { useUserMe } from "@/features/users/hooks/useUsers";
 import {
   Card,
   CardContent,
@@ -28,10 +27,7 @@ export default function ProfilePage() {
     data: user,
     isLoading,
     error: fetchError,
-  } = useQuery({
-    queryKey: ["user"],
-    queryFn: () => authService.getMe(),
-  });
+  } = useUserMe();
 
   const handleChangePassword = (e: React.FormEvent) => {
     e.preventDefault();

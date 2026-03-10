@@ -10,6 +10,7 @@ import {
   Tag,
   Ruler,
   Eye,
+  Users,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ const navigation = [
   { name: "Quản lý Tròng kính", href: "/admin/rx-lens-specs", icon: Eye },
   { name: "Quản lý Lens", href: "/admin/contact-lens-specs", icon: Eye },
   { name: "Quản lý Axis", href: "/admin/contact-lens-axis", icon: Eye },
+  { name: "Quản lý Nhân viên", href: "/admin/users", icon: Users },
 ];
 
 export default function AdminLayout() {

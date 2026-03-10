@@ -11,7 +11,9 @@ import UnauthorizedPage from "@/features/auth/pages/UnauthorizedPage";
 import ProfilePage from "@/features/auth/pages/ProfilePage";
 import NotFoundPage from "@/features/auth/pages/NotFoundPage";
 import DashboardPage from "@/features/dashboards/pages/DashBoardPage";
-import UserManagementPage from "@/features/users/pages/UserManagementPage";
+import ManageUserList from "@/features/users/pages/ManageUserList";
+import ManageUserCreate from "@/features/users/pages/ManageUserCreate";
+import ManageUserEdit from "@/features/users/pages/ManageUserEdit";
 import ForgotPasswordPage from "@/features/auth/pages/ForgotPasswordPage";
 import { ProductsCatalog } from "@/features/products/pages/ProductsCatalog";
 import { ProductDetail } from "@/features/products/pages/ProductDetail";
@@ -101,7 +103,9 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <DashboardPage /> },
-      { path: "users", element: <UserManagementPage /> },
+      { path: "users", element: <ManageUserList /> },
+      { path: "users/create", element: <ManageUserCreate /> },
+      { path: "users/:id", element: <ManageUserEdit /> },
       { path: "products", element: <ManageProductList /> },
       { path: "products/create", element: <ManageProductCreate /> },
       { path: "products/:id", element: <ManageProductEdit /> },
