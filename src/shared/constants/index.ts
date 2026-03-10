@@ -27,6 +27,9 @@ export const API_ENDPOINTS = {
   CONTACT_LENS_AXIS: {
     BASE: "/contact-lens-axis",
   },
+  CONTACT_LENS_SPECS: {
+    BASE: "/contact-lens-specs",
+  },
   CART: {
     BASE: "/carts",
     MY_CART: "/carts/my-cart",
@@ -53,6 +56,8 @@ export const QUERY_KEYS = {
   RX_LENS_SPEC_DETAIL: (id: string) => ["rx-lens-specs", id],
   CONTACT_LENS_AXIS: ["contact-lens-axis"],
   CONTACT_LENS_AXIS_DETAIL: (id: string) => ["contact-lens-axis", id],
+  CONTACT_LENS_SPECS: ["contact-lens-specs"],
+  CONTACT_LENS_SPEC_DETAIL: (id: string) => ["contact-lens-specs", id],
   CART: ["cart"],
   CART_ITEMS: ["cart-items"],
 };

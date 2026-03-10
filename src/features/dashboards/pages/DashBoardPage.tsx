@@ -12,10 +12,32 @@ import {
   ShoppingBag,
   Eye,
   Package,
+  Glasses,
+  Building2,
+  Tag,
+  Ruler,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Link } from "react-router";
+import { useRef } from "react";
 
 export default function DashboardPage() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = scrollContainerRef.current.clientWidth;
+      const newScrollPosition =
+        scrollContainerRef.current.scrollLeft +
+        (direction === "left" ? -scrollAmount : scrollAmount);
+      scrollContainerRef.current.scrollTo({
+        left: newScrollPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const stats = [
     {
       title: "Total Products",
@@ -97,32 +119,138 @@ export default function DashboardPage() {
               Manage your eyewear store efficiently
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link to="/ritual">
-              <Button
-                variant="outline"
-                className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+          <CardContent>
+            <div className="relative">
+              {/* Left Arrow Button */}
+              <button
+                onClick={() => scroll("left")}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center hover:bg-accent transition-colors"
+                aria-label="Scroll left"
               >
-                <Package className="h-6 w-6" />
-                <span className="font-semibold">Manage EyeWear</span>
-              </Button>
-            </Link>
-            <Link to="/users">
-              <Button
-                variant="outline"
-                className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+
+              {/* Scrollable Content */}
+              <div
+                ref={scrollContainerRef}
+                className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth hide-scrollbar px-12"
               >
-                <Users className="h-6 w-6" />
-                <span className="font-semibold">View Customers</span>
-              </Button>
-            </Link>
-            <Button
-              variant="outline"
-              className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-            >
-              <BarChart3 className="h-6 w-6" />
-              <span className="font-semibold">View Analytics</span>
-            </Button>
+                <Link
+                  to="/admin/products"
+                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                  >
+                    <Glasses className="h-6 w-6" />
+                    <span className="font-semibold">Quản lý Sản phẩm</span>
+                  </Button>
+                </Link>
+                <Link
+                  to="/admin/brands"
+                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                  >
+                    <Building2 className="h-6 w-6" />
+                    <span className="font-semibold">Quản lý Thương hiệu</span>
+                  </Button>
+                </Link>
+                <Link
+                  to="/admin/categories"
+                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                  >
+                    <Tag className="h-6 w-6" />
+                    <span className="font-semibold">Quản lý Danh mục</span>
+                  </Button>
+                </Link>
+                <Link
+                  to="/admin/frame-specs"
+                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                  >
+                    <Ruler className="h-6 w-6" />
+                    <span className="font-semibold">Quản lý Gọng kính</span>
+                  </Button>
+                </Link>
+                <Link
+                  to="/admin/rx-lens-specs"
+                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                  >
+                    <Eye className="h-6 w-6" />
+                    <span className="font-semibold">Quản lý Tròng kính</span>
+                  </Button>
+                </Link>
+                <Link
+                  to="/admin/contact-lens-specs"
+                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                  >
+                    <Eye className="h-6 w-6" />
+                    <span className="font-semibold">Quản lý Lens</span>
+                  </Button>
+                </Link>
+                <Link
+                  to="/admin/contact-lens-axis"
+                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                  >
+                    <Eye className="h-6 w-6" />
+                    <span className="font-semibold">Quản lý Axis</span>
+                  </Button>
+                </Link>
+                <Link
+                  to="/admin/users"
+                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                  >
+                    <Users className="h-6 w-6" />
+                    <span className="font-semibold">Quản lý Users</span>
+                  </Button>
+                </Link>
+                <div className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]">
+                  <Button
+                    variant="outline"
+                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                  >
+                    <BarChart3 className="h-6 w-6" />
+                    <span className="font-semibold">View Analytics</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Right Arrow Button */}
+              <button
+                onClick={() => scroll("right")}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center hover:bg-accent transition-colors"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
           </CardContent>
         </Card>
 

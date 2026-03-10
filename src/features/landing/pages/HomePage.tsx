@@ -1,194 +1,398 @@
 import { useNavigate } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
+import { useEffect, useRef, useState, Suspense } from "react";
 import Lenis from "@studio-freight/lenis";
+import { Canvas, useFrame } from "@react-three/fiber";
+import {
+  useGLTF,
+  Float,
+  Environment,
+  ContactShadows,
+  PerspectiveCamera,
+  Html,
+} from "@react-three/drei";
 
-// Asset paths (Ensure these point to your actual local images)
-const IMG_ASSETS = {
+const ASSETS = {
   hero: "src/shared/pictures/h3.jpg",
   lookbook1: "src/shared/pictures/h5.jpg",
   lookbook2: "src/shared/pictures/h6.jpg",
-  craft: "src/shared/pictures/R.jpg",
+  mat1: "src/shared/pictures/h10.jpg",
+  mat2: "src/shared/pictures/h11.jpg",
+  model1: "/models/k1.glb",
 };
+
+// --- COMPONENT SHOWCASE 1 MODEL DUY NHẤT ---
+function EyewearShowcase({ scrollProgress }: { scrollProgress: any }) {
+  const m1 = useGLTF(ASSETS.model1);
+  const ref1 = useRef<any>(null);
+
+  // Kích thước to hơn
+  const MAX_SCALE = 0.85;
+
+  const scale1 = useTransform(scrollProgress, [0, 1], [MAX_SCALE, MAX_SCALE]);
+  const y1 = useTransform(scrollProgress, [0, 1], [0, 0]);
+
+  // Xoay 4 vòng tròn (Math.PI * 8)
+  const rotY1 = useTransform(scrollProgress, [0, 1], [0, Math.PI * 8]);
+  const rotX = useTransform(scrollProgress, [0, 0.5, 1], [0.1, -0.2, 0.1]);
+
+  useFrame(() => {
+    if (ref1.current) {
+      ref1.current.scale.setScalar(scale1.get());
+      ref1.current.position.y = y1.get();
+      ref1.current.rotation.y = rotY1.get();
+      ref1.current.rotation.x = rotX.get();
+    }
+  });
+
+  return (
+    <group position={[0, -0.2, 0]}>
+      <primitive ref={ref1} object={m1.scene} />
+    </group>
+  );
+}
+
+useGLTF.preload(ASSETS.model1);
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { scrollYProgress: globalScroll } = useScroll();
+
+  const section3DRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: sectionScroll } = useScroll({
+    target: section3DRef,
+    offset: ["start start", "end end"],
+  });
 
   useEffect(() => {
-    // Inject luxury serif font for the "Cormorant Garamond" look
-    const link = document.createElement("link");
-    link.href =
-      "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap";
-    link.rel = "stylesheet";
-    document.head.appendChild(link);
+    document.body.style.overflow = "hidden";
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      document.body.style.overflow = "auto";
+    }, 2500);
 
-    // Initialize Lenis Smooth Scroll
-    const lenis = new Lenis({
-      duration: 1.4,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
+    const lenis = new Lenis({ duration: 1.4, smoothWheel: true });
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
-    return () => lenis.destroy();
+    return () => {
+      clearTimeout(timer);
+      lenis.destroy();
+      document.body.style.overflow = "auto";
+    };
   }, []);
 
-  const { scrollYProgress } = useScroll();
-  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.3]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  // --- TIMELINE TEXT (Đã chia đều 3 nhịp cuộn, xuất hiện sớm và rõ ràng hơn) ---
+
+  // Text 1 (0% -> 30%)
+  const text1Op = useTransform(
+    sectionScroll,
+    [0, 0.05, 0.25, 0.3],
+    [0, 1, 1, 0],
+  );
+  const text1Y = useTransform(
+    sectionScroll,
+    [0, 0.05, 0.25, 0.3],
+    [30, 0, 0, -30],
+  );
+
+  // Text 2 (35% -> 65%) - Obsidian Black
+  const text2Op = useTransform(
+    sectionScroll,
+    [0.35, 0.4, 0.6, 0.65],
+    [0, 1, 1, 0],
+  );
+  const text2Y = useTransform(
+    sectionScroll,
+    [0.35, 0.4, 0.6, 0.65],
+    [30, 0, 0, -30],
+  );
+
+  // Text 3 (70% -> 95%) - Zeiss Vision
+  const text3Op = useTransform(
+    sectionScroll,
+    [0.7, 0.75, 0.9, 0.95],
+    [0, 1, 1, 0],
+  );
+  const text3Y = useTransform(
+    sectionScroll,
+    [0.7, 0.75, 0.9, 0.95],
+    [30, 0, 0, -30],
+  );
 
   return (
-    <div className="bg-[#050505] text-white selection:bg-white selection:text-black w-full min-h-screen overflow-x-hidden p-0 m-0 font-light">
-      {/* ================= SECTION 1: HERO FULL SCREEN ================= */}
-      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-        <motion.div
-          style={{ scale: heroScale, opacity: heroOpacity }}
-          className="absolute inset-0 w-full h-full"
-        >
-          <img
-            src={IMG_ASSETS.hero}
-            className="w-full h-full object-cover brightness-[0.35]"
-            alt="Cinematic Hero"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/40" />
-        </motion.div>
-
-        <div className="relative z-10 text-center w-full">
-          <motion.h1
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[18vw] leading-none italic"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+    <div className="bg-background text-foreground w-full overflow-x-hidden font-light transition-colors duration-500 selection:bg-foreground selection:text-background">
+      {/* PRELOADER */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            exit={{ y: "-100%" }}
+            transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
+            className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center text-foreground"
           >
-            True Look
-          </motion.h1>
-          <p className="text-[10px] tracking-[1.5em] uppercase mt-4 opacity-30 font-sans">
-            Timeless Vision • Modern Luxury
-          </p>
-        </div>
+            <motion.div
+              initial={{ opacity: 0, letterSpacing: "0.2em" }}
+              animate={{ opacity: 1, letterSpacing: "0.8em" }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="text-2xl md:text-4xl font-serif italic uppercase ml-[0.8em]"
+            >
+              True Look
+            </motion.div>
+            <div className="w-32 h-[1px] bg-foreground/20 mt-8 overflow-hidden relative">
+              <motion.div
+                initial={{ x: "-100%" }}
+                animate={{ x: "100%" }}
+                transition={{
+                  duration: 1.2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute inset-0 bg-foreground"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 1. HERO */}
+      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+        <motion.img
+          style={{ scale: useTransform(globalScroll, [0, 0.3], [1, 1.1]) }}
+          src={ASSETS.hero}
+          className="absolute inset-0 w-full h-full object-cover brightness-[0.5] dark:brightness-[0.25]"
+          alt=""
+        />
+        <h1 className="relative z-10 text-[15vw] font-serif italic text-white drop-shadow-2xl">
+          True Look
+        </h1>
       </section>
 
-      {/* ================= SECTION 2: PHILOSOPHY FULL WIDTH ================= */}
-      <section className="relative min-h-[80vh] w-full flex items-center bg-[#050505] py-32 px-10 md:px-20">
-        <div className="w-full">
-          <motion.h2
-            whileInView={{ opacity: [0, 1], y: [30, 0] }}
-            viewport={{ once: true }}
-            className="text-[7vw] font-light italic leading-tight mb-16"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
-          >
-            Vision defines <br />{" "}
-            <span className="not-italic opacity-40">your aura.</span>
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 text-white/40 text-xl font-light max-w-6xl">
-            <p className="leading-relaxed">
-              True Look Eyewear was born with a mission to redefine
-              sophistication. Each design is a fusion of premium Titanium and
-              minimalist architectural inspiration.
-            </p>
-            <p className="leading-relaxed">
-              We do not mass produce. Every frame undergoes 48 hours of
-              artisanal hand-crafting to ensure absolute comfort and a bespoke
-              fit for your face.
-            </p>
+      {/* 2. MARQUEE */}
+      <div className="py-8 border-y border-border bg-muted/10 overflow-hidden flex">
+        <motion.div
+          animate={{ x: [0, -1500] }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          className="flex gap-32 whitespace-nowrap text-[10px] uppercase tracking-[0.5em] opacity-40 font-serif italic"
+        >
+          {Array(5)
+            .fill(
+              "Featured in Vogue • GQ Paris • Hypebeast • L'Officiel • Highsnobiety • ",
+            )
+            .map((text, i) => (
+              <span key={i}>{text}</span>
+            ))}
+        </motion.div>
+      </div>
+
+      {/* 3. SOLO 3D SHOWCASE - Đã trả về 400vh để giãn text đều hơn */}
+      <section
+        ref={section3DRef}
+        style={{ height: "400vh" }}
+        className="relative w-full bg-background transition-colors duration-500"
+      >
+        <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
+          {/* Backdrop Blob - Scale giảm xuống 1.5 */}
+          <div className="absolute w-full h-full flex items-center justify-center opacity-[0.03] dark:opacity-[0.05] pointer-events-none">
+            <motion.div
+              style={{
+                rotate: useTransform(sectionScroll, [0, 1], [0, 360]),
+                scale: 1.5,
+              }}
+              className="w-[85vh] h-[85vh]"
+            >
+              <svg
+                viewBox="0 0 200 200"
+                className="fill-current text-foreground"
+              >
+                <path
+                  d="M47.5,-76.3C59.6,-69.1,66.4,-52.4,72.1,-36.8C77.7,-21.2,82.2,-6.6,80.1,7.4C78,21.4,69.2,34.8,59.3,46.5C49.4,58.2,38.3,68.2,25,73.8C11.7,79.4,-3.8,80.7,-18.9,77.5C-34,74.3,-48.7,66.6,-59.6,55.5C-70.5,44.4,-77.6,30,-80.7,14.8C-83.8,-0.4,-82.9,-16.4,-76.4,-30.5C-69.9,-44.6,-57.8,-56.8,-43.9,-63.3C-30,-69.8,-15,-70.6,1.4,-72.7C17.7,-74.8,35.4,-83.4,47.5,-76.3Z"
+                  transform="translate(100 100)"
+                />
+              </svg>
+            </motion.div>
+          </div>
+
+          <div className="absolute inset-0 z-10 pointer-events-none">
+            <Canvas dpr={[1, 2]} gl={{ alpha: true }}>
+              <PerspectiveCamera makeDefault position={[0, 0, 6]} fov={35} />
+              <ambientLight intensity={2} />
+              <directionalLight position={[0, 5, 10]} intensity={4} />
+              <Environment preset="city" />
+              <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+                <Suspense fallback={null}>
+                  <EyewearShowcase scrollProgress={sectionScroll} />
+                </Suspense>
+              </Float>
+              <ContactShadows
+                position={[0, -1.5, 0]}
+                opacity={0.3}
+                scale={15}
+                blur={3}
+                far={4}
+              />
+            </Canvas>
+          </div>
+
+          {/* FLOAT TEXT 1 */}
+          <div className="absolute z-20 w-full h-full flex items-center justify-center pointer-events-none">
+            <motion.div
+              style={{ opacity: text1Op, y: text1Y }}
+              className="absolute text-center flex flex-col items-center"
+            >
+              <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
+                Edition 1
+              </p>
+              <h2 className="text-[8vw] md:text-[6vw] font-serif italic leading-none drop-shadow-lg">
+                Pure Titanium
+              </h2>
+              <p className="mt-8 text-muted-foreground max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
+                Chế tác từ nguyên khối hợp kim hàng không. Nhẹ hơn không khí,
+                vững chãi hơn thời gian.
+              </p>
+            </motion.div>
+          </div>
+
+          {/* FLOAT TEXT 2 */}
+          <div className="absolute z-20 w-full h-full flex items-center justify-center pointer-events-none">
+            <motion.div
+              style={{ opacity: text2Op, y: text2Y }}
+              className="absolute text-center flex flex-col items-center"
+            >
+              <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
+                Edition 2
+              </p>
+              <h2 className="text-[8vw] md:text-[6vw] font-serif italic leading-none drop-shadow-lg">
+                Obsidian Black
+              </h2>
+              <p className="mt-8 text-muted-foreground max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
+                Bóng đêm huyền bí, quyền lực vô song. Cắt gọt tỉ mỉ từ những
+                khối vật liệu nguyên bản.
+              </p>
+            </motion.div>
+          </div>
+
+          {/* FLOAT TEXT 3 */}
+          <div className="absolute z-20 w-full h-full flex items-center justify-center pointer-events-none">
+            <motion.div
+              style={{ opacity: text3Op, y: text3Y }}
+              className="absolute text-center flex flex-col items-center"
+            >
+              <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
+                Edition 3
+              </p>
+              <h2 className="text-[8vw] md:text-[6vw] font-serif italic leading-none drop-shadow-lg">
+                Zeiss Vision
+              </h2>
+              <p className="mt-8 text-muted-foreground max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
+                Thấu kính quang học đỉnh cao thế giới. Bảo vệ toàn diện, mở rộng
+                tầm nhìn của người kiến tạo.
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ================= SECTION 3: ASYMMETRIC GRID FULL SCREEN ================= */}
-      <section className="w-full bg-black">
-        {/* Gap-0 ensures the images touch the edges of the screen */}
-        <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-0 items-stretch">
-          {/* Left Item */}
+      {/* 4. MATERIALS */}
+      <section className="py-60 border-t border-border bg-muted/10 relative z-30">
+        <div className="max-w-screen-2xl mx-auto px-10 grid grid-cols-1 md:grid-cols-2 gap-32 items-center">
+          <div className="space-y-16">
+            <h2 className="text-7xl md:text-8xl font-serif italic leading-[0.9]">
+              Art of <br /> Engineering.
+            </h2>
+            <div className="flex gap-20 pt-12 border-t border-border/50">
+              <div>
+                <p className="text-5xl font-serif mb-2">12g</p>
+                <p className="text-[9px] uppercase tracking-widest opacity-40 italic">
+                  Ultralight
+                </p>
+              </div>
+              <div>
+                <p className="text-5xl font-serif mb-2">Zeiss</p>
+                <p className="text-[9px] uppercase tracking-widest opacity-40 italic">
+                  Optics
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-8 h-[75vh]">
+            <div className="rounded-sm overflow-hidden bg-muted shadow-2xl">
+              <img
+                src={ASSETS.mat1}
+                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                alt=""
+              />
+            </div>
+            <div className="rounded-sm overflow-hidden mt-24 bg-muted shadow-2xl">
+              <img
+                src={ASSETS.mat2}
+                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                alt=""
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. GALLERY */}
+      <section className="py-40 px-10 border-t border-border bg-background relative z-30">
+        <div className="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-24">
           <motion.div
-            className="relative h-[100vh] w-full overflow-hidden group border-r border-white/5"
-            whileInView={{ opacity: [0, 1] }}
+            whileInView={{ opacity: [0, 1], y: [40, 0] }}
             viewport={{ once: true }}
           >
-            <img
-              src={IMG_ASSETS.lookbook1}
-              className="w-full h-full object-cover grayscale transition-all duration-1000 group-hover:scale-105 group-hover:grayscale-0"
-              alt="A-Series Collection"
-            />
-            <div
-              className="absolute bottom-12 left-12 italic text-[5vw] font-serif leading-none z-20"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
-            >
+            <div className="aspect-[3/4] overflow-hidden rounded-sm bg-muted shadow-2xl">
+              <img
+                src={ASSETS.lookbook1}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-[2.5s]"
+                alt=""
+              />
+            </div>
+            <h3 className="mt-8 text-3xl font-serif italic opacity-70">
               A-Series 2026
-            </div>
+            </h3>
           </motion.div>
-
-          {/* Right Item - Offset vertically for a cinematic rhythm */}
           <motion.div
-            className="relative h-[100vh] w-full overflow-hidden group md:mt-[20vh]"
-            whileInView={{ opacity: [0, 1] }}
+            whileInView={{ opacity: [0, 1], y: [40, 0] }}
+            transition={{ delay: 0.2 }}
             viewport={{ once: true }}
+            className="md:mt-48"
           >
-            <img
-              src={IMG_ASSETS.lookbook2}
-              className="w-full h-full object-cover grayscale transition-all duration-1000 group-hover:scale-105 group-hover:grayscale-0"
-              alt="Gold Tint Edition"
-            />
-            <div
-              className="absolute bottom-12 left-12 italic text-[5vw] font-serif leading-none z-20"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
-            >
-              Gold Tint Edition
+            <div className="aspect-[3/4] overflow-hidden rounded-sm bg-muted shadow-2xl">
+              <img
+                src={ASSETS.lookbook2}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-[2.5s]"
+                alt=""
+              />
             </div>
+            <h3 className="mt-8 text-3xl font-serif italic opacity-70">
+              Obsidian Edition
+            </h3>
           </motion.div>
         </div>
       </section>
 
-      {/* ================= SECTION 4: CRAFTSMANSHIP FULL BACKGROUND ================= */}
-      <section className="relative h-screen w-full flex items-center overflow-hidden">
-        <div className="absolute inset-0 w-full h-full">
-          <img
-            src={IMG_ASSETS.craft}
-            className="w-full h-full object-cover opacity-20"
-            alt="Craftsmanship Details"
-          />
-        </div>
-        <div className="relative z-10 px-10 md:px-24 w-full">
-          <h2
-            className="text-[10vw] italic font-serif leading-none mb-10"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
-          >
-            Meticulous <br /> Craft.
-          </h2>
-          <button
-            onClick={() => navigate("/products")}
-            className="group flex items-center gap-6 border border-white/20 px-12 py-6 text-[10px] tracking-[0.5em] uppercase hover:bg-white hover:text-black transition-all duration-700"
-          >
-            Explore Collection
-            <div className="w-8 h-[1px] bg-white group-hover:bg-black transition-all duration-500" />
-          </button>
-        </div>
-      </section>
-
-      {/* ================= FOOTER ================= */}
-      <footer className="py-32 border-t border-white/5 text-center relative overflow-hidden bg-[#050505]">
-        {/* Giant Watermark Background Text */}
-        <h2 className="text-[20vw] opacity-[0.02] font-serif italic absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none">
+      {/* 6. FOOTER */}
+      <footer className="py-40 text-center border-t border-border bg-muted/20 relative overflow-hidden z-30">
+        <h2 className="text-[25vw] opacity-[0.02] font-serif italic absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap pointer-events-none uppercase">
           TRUE LOOK
         </h2>
-
         <div className="relative z-10 space-y-12">
-          <div className="flex justify-center gap-12 text-[10px] tracking-[0.5em] uppercase text-white/30">
-            <a href="#" className="hover:text-white transition-colors">
-              Instagram
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              TikTok
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              Vogue Journal
-            </a>
-          </div>
-          <p className="text-[9px] text-white/10 tracking-[0.3em] uppercase italic font-sans">
+          <button
+            onClick={() => navigate("/products")}
+            className="border border-primary px-16 py-6 uppercase tracking-[0.5em] text-[10px] hover:bg-foreground hover:text-background transition-all duration-700 bg-transparent"
+          >
+            Enter Collection
+          </button>
+          <p className="text-[10px] uppercase tracking-[0.4em] opacity-30 italic pt-10">
             © 2026 True Look Eyewear. Engineered for the Visionaries.
           </p>
         </div>

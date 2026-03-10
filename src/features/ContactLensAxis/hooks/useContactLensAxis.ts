@@ -7,12 +7,12 @@ import { QUERY_KEYS } from "@/shared/constants";
 import {
   adminContactLensAxisService,
   contactLensAxisService,
-} from "@/features/ContactLensAxis/services";
+} from "@/features/contactLensAxis/services";
 import type {
   CreateContactLensAxisDto,
   UpdateContactLensAxisDto,
   ContactLensAxisFilterParams,
-} from "@/features/ContactLensAxis/types";
+} from "@/features/contactLensAxis/types";
 
 /**
  * Hook lấy danh sách contact lens axis với pagination và filters.

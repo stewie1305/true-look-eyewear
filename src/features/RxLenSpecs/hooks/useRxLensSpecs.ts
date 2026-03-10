@@ -4,12 +4,15 @@ import { useMemo } from "react";
 import { toast } from "sonner";
 
 import { QUERY_KEYS } from "@/shared/constants";
-import { adminRxLensSpecService, rxLensSpecService } from "@/features/RxLenSpecs/pages/services";
+import {
+  adminRxLensSpecService,
+  rxLensSpecService,
+} from "@/features/rxLenSpecs/pages/services";
 import type {
   CreateRxLensSpecDto,
   RxLensSpecFilterParams,
   UpdateRxLensSpecDto,
-} from "@/features/RxLenSpecs/pages/types";
+} from "@/features/rxLenSpecs/pages/types";
 
 export function useRxLensSpecs(options?: { forceActive?: boolean }) {
   const [searchParams] = useSearchParams();
@@ -64,7 +67,8 @@ export function useRxLensSpecs(options?: { forceActive?: boolean }) {
   } else if (filters.status) {
     rxLensSpecs = rxLensSpecs.filter(
       (item) =>
-        String(item.status || "").toLowerCase() === filters.status?.toLowerCase(),
+        String(item.status || "").toLowerCase() ===
+        filters.status?.toLowerCase(),
     );
   }
 
@@ -81,7 +85,8 @@ export function useCreateRxLensSpec() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateRxLensSpecDto) => adminRxLensSpecService.create(data),
+    mutationFn: (data: CreateRxLensSpecDto) =>
+      adminRxLensSpecService.create(data),
     onSuccess: () => {
       toast.success("Tạo tròng kính thuốc thành công!");
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.RX_LENS_SPECS });

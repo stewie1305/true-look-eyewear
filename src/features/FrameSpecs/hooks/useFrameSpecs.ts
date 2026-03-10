@@ -4,12 +4,15 @@ import { useMemo } from "react";
 import { toast } from "sonner";
 
 import { QUERY_KEYS } from "@/shared/constants";
-import { adminFrameSpecService, frameSpecService } from "@/features/FrameSpecs/services";
+import {
+  adminFrameSpecService,
+  frameSpecService,
+} from "@/features/frameSpecs/services";
 import type {
   CreateFrameSpecDto,
   FrameSpecFilterParams,
   UpdateFrameSpecDto,
-} from "@/features/FrameSpecs/types";
+} from "@/features/frameSpecs/types";
 
 export function useFrameSpecs(options?: { forceActive?: boolean }) {
   const [searchParams] = useSearchParams();
@@ -65,7 +68,8 @@ export function useFrameSpecs(options?: { forceActive?: boolean }) {
   } else if (filters.status) {
     frameSpecs = frameSpecs.filter(
       (item) =>
-        String(item.status || "").toLowerCase() === filters.status?.toLowerCase(),
+        String(item.status || "").toLowerCase() ===
+        filters.status?.toLowerCase(),
     );
   }
 
@@ -82,7 +86,8 @@ export function useCreateFrameSpec() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateFrameSpecDto) => adminFrameSpecService.create(data),
+    mutationFn: (data: CreateFrameSpecDto) =>
+      adminFrameSpecService.create(data),
     onSuccess: () => {
       toast.success("Tạo gọng kính thành công!");
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FRAME_SPECS });

@@ -25,15 +25,18 @@ import CartPage from "@/features/cart/pages/CartPage";
 import ManageCategoryList from "@/features/categories/pages/ManageCategoryList";
 import ManageCategoryCreate from "@/features/categories/pages/ManageCategoryCreate";
 import ManageCategoryEdit from "@/features/categories/pages/ManageCategoryEdit";
-import ManageFrameSpecList from "@/features/FrameSpecs/pages/ManageFrameSpecList";
-import ManageFrameSpecCreate from "@/features/FrameSpecs/pages/ManageFrameSpecCreate";
-import ManageFrameSpecEdit from "@/features/FrameSpecs/pages/ManageFrameSpecEdit";
-import ManageRxLensSpecList from "@/features/RxLenSpecs/pages/ManageRxLensSpecList";
-import ManageRxLensSpecCreate from "@/features/RxLenSpecs/pages/ManageRxLensSpecCreate";
-import ManageRxLensSpecEdit from "@/features/RxLenSpecs/pages/ManageRxLensSpecEdit";
-import { ManageContactLensAxisList } from "@/features/ContactLensAxis/pages/ManageContactLensAxisList";
-import { ManageContactLensAxisCreate } from "@/features/ContactLensAxis/pages/ManageContactLensAxisCreate";
-import { ManageContactLensAxisEdit } from "@/features/ContactLensAxis/pages/ManageContactLensAxisEdit";
+import ManageFrameSpecList from "@/features/frameSpecs/pages/ManageFrameSpecList";
+import ManageFrameSpecCreate from "@/features/frameSpecs/pages/ManageFrameSpecCreate";
+import ManageFrameSpecEdit from "@/features/frameSpecs/pages/ManageFrameSpecEdit";
+import ManageRxLensSpecList from "@/features/rxLenSpecs/pages/ManageRxLensSpecList";
+import ManageRxLensSpecCreate from "@/features/rxLenSpecs/pages/ManageRxLensSpecCreate";
+import ManageRxLensSpecEdit from "@/features/rxLenSpecs/pages/ManageRxLensSpecEdit";
+import { ManageContactLensAxisList } from "@/features/contactLensAxis/pages/ManageContactLensAxisList";
+import { ManageContactLensAxisCreate } from "@/features/contactLensAxis/pages/ManageContactLensAxisCreate";
+import { ManageContactLensAxisEdit } from "@/features/contactLensAxis/pages/ManageContactLensAxisEdit";
+import ManageContactLensSpecList from "@/features/contactLensSpecs/pages/ManageContactLensSpecList";
+import ManageContactLensSpecCreate from "@/features/contactLensSpecs/pages/ManageContactLensSpecCreate";
+import ManageContactLensSpecEdit from "@/features/contactLensSpecs/pages/ManageContactLensSpecEdit";
 //1. Su dung createBrowserRouter - API moi nhat cua v6
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -114,6 +117,15 @@ export const router = createBrowserRouter([
       { path: "rx-lens-specs", element: <ManageRxLensSpecList /> },
       { path: "rx-lens-specs/create", element: <ManageRxLensSpecCreate /> },
       { path: "rx-lens-specs/:id", element: <ManageRxLensSpecEdit /> },
+      { path: "contact-lens-specs", element: <ManageContactLensSpecList /> },
+      {
+        path: "contact-lens-specs/create",
+        element: <ManageContactLensSpecCreate />,
+      },
+      {
+        path: "contact-lens-specs/:id",
+        element: <ManageContactLensSpecEdit />,
+      },
       { path: "contact-lens-axis", element: <ManageContactLensAxisList /> },
       {
         path: "contact-lens-axis/create",
