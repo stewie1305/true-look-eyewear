@@ -10,7 +10,11 @@ const Header = () => {
   const logoutMutation = useLogoutMutation();
   const token = useAuthStore((state) => state.accessToken);
 
-  const isActive = (pathname: string) => location.pathname === pathname;
+  const isActive = (pathname: string) =>
+    pathname === "/"
+      ? location.pathname === pathname
+      : location.pathname === pathname ||
+        location.pathname.startsWith(`${pathname}/`);
 
   return (
     <header

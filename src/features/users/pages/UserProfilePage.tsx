@@ -1,5 +1,16 @@
-import { useState } from "react";
-import { Calendar, Loader2, Lock, Mail, User, Users2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Calendar,
+  Loader2,
+  Lock,
+  PencilLine,
+  Mail,
+  RefreshCw,
+  User,
+  Users2,
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import { useChangePasswordMutation } from "@/features/auth/hooks/useAuthMutation";
 import { useUserMe } from "@/features/users/hooks/useUsers";
@@ -30,14 +41,38 @@ const mapGender = (gender?: string) => {
 };
 
 export default function UserProfilePage() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const { data: user, isLoading, error: fetchError } = useUserMe();
+  const {
+    data: user,
+    isLoading,
+    isFetching,
+    error: fetchError,
+    refetch,
+  } = useUserMe();
   const changePasswordMutation = useChangePasswordMutation();
+
+  useEffect(() => {
+    const state = location.state as {
+      profileUpdated?: boolean;
+      successMessage?: string;
+    } | null;
+
+    if (!state?.profileUpdated) return;
+
+    toast.success(
+      state.successMessage ||
+        "Lưu thay đổi hồ sơ thành công. Thông tin của bạn đã được cập nhật.",
+    );
+
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, location.state, navigate]);
 
   const resetPasswordForm = () => {
     setShowChangePassword(false);
@@ -97,11 +132,35 @@ export default function UserProfilePage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6 py-8">
-      <div>
-        <h1 className="text-3xl font-bold">Hồ sơ cá nhân</h1>
-        <p className="text-sm text-muted-foreground">
-          Xem thông tin tài khoản và quản lý bảo mật.
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Hồ sơ cá nhân</h1>
+          <p className="text-sm text-muted-foreground">
+            Xem thông tin tài khoản và quản lý bảo mật.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => refetch()}
+            disabled={isFetching}
+          >
+            {isFetching ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="mr-2 h-4 w-4" />
+            )}
+            Refresh trang
+          </Button>
+          <Button asChild>
+            <Link to="/profile/edit">
+              <PencilLine className="mr-2 h-4 w-4" />
+              Chỉnh sửa profile
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <Card className="border-border/60">

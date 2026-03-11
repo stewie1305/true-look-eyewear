@@ -199,6 +199,20 @@ export function useUserMe() {
   });
 }
 
+export function useUpdateUserMe() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateUserDto) => adminUserService.updateMe(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users", "me"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Cập nhật hồ sơ thất bại");
+    },
+  });
+}
+
 export function useRoles() {
   return useQuery({
     queryKey: QUERY_KEYS.USER_ROLES,
