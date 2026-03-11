@@ -39,6 +39,9 @@ import { ManageContactLensAxisEdit } from "@/features/contactLensAxis/pages/Mana
 import ManageContactLensSpecList from "@/features/contactLensSpecs/pages/ManageContactLensSpecList";
 import ManageContactLensSpecCreate from "@/features/contactLensSpecs/pages/ManageContactLensSpecCreate";
 import ManageContactLensSpecEdit from "@/features/contactLensSpecs/pages/ManageContactLensSpecEdit";
+import ManageRoleList from "@/features/roles/pages/ManageRoleList";
+import ManageRoleCreate from "@/features/roles/pages/ManageRoleCreate";
+import ManageRoleEdit from "@/features/roles/pages/ManageRoleEdit";
 //1. Su dung createBrowserRouter - API moi nhat cua v6
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -136,6 +139,9 @@ export const router = createBrowserRouter([
         element: <ManageContactLensAxisCreate />,
       },
       { path: "contact-lens-axis/:id", element: <ManageContactLensAxisEdit /> },
+      { path: "roles", element: <ManageRoleList /> },
+      { path: "roles/create", element: <ManageRoleCreate /> },
+      { path: "roles/:id", element: <ManageRoleEdit /> },
     ],
   },
 ]);
