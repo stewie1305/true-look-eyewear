@@ -206,6 +206,7 @@ export function useUpdateUserMe() {
     mutationFn: (data: UpdateUserDto) => adminUserService.updateMe(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users", "me"] });
+      toast.success("Cập nhật hồ sơ thành công!");
     },
     onError: (error: any) => {
       toast.error(error?.message || "Cập nhật hồ sơ thất bại");

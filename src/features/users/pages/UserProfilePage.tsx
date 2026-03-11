@@ -3,14 +3,14 @@ import {
   Calendar,
   Loader2,
   Lock,
-  PencilLine,
   Mail,
+  MapPinPlus,
+  PencilLine,
   RefreshCw,
   User,
   Users2,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 import { useChangePasswordMutation } from "@/features/auth/hooks/useAuthMutation";
 import { useUserMe } from "@/features/users/hooks/useUsers";
@@ -24,6 +24,7 @@ import {
 } from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
+import { toast } from "sonner";
 
 const formatDate = (date?: string) => {
   if (!date) return "-";
@@ -132,32 +133,32 @@ export default function UserProfilePage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6 py-8">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Hồ sơ cá nhân</h1>
-          <p className="text-sm text-muted-foreground">
-            Xem thông tin tài khoản và quản lý bảo mật.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => refetch()}
-            disabled={isFetching}
-          >
+      <div>
+        <h1 className="text-3xl font-bold">Hồ sơ cá nhân</h1>
+        <p className="text-sm text-muted-foreground">
+          Xem thông tin tài khoản và quản lý bảo mật.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button type="button" variant="outline" onClick={() => refetch()}>
             {isFetching ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <RefreshCw className="mr-2 h-4 w-4" />
             )}
-            Refresh trang
+            Refresh
           </Button>
+
           <Button asChild>
             <Link to="/profile/edit">
               <PencilLine className="mr-2 h-4 w-4" />
               Chỉnh sửa profile
+            </Link>
+          </Button>
+
+          <Button asChild>
+            <Link to="/addresses">
+              <MapPinPlus className="mr-2 h-4 w-4" />
+              Thêm address
             </Link>
           </Button>
         </div>
