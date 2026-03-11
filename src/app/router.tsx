@@ -9,6 +9,8 @@ import { ProtectedRoute } from "@/shared/components/common/ProtectedRoute";
 import AdminLayout from "@/shared/layouts/AdminLayout";
 import UnauthorizedPage from "@/features/auth/pages/UnauthorizedPage";
 import UserProfilePage from "@/features/users/pages/UserProfilePage";
+import EditUserProfilePage from "@/features/users/pages/EditUserProfilePage";
+import AddressPage from "@/features/address/pages/AddressPage";
 import NotFoundPage from "@/features/auth/pages/NotFoundPage";
 import DashboardPage from "@/features/dashboards/pages/DashBoardPage";
 import ManageUserList from "@/features/users/pages/ManageUserList";
@@ -86,6 +88,22 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <UserProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "profile/edit",
+        element: (
+          <ProtectedRoute>
+            <EditUserProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "addresses",
+        element: (
+          <ProtectedRoute>
+            <AddressPage />
           </ProtectedRoute>
         ),
       },

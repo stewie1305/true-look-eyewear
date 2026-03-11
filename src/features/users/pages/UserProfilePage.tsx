@@ -1,5 +1,16 @@
 import { useState } from "react";
-import { Calendar, Loader2, Lock, Mail, User, Users2 } from "lucide-react";
+import {
+  Calendar,
+  Loader2,
+  Lock,
+  Mail,
+  MapPinPlus,
+  PencilLine,
+  RefreshCw,
+  User,
+  Users2,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { useChangePasswordMutation } from "@/features/auth/hooks/useAuthMutation";
 import { useUserMe } from "@/features/users/hooks/useUsers";
@@ -36,7 +47,13 @@ export default function UserProfilePage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const { data: user, isLoading, error: fetchError } = useUserMe();
+  const {
+    data: user,
+    isLoading,
+    isFetching,
+    error: fetchError,
+    refetch,
+  } = useUserMe();
   const changePasswordMutation = useChangePasswordMutation();
 
   const resetPasswordForm = () => {
@@ -102,6 +119,30 @@ export default function UserProfilePage() {
         <p className="text-sm text-muted-foreground">
           Xem thông tin tài khoản và quản lý bảo mật.
         </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button type="button" variant="outline" onClick={() => refetch()}>
+            {isFetching ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="mr-2 h-4 w-4" />
+            )}
+            Refresh
+          </Button>
+
+          <Button asChild>
+            <Link to="/profile/edit">
+              <PencilLine className="mr-2 h-4 w-4" />
+              Chỉnh sửa profile
+            </Link>
+          </Button>
+
+          <Button asChild>
+            <Link to="/addresses">
+              <MapPinPlus className="mr-2 h-4 w-4" />
+              Thêm address
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <Card className="border-border/60">

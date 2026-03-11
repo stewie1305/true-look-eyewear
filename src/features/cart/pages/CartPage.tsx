@@ -1,10 +1,13 @@
 import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { LoadingSpinner, EmptyState } from "@/shared/components/common";
+import { useAddresses } from "@/features/address/hooks/useAddresses";
+import type { Address } from "@/features/address/types";
 import {
   useCart,
   useUpdateCartItem,
@@ -15,14 +18,36 @@ import {
  * Trang giỏ hàng cho user
  */
 export default function CartPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [deleteConfirm, setDeleteConfirm] = useState<{
     id: string;
     name: string;
   } | null>(null);
 
   const { items, totalItems, totalAmount, isLoading } = useCart();
+  const { addresses, isLoading: isLoadingAddresses } = useAddresses();
   const updateMutation = useUpdateCartItem();
   const removeMutation = useRemoveFromCart();
+
+  const runCheckout = (address: Address) => {
+    const fullAddress = `${address.street}, ${address.ward}, ${address.district}, ${address.city}`;
+    toast.success(
+      `Đang thanh toán với địa chỉ: ${address.name_recipient} - ${fullAddress}`,
+    );
+  };
+
+  useEffect(() => {
+    const state = location.state as {
+      autoCheckout?: boolean;
+      checkoutWithAddress?: Address;
+    } | null;
+
+    if (!state?.autoCheckout || !state.checkoutWithAddress) return;
+
+    runCheckout(state.checkoutWithAddress);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, location.state, navigate]);
 
   const handleUpdateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -41,6 +66,20 @@ export default function CartPage() {
     }
   };
 
+  const handleCheckout = () => {
+    if (!addresses.length) {
+      navigate("/addresses", {
+        state: {
+          fromCheckout: true,
+          returnTo: "/cart",
+        },
+      });
+      return;
+    }
+
+    runCheckout(addresses[0]);
+  };
+
   if (isLoading) {
     return <LoadingSpinner className="py-20" size="lg" />;
   }
@@ -50,7 +89,7 @@ export default function CartPage() {
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="rounded-2xl bg-gradient-to-br from-primary/25 via-primary/10 to-transparent p-2.5 ring-1 ring-primary/20 shadow-sm">
+          <div className="rounded-2xl bg-linear-to-br from-primary/25 via-primary/10 to-transparent p-2.5 ring-1 ring-primary/20 shadow-sm">
             <ShoppingCart className="h-7 w-7 text-primary" />
           </div>
 
@@ -90,7 +129,7 @@ export default function CartPage() {
               <Card key={item.id} className="p-4">
                 <div className="flex gap-4">
                   {/* Image */}
-                  <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
+                  <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-muted">
                     {item.variant?.images?.[0]?.path ? (
                       <img
                         src={item.variant.images[0].path}
@@ -217,7 +256,12 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <Button className="w-full" size="lg">
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={handleCheckout}
+                disabled={isLoadingAddresses}
+              >
                 Thanh toán
               </Button>
 

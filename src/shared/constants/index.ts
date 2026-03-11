@@ -46,6 +46,9 @@ export const API_ENDPOINTS = {
     ME: "/users/me",
     STAFF: "/users/staff",
   },
+  ADDRESSES: {
+    BASE: "/api/addresses",
+  },
   USER_ROLES: {
     BASE: "/user-roles",
     USER: (userId: string) => `/user-roles/user/${userId}`,
@@ -74,5 +77,6 @@ export const QUERY_KEYS = {
   CART_ITEMS: ["cart-items"],
   USERS: ["users"],
   USER_DETAIL: (id: string) => ["users", id],
+  ADDRESSES: ["addresses"],
   USER_ROLES: ["user-roles"],
 };
