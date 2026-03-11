@@ -53,6 +53,9 @@ export const API_ENDPOINTS = {
     REMOVE: (userId: string, roleId: string) =>
       `/user-roles/${userId}/${roleId}`,
   },
+  ROLES: {
+    BASE: "/roles",
+  },
 };
 
 export const QUERY_KEYS = {
@@ -75,4 +78,6 @@ export const QUERY_KEYS = {
   USERS: ["users"],
   USER_DETAIL: (id: string) => ["users", id],
   USER_ROLES: ["user-roles"],
+  ROLES: ["roles"],
+  ROLE_DETAIL: (id: string) => ["roles", id],
 };
