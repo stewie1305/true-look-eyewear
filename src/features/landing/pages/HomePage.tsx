@@ -23,6 +23,7 @@ import lookbook1Image from "@/shared/pictures/h5.jpg";
 import lookbook2Image from "@/shared/pictures/h6.jpg";
 import material1Image from "@/shared/pictures/h10.jpg";
 import material2Image from "@/shared/pictures/h11.jpg";
+import EyewearChatBox from "@/features/landing/components/EyewearChatBox";
 
 const ASSETS = {
   hero: heroImage,
@@ -286,7 +287,7 @@ export default function HomePage() {
           <motion.div
             exit={{ y: "-100%" }}
             transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center text-foreground"
+            className="fixed inset-0 z-100 bg-background flex flex-col items-center justify-center text-foreground"
           >
             <motion.div
               initial={{ opacity: 0, letterSpacing: "0.2em" }}
@@ -573,6 +574,8 @@ export default function HomePage() {
           </p>
         </div>
       </footer>
+
+      <EyewearChatBox />
     </div>
   );
 }
