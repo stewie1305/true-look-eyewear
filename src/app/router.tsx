@@ -38,6 +38,7 @@ import ManageFrameSpecCreate from "@/features/frameSpecs/pages/ManageFrameSpecCr
 import ManageRxLensSpecList from "@/features/rxLenSpecs/pages/ManageRxLensSpecList";
 import ManageRxLensSpecCreate from "@/features/rxLenSpecs/pages/ManageRxLensSpecCreate";
 import ManageRxLensSpecEdit from "@/features/rxLenSpecs/pages/ManageRxLensSpecEdit";
+import ManageUserRoleList from "@/features/user-roles/pages/ManageUserRoleList";
 import { ManageContactLensAxisList } from "@/features/contactLensAxis/pages/ManageContactLensAxisList";
 import { ManageContactLensAxisCreate } from "@/features/contactLensAxis/pages/ManageContactLensAxisCreate";
 import { ManageContactLensAxisEdit } from "@/features/contactLensAxis/pages/ManageContactLensAxisEdit";
@@ -124,6 +125,7 @@ export const router = createBrowserRouter([
       { path: "users", element: <ManageUserList /> },
       { path: "users/create", element: <ManageUserCreate /> },
       { path: "users/:id", element: <ManageUserEdit /> },
+      { path: "user-roles", element: <ManageUserRoleList /> },
       { path: "products", element: <ManageProductList /> },
       { path: "products/create", element: <ManageProductCreate /> },
       { path: "products/:id", element: <ManageProductEdit /> },
