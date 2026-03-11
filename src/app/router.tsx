@@ -39,6 +39,13 @@ import { ManageContactLensAxisEdit } from "@/features/contactLensAxis/pages/Mana
 import ManageContactLensSpecList from "@/features/contactLensSpecs/pages/ManageContactLensSpecList";
 import ManageContactLensSpecCreate from "@/features/contactLensSpecs/pages/ManageContactLensSpecCreate";
 import ManageContactLensSpecEdit from "@/features/contactLensSpecs/pages/ManageContactLensSpecEdit";
+import ManageRoleList from "@/features/roles/pages/ManageRoleList";
+import ManageRoleCreate from "@/features/roles/pages/ManageRoleCreate";
+import ManageRoleEdit from "@/features/roles/pages/ManageRoleEdit";
+import ManagePromotionList from "@/features/promotions/pages/ManagePromotionList";
+import ManagePromotionCreate from "@/features/promotions/pages/ManagePromotionCreate";
+import ManagePromotionEdit from "@/features/promotions/pages/ManagePromotionEdit";
+import PromotionsPage from "@/features/promotions/pages/PromotionsPage";
 //1. Su dung createBrowserRouter - API moi nhat cua v6
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -89,6 +96,14 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "promotions",
+        element: (
+          <ProtectedRoute>
+            <PromotionsPage />
+          </ProtectedRoute>
+        ),
+      },
       //404 fallback
       { path: "*", element: <NotFoundPage /> },
     ],
@@ -136,6 +151,12 @@ export const router = createBrowserRouter([
         element: <ManageContactLensAxisCreate />,
       },
       { path: "contact-lens-axis/:id", element: <ManageContactLensAxisEdit /> },
+      { path: "roles", element: <ManageRoleList /> },
+      { path: "roles/create", element: <ManageRoleCreate /> },
+      { path: "roles/:id", element: <ManageRoleEdit /> },
+      { path: "promotions", element: <ManagePromotionList /> },
+      { path: "promotions/create", element: <ManagePromotionCreate /> },
+      { path: "promotions/:id", element: <ManagePromotionEdit /> },
     ],
   },
 ]);

@@ -11,6 +11,8 @@ import {
   Ruler,
   Eye,
   Users,
+  Shield,
+  BadgePercent,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,6 +28,8 @@ const navigation = [
   { name: "Quản lý Lens", href: "/admin/contact-lens-specs", icon: Eye },
   { name: "Quản lý Axis", href: "/admin/contact-lens-axis", icon: Eye },
   { name: "Quản lý Nhân viên", href: "/admin/users", icon: Users },
+  { name: "Quản lý Quyền", href: "/admin/roles", icon: Shield },
+  { name: "Quản lý Khuyến mãi", href: "/admin/promotions", icon: BadgePercent },
 ];
 
 export default function AdminLayout() {

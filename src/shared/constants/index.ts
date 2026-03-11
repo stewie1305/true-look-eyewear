@@ -53,6 +53,17 @@ export const API_ENDPOINTS = {
     REMOVE: (userId: string, roleId: string) =>
       `/user-roles/${userId}/${roleId}`,
   },
+  ROLES: {
+    BASE: "/roles",
+  },
+  PROMOTIONS: {
+    CREATE: "/promotions/create",
+    ADMIN_FIND_ALL: "/promotions/admin/findAll",
+    FIND_ALL: "/promotions/findAll",
+    FIND_ONE: "/promotions/findOne",
+    UPDATE: "/promotions/update",
+    REMOVE: "/promotions/remove",
+  },
 };
 
 export const QUERY_KEYS = {
@@ -75,4 +86,8 @@ export const QUERY_KEYS = {
   USERS: ["users"],
   USER_DETAIL: (id: string) => ["users", id],
   USER_ROLES: ["user-roles"],
+  ROLES: ["roles"],
+  ROLE_DETAIL: (id: string) => ["roles", id],
+  PROMOTIONS: ["promotions"],
+  PROMOTION_DETAIL: (id: string) => ["promotions", id],
 };
