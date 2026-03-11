@@ -5,6 +5,8 @@ import {
   useTransform,
   AnimatePresence,
   useReducedMotion,
+  useSpring,
+  type MotionValue,
 } from "framer-motion";
 import { useEffect, useRef, useState, useMemo, Suspense } from "react";
 import Lenis from "@studio-freight/lenis";
@@ -32,9 +34,9 @@ const ASSETS = {
   mat1: material1Image,
   mat2: material2Image,
   model1: "/models/k1.glb",
-  model2: "/models/k7.glb",
-  model3: "/models/k6.glb",
-  model4: "/models/k8.glb",
+  model2: "/models/k7.glb", // Gamot 02
+  model3: "/models/k6.glb", // Goxx 02
+  model4: "/models/k8.glb", // Manifesto 02
 };
 
 useGLTF.preload(ASSETS.model1);
@@ -42,11 +44,22 @@ useGLTF.preload(ASSETS.model2);
 useGLTF.preload(ASSETS.model3);
 useGLTF.preload(ASSETS.model4);
 
-function EyewearShowcase({ scrollProgress }: { scrollProgress: any }) {
+function EyewearShowcase({
+  scrollProgress,
+}: {
+  scrollProgress: MotionValue<number>;
+}) {
   const m1 = useGLTF(ASSETS.model1);
   const m2 = useGLTF(ASSETS.model2);
   const m3 = useGLTF(ASSETS.model3);
   const m4 = useGLTF(ASSETS.model4);
+
+  // Tạo độ mượt vật lý cho tiến trình cuộn (Inertia)
+  const smoothProgress = useSpring(scrollProgress, {
+    stiffness: 60,
+    damping: 20,
+    restDelta: 0.001,
+  });
 
   const getModelTransform = (scene: any) => {
     scene.updateMatrixWorld(true);
@@ -66,13 +79,26 @@ function EyewearShowcase({ scrollProgress }: { scrollProgress: any }) {
   const t4 = useMemo(() => getModelTransform(m4.scene), [m4.scene]);
 
   const stackRef = useRef<any>(null);
-  const group1 = useRef<any>(null);
-  const group2 = useRef<any>(null);
-  const group3 = useRef<any>(null);
-  const group4 = useRef<any>(null);
+  const groups = [
+    useRef<any>(null),
+    useRef<any>(null),
+    useRef<any>(null),
+    useRef<any>(null),
+  ];
 
   const MAX_SCALE = 0.85;
-  const STACK_GAP = 4.8;
+  const STACK_GAP = 5.0; // Tăng nhẹ khoảng cách để tránh clipping
+
+  const yOffsets = useMemo(
+    () => [
+      -0.2 - t1.center.y,
+      -0.2 - STACK_GAP - t2.center.y,
+      -0.2 - STACK_GAP * 2 - t3.center.y,
+      -0.2 - STACK_GAP * 3 - t4.center.y,
+    ],
+    [t1.center.y, t2.center.y, t3.center.y, t4.center.y],
+  );
+
   const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
   const smoothStep = (t: number) => {
     const c = clamp01(t);
@@ -80,103 +106,67 @@ function EyewearShowcase({ scrollProgress }: { scrollProgress: any }) {
   };
 
   useFrame(() => {
-    const p = scrollProgress.get();
+    const p = Number(smoothProgress.get()); // đảm bảo number để so sánh timeline
 
-    const y1 = -0.2 - t1.center.y;
-    const y2 = -0.2 - STACK_GAP - t2.center.y;
-    const y3 = -0.2 - STACK_GAP * 2 - t3.center.y;
-    const y4 = -0.2 - STACK_GAP * 3 - t4.center.y;
-
-    const shiftTo2 = y1 - y2;
-    const shiftTo3 = y1 - y3;
-    const shiftTo4 = y1 - y4;
+    const shifts = [
+      0,
+      yOffsets[0] - yOffsets[1],
+      yOffsets[0] - yOffsets[2],
+      yOffsets[0] - yOffsets[3],
+    ];
 
     let stackY = 0;
+    // Cấu trúc lại Timeline Hold/Slide cho 4 model (0 -> 1.0)
+    if (p < 0.15) stackY = shifts[0];
+    else if (p < 0.25) stackY = shifts[1] * smoothStep((p - 0.15) / 0.1);
+    else if (p < 0.4) stackY = shifts[1];
+    else if (p < 0.5)
+      stackY =
+        shifts[1] + (shifts[2] - shifts[1]) * smoothStep((p - 0.4) / 0.1);
+    else if (p < 0.65) stackY = shifts[2];
+    else if (p < 0.75)
+      stackY =
+        shifts[2] + (shifts[3] - shifts[2]) * smoothStep((p - 0.65) / 0.1);
+    else stackY = shifts[3];
 
-    // Logic hold: Giữ kính đứng yên tại trung tâm
-    if (p < 0.15) {
-      stackY = 0;
-    } else if (p < 0.25) {
-      const local = smoothStep((p - 0.15) / 0.1);
-      stackY = shiftTo2 * local;
-    } else if (p < 0.4) {
-      stackY = shiftTo2;
-    } else if (p < 0.5) {
-      const local = smoothStep((p - 0.4) / 0.1);
-      stackY = shiftTo2 + (shiftTo3 - shiftTo2) * local;
-    } else if (p < 0.65) {
-      stackY = shiftTo3;
-    } else if (p < 0.75) {
-      const local = smoothStep((p - 0.65) / 0.1);
-      stackY = shiftTo3 + (shiftTo4 - shiftTo3) * local;
-    } else {
-      stackY = shiftTo4;
-    }
+    if (stackRef.current) stackRef.current.position.y = stackY;
 
-    if (stackRef.current) {
-      stackRef.current.position.y = stackY;
-    }
-
-    const rx = 0.06;
+    const rx = 0.08;
     const baseRy = p * Math.PI * 6;
 
-    if (group1.current) {
-      group1.current.scale.setScalar(t1.fitScale * MAX_SCALE);
-      group1.current.rotation.set(rx, baseRy, 0);
-      group1.current.visible = true;
-    }
-    if (group2.current) {
-      group2.current.scale.setScalar(t2.fitScale * MAX_SCALE);
-      group2.current.rotation.set(rx, baseRy + 0.35, 0);
-      group2.current.visible = true;
-    }
-    if (group3.current) {
-      group3.current.scale.setScalar(t3.fitScale * MAX_SCALE);
-      group3.current.rotation.set(rx, baseRy + 0.7, 0);
-      group3.current.visible = true;
-    }
-    if (group4.current) {
-      group4.current.scale.setScalar(t4.fitScale * MAX_SCALE);
-      group4.current.rotation.set(rx, baseRy + 1.05, 0);
-      group4.current.visible = true;
-    }
+    // Cập nhật Rotation & Scale đồng bộ
+    const transforms = [t1, t2, t3, t4];
+    groups.forEach((ref, i) => {
+      if (ref.current) {
+        ref.current.scale.setScalar(transforms[i].fitScale * MAX_SCALE);
+        ref.current.rotation.set(rx, baseRy + i * 0.4, 0);
+      }
+    });
   });
 
   return (
     <group ref={stackRef}>
       <group
-        ref={group1}
-        position={[-t1.center.x, -0.2 - t1.center.y, -t1.center.z]}
-        scale={t1.fitScale}
+        ref={groups[0]}
+        position={[-t1.center.x, yOffsets[0], -t1.center.z]}
       >
         <Clone object={m1.scene} />
       </group>
       <group
-        ref={group2}
-        position={[-t2.center.x, -0.2 - STACK_GAP - t2.center.y, -t2.center.z]}
-        scale={t2.fitScale}
+        ref={groups[1]}
+        position={[-t2.center.x, yOffsets[1], -t2.center.z]}
       >
         <Clone object={m2.scene} />
       </group>
       <group
-        ref={group3}
-        position={[
-          -t3.center.x,
-          -0.2 - STACK_GAP * 2 - t3.center.y,
-          -t3.center.z,
-        ]}
-        scale={t3.fitScale}
+        ref={groups[2]}
+        position={[-t3.center.x, yOffsets[2], -t3.center.z]}
       >
         <Clone object={m3.scene} />
       </group>
       <group
-        ref={group4}
-        position={[
-          -t4.center.x,
-          -0.2 - STACK_GAP * 3 - t4.center.y,
-          -t4.center.z,
-        ]}
-        scale={t4.fitScale}
+        ref={groups[3]}
+        position={[-t4.center.x, yOffsets[3], -t4.center.z]}
       >
         <Clone object={m4.scene} />
       </group>
@@ -200,17 +190,19 @@ export default function HomePage() {
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    const timer = setTimeout(
-      () => {
-        setIsLoading(false);
-        document.body.style.overflow = "auto";
-      },
-      prefersReducedMotion ? 800 : 1600,
-    );
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      document.body.style.overflow = "auto";
+    }, 1600);
 
     let lenis: Lenis | null = null;
     if (!prefersReducedMotion) {
-      lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+      lenis = new Lenis({
+        duration: 1.4,
+        lerp: 0.05, // Độ trễ tạo cảm giác mượt mà cực cao
+        smoothWheel: true,
+        wheelMultiplier: 0.9,
+      });
       const raf = (time: number) => {
         lenis?.raf(time);
         rafRef.current = requestAnimationFrame(raf);
@@ -225,62 +217,45 @@ export default function HomePage() {
     };
   }, [prefersReducedMotion]);
 
-  // --- TIMELINE TEXT ---
-
-  // Text 1 (Kính 1 trung tâm từ 0 -> 15%)
+  // --- TIMELINE TEXT (Hold Zones: 0-15, 25-40, 50-65, 75-100) ---
   const text1Op = useTransform(sectionScroll, [0, 0.15, 0.22], [1, 1, 0]);
-  const text1Y = useTransform(sectionScroll, [0, 0.15, 0.22], [0, 0, -30]);
   const text1Blur = useTransform(
     sectionScroll,
     [0, 0.15, 0.22],
-    ["blur(0px)", "blur(0px)", "blur(12px)"],
+    ["blur(0px)", "blur(0px)", "blur(15px)"],
   );
 
-  // Text 2 (Kính 2 trung tâm từ 25% -> 40%) - GAMOT 02
   const text2Op = useTransform(
     sectionScroll,
     [0.18, 0.25, 0.4, 0.47],
     [0, 1, 1, 0],
   );
-  const text2Y = useTransform(
-    sectionScroll,
-    [0.18, 0.25, 0.4, 0.47],
-    [30, 0, 0, -30],
-  );
   const text2Blur = useTransform(
     sectionScroll,
     [0.18, 0.25, 0.4, 0.47],
-    ["blur(12px)", "blur(0px)", "blur(0px)", "blur(12px)"],
+    ["blur(15px)", "blur(0px)", "blur(0px)", "blur(15px)"],
   );
 
-  // Text 3 (Kính 3 trung tâm từ 50% -> 65%) - GOXX 02
   const text3Op = useTransform(
     sectionScroll,
     [0.43, 0.5, 0.65, 0.72],
     [0, 1, 1, 0],
   );
-  const text3Y = useTransform(
-    sectionScroll,
-    [0.43, 0.5, 0.65, 0.72],
-    [30, 0, 0, -30],
-  );
   const text3Blur = useTransform(
     sectionScroll,
     [0.43, 0.5, 0.65, 0.72],
-    ["blur(12px)", "blur(0px)", "blur(0px)", "blur(12px)"],
+    ["blur(15px)", "blur(0px)", "blur(0px)", "blur(15px)"],
   );
 
-  // Text 4 (Kính 4 trung tâm từ 75% -> 100%) - MANIFESTO 02
   const text4Op = useTransform(sectionScroll, [0.68, 0.75, 1], [0, 1, 1]);
-  const text4Y = useTransform(sectionScroll, [0.68, 0.75, 1], [30, 0, 0]);
   const text4Blur = useTransform(
     sectionScroll,
     [0.68, 0.75, 1],
-    ["blur(12px)", "blur(0px)", "blur(0px)"],
+    ["blur(15px)", "blur(0px)", "blur(0px)"],
   );
 
   return (
-    <div className="bg-background text-foreground w-full overflow-x-clip font-light transition-colors duration-500 selection:bg-foreground selection:text-background">
+    <div className="bg-background text-foreground w-full overflow-x-clip font-light selection:bg-foreground selection:text-background transition-colors duration-500">
       {/* PRELOADER */}
       <AnimatePresence>
         {isLoading && (
@@ -316,9 +291,9 @@ export default function HomePage() {
       {/* 1. HERO */}
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
         <motion.img
-          style={{ scale: useTransform(globalScroll, [0, 0.3], [1, 1.1]) }}
+          style={{ scale: useTransform(globalScroll, [0, 0.3], [1, 1.15]) }}
           src={ASSETS.hero}
-          className="absolute inset-0 w-full h-full object-cover brightness-[0.5] dark:brightness-[0.25]"
+          className="absolute inset-0 w-full h-full object-cover brightness-[0.5] dark:brightness-[0.3]"
           alt=""
         />
         <h1 className="relative z-10 text-[15vw] font-serif italic text-white drop-shadow-2xl">
@@ -343,18 +318,21 @@ export default function HomePage() {
         </motion.div>
       </div>
 
-      {/* 3. SHOWCASE 3D */}
+      {/* 3. SHOWCASE 3D (Cột trái Text - Cột phải 3D) */}
       <section
         ref={section3DRef}
         style={{ height: "500vh" }}
         className="relative w-full bg-background transition-colors duration-500"
       >
         <div className="sticky top-0 h-screen w-full max-w-screen-2xl mx-auto flex flex-col md:flex-row items-center justify-between overflow-hidden px-6 md:px-12">
-          {/* CỘT TRÁI: TEXT HIỂN THỊ */}
           <div className="relative w-full md:w-1/2 h-[40vh] md:h-full flex items-center justify-start z-20">
             {/* TEXT 1 (k1) */}
             <motion.div
-              style={{ opacity: text1Op, y: text1Y, filter: text1Blur }}
+              style={{
+                opacity: text1Op,
+                filter: text1Blur,
+                y: useTransform(sectionScroll, [0, 0.22], [0, -40]),
+              }}
               className="absolute text-left flex flex-col items-start"
             >
               <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
@@ -369,9 +347,13 @@ export default function HomePage() {
               </p>
             </motion.div>
 
-            {/* TEXT 2 (Gamot 02 - bây giờ hiển thị k7.glb) */}
+            {/* TEXT 2 (Gamot 02) */}
             <motion.div
-              style={{ opacity: text2Op, y: text2Y, filter: text2Blur }}
+              style={{
+                opacity: text2Op,
+                filter: text2Blur,
+                y: useTransform(sectionScroll, [0.18, 0.47], [40, -40]),
+              }}
               className="absolute text-left flex flex-col items-start"
             >
               <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
@@ -382,14 +364,17 @@ export default function HomePage() {
               </h2>
               <p className="mt-8 text-muted-foreground max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
                 Gọng kim loại bạc sáng bóng với tròng kính vuông trong suốt.
-                Điểm nhấn chi tiết thắt nút lấy cảm hứng từ cấu trúc thực vật.
-                Tích hợp chặn ánh sáng xanh và 99.9% tia UV.
+                Điểm nhấn chi tiết thắt nút lấy cảm hứng từ thực vật.
               </p>
             </motion.div>
 
-            {/* TEXT 3 (Goxx 02 - bây giờ hiển thị k6.glb) */}
+            {/* TEXT 3 (Goxx 02) */}
             <motion.div
-              style={{ opacity: text3Op, y: text3Y, filter: text3Blur }}
+              style={{
+                opacity: text3Op,
+                filter: text3Blur,
+                y: useTransform(sectionScroll, [0.43, 0.72], [40, -40]),
+              }}
               className="absolute text-left flex flex-col items-start"
             >
               <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
@@ -400,14 +385,17 @@ export default function HomePage() {
               </h2>
               <p className="mt-8 text-muted-foreground max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
                 Kính râm dáng Wraparound phá cách với gọng kim loại bạc. Dấu ấn
-                biểu tượng BOLD đặc trưng trên càng kính. Tròng kính tráng gương
-                bảo vệ mắt tuyệt đối khỏi tia UV.
+                biểu tượng BOLD đặc trưng trên càng kính.
               </p>
             </motion.div>
 
             {/* TEXT 4 (Manifesto 02) */}
             <motion.div
-              style={{ opacity: text4Op, y: text4Y, filter: text4Blur }}
+              style={{
+                opacity: text4Op,
+                filter: text4Blur,
+                y: useTransform(sectionScroll, [0.68, 1], [40, 0]),
+              }}
               className="absolute text-left flex flex-col items-start"
             >
               <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
@@ -418,13 +406,11 @@ export default function HomePage() {
               </h2>
               <p className="mt-8 text-muted-foreground max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
                 Sự giao thoa của chất liệu bạc cao cấp và tròng kính tráng gương
-                xám. Biểu tượng BOLD được khắc họa sắc nét trên cầu kính và
-                gọng. Trải nghiệm thị giác vượt chuẩn.
+                xám. Trải nghiệm thị giác vượt chuẩn.
               </p>
             </motion.div>
           </div>
 
-          {/* CỘT PHẢI: 3D MODEL & KHUNG XÁM */}
           <div className="relative w-full md:w-1/2 h-[60vh] md:h-full flex items-center justify-center pointer-events-none">
             <div className="absolute w-full h-full flex items-center justify-center opacity-[0.03] dark:opacity-[0.05] pointer-events-none">
               <motion.div
@@ -448,10 +434,10 @@ export default function HomePage() {
 
             <div className="absolute inset-0 z-10 pointer-events-none">
               <Canvas
-                dpr={[1, 1.5]}
+                dpr={[1, 2]}
                 gl={{
                   alpha: true,
-                  antialias: false,
+                  antialias: true,
                   powerPreference: "high-performance",
                 }}
                 camera={{ position: [0, 0, 6], fov: 35 }}
@@ -460,7 +446,7 @@ export default function HomePage() {
                 <ambientLight intensity={3} />
                 <directionalLight position={[0, 5, 10]} intensity={5} />
                 <Environment preset="city" />
-                <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+                <Float speed={2.5} rotationIntensity={0.3} floatIntensity={0.6}>
                   <Suspense fallback={null}>
                     <EyewearShowcase scrollProgress={sectionScroll} />
                   </Suspense>
@@ -504,14 +490,14 @@ export default function HomePage() {
             <div className="rounded-sm overflow-hidden bg-muted shadow-2xl">
               <img
                 src={ASSETS.mat1}
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-[2s]"
                 alt=""
               />
             </div>
             <div className="rounded-sm overflow-hidden mt-24 bg-muted shadow-2xl">
               <img
                 src={ASSETS.mat2}
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-[2s]"
                 alt=""
               />
             </div>
@@ -529,7 +515,7 @@ export default function HomePage() {
             <div className="aspect-3/4 overflow-hidden rounded-sm bg-muted shadow-2xl">
               <img
                 src={ASSETS.lookbook1}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-[2.5s]"
+                className="w-full h-full object-cover hover:scale-110 transition-transform duration-[3s]"
                 alt=""
               />
             </div>
@@ -546,7 +532,7 @@ export default function HomePage() {
             <div className="aspect-3/4 overflow-hidden rounded-sm bg-muted shadow-2xl">
               <img
                 src={ASSETS.lookbook2}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-[2.5s]"
+                className="w-full h-full object-cover hover:scale-110 transition-transform duration-[3s]"
                 alt=""
               />
             </div>
