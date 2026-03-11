@@ -1,6 +1,7 @@
 import { useMemo, useEffect, useState } from "react";
 import { Shield, RefreshCcw, Users } from "lucide-react";
 import { toast } from "sonner";
+import { useSearchParams } from "react-router-dom";
 
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -25,6 +26,7 @@ const getRoleId = (role: UserRole) => String(role.id ?? role.name ?? "");
 const getRoleName = (role: UserRole) => String(role.name ?? role.id ?? "-");
 
 export default function ManageUserRoleList() {
+  const [searchParams] = useSearchParams();
   const { roles, isLoading } = useUserRoles();
   const { users, isLoading: isLoadingUsers } = useUsersWithRoles();
   const syncMutation = useSyncUserRoles();
@@ -38,6 +40,25 @@ export default function ManageUserRoleList() {
     roles: userRoles,
     isLoading: isLoadingUserRoles,
   } = useUserRolesByUser(activeUserId);
+
+  useEffect(() => {
+    const userIdParam = searchParams.get("userId");
+    const qParam = searchParams.get("q");
+    if (!userIdParam) return;
+    setActiveUserId(userIdParam);
+    if (qParam) {
+      setUserSearchInput(qParam);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!activeUserId || userSearchInput.trim()) return;
+    const selected = users.find((u) => String(u.id) === String(activeUserId));
+    if (!selected) return;
+    const label =
+      selected.fullName || selected.username || selected.email || selected.id;
+    setUserSearchInput(String(label));
+  }, [activeUserId, userSearchInput, users]);
 
   useEffect(() => {
     if (!activeUserId) return;

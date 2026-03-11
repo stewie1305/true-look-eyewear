@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Pencil, Trash2, User as UserIcon } from "lucide-react";
+import { Pencil, Trash2, User as UserIcon, Shield } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
@@ -32,15 +32,22 @@ const statusVariant: Record<
   "1": "default",
 };
 
-const getRoleLabel = (user: User) => {
-  if (user.roleName) return user.roleName;
-  if (typeof user.role === "string") return user.role;
-  if (typeof user.role === "object" && user.role?.name) return user.role.name;
-  if (user.roles && user.roles.length > 0) return user.roles[0].name;
-  if (user.userRoles && user.userRoles.length > 0) {
-    return user.userRoles[0]?.role?.name ?? "-";
+const getRoleLabels = (user: User) => {
+  const labels = new Set<string>();
+  if (user.roleName) labels.add(user.roleName);
+  if (typeof user.role === "string") labels.add(user.role);
+  if (typeof user.role === "object" && user.role?.name) labels.add(user.role.name);
+  if (Array.isArray(user.roles)) {
+    user.roles.forEach((r) => {
+      if (r?.name) labels.add(r.name);
+    });
   }
-  return "-";
+  if (Array.isArray(user.userRoles)) {
+    user.userRoles.forEach((ur) => {
+      if (ur?.role?.name) labels.add(ur.role.name);
+    });
+  }
+  return Array.from(labels).filter(Boolean);
 };
 
 export function UserTable({
@@ -79,16 +86,38 @@ export function UserTable({
               <TableCell className="text-muted-foreground">
                 {user.email}
               </TableCell>
-              <TableCell>{getRoleLabel(user)}</TableCell>
               <TableCell>
-                <Badge
-                  variant={statusVariant[String(user.status)] ?? "outline"}
-                >
+                {getRoleLabels(user).length === 0 ? (
+                  "-"
+                ) : (
+                  <div className="flex flex-wrap gap-1">
+                    {getRoleLabels(user).map((role) => (
+                      <Badge key={role} variant="secondary">
+                        {role}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </TableCell>
+              <TableCell>
+                <Badge variant={statusVariant[String(user.status)] ?? "outline"}>
                   {String(user.status ?? "")}
                 </Badge>
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-end gap-2">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link
+                      to={`/admin/user-roles?userId=${encodeURIComponent(
+                        String(user.id),
+                      )}&q=${encodeURIComponent(
+                        String(user.fullName || user.username || user.email || ""),
+                      )}`}
+                    >
+                      <Shield className="mr-1 h-3 w-3" />
+                      Phân quyền
+                    </Link>
+                  </Button>
                   <Button variant="outline" size="sm" asChild>
                     <Link to={`/admin/users/${user.id}`}>
                       <Pencil className="mr-1 h-3 w-3" />
