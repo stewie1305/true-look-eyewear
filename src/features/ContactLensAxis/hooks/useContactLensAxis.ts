@@ -14,14 +14,11 @@ import type {
   ContactLensAxisFilterParams,
 } from "@/features/contactLensAxis/types";
 
-/**
- * Hook lấy danh sách contact lens axis với pagination và filters.
- * Đồng bộ filters với URL search params.
- */
+
 export function useContactLensAxis(options?: { forceActive?: boolean }) {
   const [searchParams] = useSearchParams();
 
-  // Parse filters từ URL params
+
   const filters = useMemo<ContactLensAxisFilterParams>(() => {
     return {
       page: Number(searchParams.get("page")) || 1,
@@ -48,7 +45,7 @@ export function useContactLensAxis(options?: { forceActive?: boolean }) {
     ? query.data
     : (query.data?.data ?? []);
 
-  // Client-side filtering cho status
+
   let contactLensAxis = rawData;
 
   if (options?.forceActive) {
@@ -71,10 +68,6 @@ export function useContactLensAxis(options?: { forceActive?: boolean }) {
   };
 }
 
-/**
- * Hook tạo contact lens axis mới.
- * Sau khi thành công → invalidate cache + navigate về list.
- */
 export function useCreateContactLensAxis() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -95,10 +88,7 @@ export function useCreateContactLensAxis() {
   });
 }
 
-/**
- * Hook cập nhật contact lens axis.
- * Sau khi thành công → invalidate cache (list + detail) + navigate về list.
- */
+
 export function useUpdateContactLensAxis() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -127,10 +117,6 @@ export function useUpdateContactLensAxis() {
   });
 }
 
-/**
- * Hook xóa contact lens axis.
- * Sau khi thành công → invalidate cache.
- */
 export function useDeleteContactLensAxis() {
   const queryClient = useQueryClient();
 
@@ -148,9 +134,7 @@ export function useDeleteContactLensAxis() {
   });
 }
 
-/**
- * Hook lấy chi tiết 1 contact lens axis.
- */
+
 export function useContactLensAxisDetail(id: string) {
   return useQuery({
     queryKey: QUERY_KEYS.CONTACT_LENS_AXIS_DETAIL(id),

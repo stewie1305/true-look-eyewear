@@ -7,10 +7,7 @@ import { ContactLensSpecForm } from "@/features/contactLensSpecs/components/Cont
 import type { CreateContactLensSpecDto } from "@/features/contactLensSpecs/types";
 import { Loader2 } from "lucide-react";
 
-/**
- * Page chỉnh sửa Contact Lens Spec
- * Load dữ liệu hiện tại và cho phép cập nhật
- */
+
 export default function ManageContactLensSpecEdit() {
   const { id } = useParams<{ id: string }>();
   const { data: spec, isLoading } = useContactLensSpecDetail(id!);

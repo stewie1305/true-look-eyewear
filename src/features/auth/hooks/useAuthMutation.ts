@@ -26,9 +26,7 @@ export const useRegisterMutation = () => {
         error.response?.data?.message || "Dang ki that bai, vui long thu lai",
       );
     },
-    onSettled: () => {
-      //co the dung de reset form hoac cac thao tac cleanup khac
-    },
+    onSettled: () => {},
   });
 };
 export const useLoginMutation = () => {
@@ -46,7 +44,6 @@ export const useLoginMutation = () => {
 
       try {
         decoded = jwtDecode<JwtPayload>(response.accessToken);
-        // Extract role from roles array or role field
         if (
           decoded.roles &&
           Array.isArray(decoded.roles) &&
@@ -70,7 +67,6 @@ export const useLoginMutation = () => {
         role: userRole,
       });
       toast.success("Đăng nhập thành công");
-      // Redirect dựa trên role, Admin thì vào trang admin, user thì vào trang profile
       if (userRole === "admin") {
         navigate("/admin/rituals", { replace: true });
       } else {
@@ -91,19 +87,13 @@ export const useLogoutMutation = () => {
     mutationFn: () => authService.logout(),
 
     onSuccess: () => {
-      // 1. xoá token
       clearAuth();
-
-      // 2. xoá toàn bộ cache react-query
       queryClient.clear();
-
-      // 3. redirect về login
       navigate("/login");
       toast.info("Đăng xuất thành công");
     },
 
     onError: () => {
-      // Dù API lỗi vẫn logout để đảm bảo UX
       clearAuth();
       queryClient.clear();
       navigate("/login");

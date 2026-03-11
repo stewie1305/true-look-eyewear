@@ -76,11 +76,6 @@ export default function ForgotPasswordPage() {
       return;
     }
 
-    console.log("Sending reset password request:", {
-      email: email.trim(),
-      otp: trimmedOtp,
-      newPassword: trimmedPassword,
-    });
 
     resetPasswordMutation.mutate({
       email: email.trim(),

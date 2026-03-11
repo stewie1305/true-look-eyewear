@@ -16,10 +16,6 @@ import { ProductCard } from "../components/ProductCard";
 import { useBrands } from "@/features/brands/hooks/useBrands";
 import { useActiveCategories } from "@/features/categories/hooks/useCategories";
 
-/**
- * Trang danh sách sản phẩm cho User – có search, filter, pagination.
- * Tất cả state lưu trên URL (searchParams) → có thể bookmark/share.
- */
 export function ProductsCatalog() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -47,23 +43,12 @@ export function ProductsCatalog() {
     );
   }, [activeCategories]);
 
-  /**
-   * Local search state + Debounce pattern:
-   *
-   * FLOW:
-   * 1. User gõ chữ → `searchInput` update ngay lập tức (controlled input)
-   * 2. `useDebounce` chờ 500ms sau lần gõ cuối → tạo `debouncedSearch`
-   * 3. `useEffect` bắt thay đổi của `debouncedSearch` → update URL
-   * 4. URL update → trigger `useProducts()` hook → gọi API
-   */
   const [searchInput, setSearchInput] = useState(
     searchParams.get("search") || "",
   );
   const debouncedSearch = useDebounce(searchInput, 500);
 
-  /**
-   * useCallback - Memoize function để giữ reference ổn định.
-   */
+
   const updateSearchParam = useCallback(
     (value: string) => {
       const params = new URLSearchParams(searchParams);
@@ -78,18 +63,13 @@ export function ProductsCatalog() {
     [searchParams, setSearchParams],
   );
 
-  /**
-   * Sync debounced search → URL params.
-   */
+ 
   useEffect(() => {
     if (debouncedSearch !== searchParams.get("search")) {
       updateSearchParam(debouncedSearch);
     }
-  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [debouncedSearch]); 
 
-  /**
-   * Filter handlers - Update URL params cho các filter.
-   */
   const handleFilterChange = (key: string, value: string | undefined) => {
     const params = new URLSearchParams(searchParams);
     if (value) {
@@ -101,27 +81,21 @@ export function ProductsCatalog() {
     setSearchParams(params);
   };
 
-  /**
-   * Clear all filters - Reset về trạng thái ban đầu.
-   */
+ 
   const clearFilters = () => {
     const params = new URLSearchParams();
     setSearchParams(params);
     setSearchInput("");
   };
 
-  /**
-   * Pagination handler - Chỉ update param "page", giữ nguyên filters.
-   */
+ 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", String(page));
     setSearchParams(params);
   };
 
-  /**
-   * Check có filter nào đang active không?
-   */
+
   const hasActiveFilters =
     !!searchParams.get("product_type") ||
     !!searchParams.get("brand_name") ||

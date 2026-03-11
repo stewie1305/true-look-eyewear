@@ -14,9 +14,6 @@ import {
   useRemoveFromCart,
 } from "../hooks/useCart";
 
-/**
- * Trang giỏ hàng cho user
- */
 export default function CartPage() {
   const location = useLocation();
   const navigate = useNavigate();

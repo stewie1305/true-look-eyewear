@@ -50,7 +50,7 @@ export default function ManageFrameSpecList() {
     if (debouncedSearch !== searchParams.get("search")) {
       updateSearchParam(debouncedSearch);
     }
-  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [debouncedSearch]); 
 
   const handleFilterChange = (key: string, value: string | undefined) => {
     const params = new URLSearchParams(searchParams);

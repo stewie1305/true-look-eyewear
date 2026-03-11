@@ -18,10 +18,6 @@ interface ContactLensSpecTableProps {
   isDeleting?: boolean;
 }
 
-/**
- * Table component để hiển thị danh sách Contact Lens Specs
- * Hiển thị các thông số kỹ thuật của kính áp tròng
- */
 export function ContactLensSpecTable({
   data,
   onDelete,

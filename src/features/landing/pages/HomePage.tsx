@@ -54,7 +54,6 @@ function EyewearShowcase({
   const m3 = useGLTF(ASSETS.model3);
   const m4 = useGLTF(ASSETS.model4);
 
-  // Tạo độ mượt vật lý cho tiến trình cuộn (Inertia)
   const smoothProgress = useSpring(scrollProgress, {
     stiffness: 60,
     damping: 20,
@@ -87,7 +86,7 @@ function EyewearShowcase({
   ];
 
   const MAX_SCALE = 0.85;
-  const STACK_GAP = 5.0; // Tăng nhẹ khoảng cách để tránh clipping
+  const STACK_GAP = 5.0;
 
   const yOffsets = useMemo(
     () => [
@@ -106,7 +105,7 @@ function EyewearShowcase({
   };
 
   useFrame(() => {
-    const p = Number(smoothProgress.get()); // đảm bảo number để so sánh timeline
+    const p = Number(smoothProgress.get()); 
 
     const shifts = [
       0,
@@ -116,7 +115,6 @@ function EyewearShowcase({
     ];
 
     let stackY = 0;
-    // Cấu trúc lại Timeline Hold/Slide cho 4 model (0 -> 1.0)
     if (p < 0.15) stackY = shifts[0];
     else if (p < 0.25) stackY = shifts[1] * smoothStep((p - 0.15) / 0.1);
     else if (p < 0.4) stackY = shifts[1];
@@ -134,7 +132,6 @@ function EyewearShowcase({
     const rx = 0.08;
     const baseRy = p * Math.PI * 6;
 
-    // Cập nhật Rotation & Scale đồng bộ
     const transforms = [t1, t2, t3, t4];
     groups.forEach((ref, i) => {
       if (ref.current) {
@@ -199,7 +196,7 @@ export default function HomePage() {
     if (!prefersReducedMotion) {
       lenis = new Lenis({
         duration: 1.4,
-        lerp: 0.05, // Độ trễ tạo cảm giác mượt mà cực cao
+        lerp: 0.05, 
         smoothWheel: true,
         wheelMultiplier: 0.9,
       });
@@ -217,7 +214,6 @@ export default function HomePage() {
     };
   }, [prefersReducedMotion]);
 
-  // --- TIMELINE TEXT (Hold Zones: 0-15, 25-40, 50-65, 75-100) ---
   const text1Op = useTransform(sectionScroll, [0, 0.15, 0.22], [1, 1, 0]);
   const text1Blur = useTransform(
     sectionScroll,
@@ -318,7 +314,7 @@ export default function HomePage() {
         </motion.div>
       </div>
 
-      {/* 3. SHOWCASE 3D (Cột trái Text - Cột phải 3D) */}
+      {/* 3. SHOWCASE 3D  */}
       <section
         ref={section3DRef}
         style={{ height: "500vh" }}

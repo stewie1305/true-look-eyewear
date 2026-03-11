@@ -6,9 +6,7 @@ import { CategoryForm } from "../components/CategoryForm";
 import { useCategoryDetail, useUpdateCategory } from "../hooks/useCategories";
 import type { UpdateCategoryDto } from "../types";
 
-/**
- * Trang chỉnh sửa danh mục (Admin).
- */
+
 export default function ManageCategoryEdit() {
   const { id } = useParams<{ id: string }>();
   const { data: category, isLoading } = useCategoryDetail(id!);

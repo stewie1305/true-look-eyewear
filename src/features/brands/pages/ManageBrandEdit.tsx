@@ -6,9 +6,6 @@ import { BrandForm } from "../components/BrandForm";
 import { useBrandDetail, useUpdateBrand } from "../hooks/useBrands";
 import type { UpdateBrandDto } from "../types";
 
-/**
- * Trang chỉnh sửa thương hiệu (Admin).
- */
 export default function ManageBrandEdit() {
   const { id } = useParams<{ id: string }>();
   const { data: brand, isLoading } = useBrandDetail(id!);

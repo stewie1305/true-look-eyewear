@@ -6,9 +6,6 @@ import { ProductForm } from "../components/ProductForm";
 import { useCreateProduct } from "../hooks/useProducts";
 import type { CreateProductDto } from "../types";
 
-/**
- * Trang tạo sản phẩm mới (Admin).
- */
 export function ManageProductCreate() {
   const { mutate: createProduct, isPending } = useCreateProduct();
 

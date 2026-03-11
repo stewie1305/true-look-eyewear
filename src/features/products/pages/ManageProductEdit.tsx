@@ -6,9 +6,7 @@ import { ProductForm } from "../components/ProductForm";
 import { useProductDetail, useUpdateProduct } from "../hooks/useProducts";
 import type { UpdateProductDto } from "../types";
 
-/**
- * Trang chỉnh sửa sản phẩm (Admin).
- */
+
 export default function ManageProductEdit() {
   const { id } = useParams<{ id: string }>();
   const { data: product, isLoading } = useProductDetail(id!);

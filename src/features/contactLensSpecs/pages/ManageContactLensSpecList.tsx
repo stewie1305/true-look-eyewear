@@ -19,10 +19,6 @@ import { ContactLensSpecTable } from "@/features/contactLensSpecs/components/Con
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { useSearchParams } from "react-router-dom";
 
-/**
- * Page quản lý danh sách Contact Lens Specs
- * Hỗ trợ tìm kiếm, xem, sửa, xóa contact lens specs
- */
 export default function ManageContactLensSpecList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(

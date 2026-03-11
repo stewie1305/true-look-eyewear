@@ -29,10 +29,7 @@ const statusVariant: Record<
   Inactive: "secondary",
 };
 
-/**
- * Table hiển thị danh sách categories cho admin.
- * Sử dụng shadcn Table + Button + Badge.
- */
+
 export function CategoryTable({
   categories,
   onDelete,

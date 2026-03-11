@@ -2,10 +2,7 @@ import { useCreateContactLensSpec } from "@/features/contactLensSpecs/hooks";
 import { ContactLensSpecForm } from "@/features/contactLensSpecs/components/ContactLensSpecForm";
 import type { CreateContactLensSpecDto } from "@/features/contactLensSpecs/types";
 
-/**
- * Page tạo Contact Lens Spec mới
- * axis_min được chọn từ danh sách ContactLensAxis có sẵn
- */
+
 export default function ManageContactLensSpecCreate() {
   const { mutate: createSpec, isPending } = useCreateContactLensSpec();
 

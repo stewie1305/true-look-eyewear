@@ -31,10 +31,6 @@ interface ContactLensSpecFormProps {
   submitLabel?: string;
 }
 
-/**
- * Form component để tạo/sửa Contact Lens Spec
- * axis_min được lấy từ danh sách axis_value có sẵn trong ContactLensAxis
- */
 export function ContactLensSpecForm({
   defaultValues,
   onSubmit,
@@ -61,8 +57,6 @@ export function ContactLensSpecForm({
       ...defaultValues,
     },
   });
-
-  // Lấy danh sách axis_value từ ContactLensAxis (lấy tất cả, không phụ thuộc URL params)
   const { data: axisData, isLoading: isLoadingAxis } = useQuery({
     queryKey: [
       ...QUERY_KEYS.CONTACT_LENS_AXIS,
@@ -77,21 +71,14 @@ export function ContactLensSpecForm({
     },
   });
 
-  // Extract data từ response
   const contactLensAxis = Array.isArray(axisData)
     ? axisData
     : (axisData?.data ?? []);
-
-  // Debug: Log để xem data
-  console.log("contactLensAxis:", contactLensAxis);
-  console.log("isLoadingAxis:", isLoadingAxis);
-
   // Tạo danh sách unique axis_value để hiển thị trong dropdown
   const availableAxisValues = Array.from(
     new Set(contactLensAxis.map((item) => item.axis_value)),
   ).sort((a, b) => a - b);
 
-  console.log("availableAxisValues:", availableAxisValues);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

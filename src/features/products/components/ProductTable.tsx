@@ -30,10 +30,6 @@ const statusVariant: Record<
   out_of_stock: "destructive",
 };
 
-/**
- * Table hiển thị danh sách products cho admin.
- * Sử dụng shadcn Table + Button + Badge.
- */
 export function ProductTable({
   products,
   onDelete,

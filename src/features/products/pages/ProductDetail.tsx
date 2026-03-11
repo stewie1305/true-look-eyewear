@@ -3,7 +3,6 @@ import {
   ArrowLeft,
   Glasses,
   Package,
-  ShoppingCart,
   Palette,
   Package2,
 } from "lucide-react";

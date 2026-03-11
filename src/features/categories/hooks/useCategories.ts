@@ -16,10 +16,7 @@ import type {
   CategoryFilterParams,
 } from "@/features/categories/types";
 
-/**
- * Hook lay danh sach categories voi pagination va filters.
- * Dong bo filters voi URL search params.
- */
+
 export function useCategories(options?: { forceActive?: boolean }) {
   const [searchParams] = useSearchParams();
 
@@ -75,9 +72,7 @@ export function useCategories(options?: { forceActive?: boolean }) {
   };
 }
 
-/**
- * Hook lay danh sach category active cho user pages.
- */
+
 export function useActiveCategories() {
   const query = useQuery({
     queryKey: [...QUERY_KEYS.CATEGORIES, "active"],
@@ -95,10 +90,7 @@ export function useActiveCategories() {
   };
 }
 
-/**
- * Hook tao category moi.
- * Sau khi thanh cong -> invalidate cache + navigate ve list.
- */
+
 export function useCreateCategory() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -113,10 +105,6 @@ export function useCreateCategory() {
   });
 }
 
-/**
- * Hook cap nhat category.
- * Sau khi thanh cong -> invalidate cache (list + detail) + navigate ve list.
- */
 export function useUpdateCategory() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -135,10 +123,7 @@ export function useUpdateCategory() {
   });
 }
 
-/**
- * Hook xoa category.
- * Sau khi thanh cong -> invalidate cache.
- */
+
 export function useDeleteCategory() {
   const queryClient = useQueryClient();
 
@@ -151,9 +136,7 @@ export function useDeleteCategory() {
   });
 }
 
-/**
- * Hook lay chi tiet 1 category.
- */
+
 export function useCategoryDetail(id: string) {
   return useQuery({
     queryKey: QUERY_KEYS.CATEGORY_DETAIL(id),

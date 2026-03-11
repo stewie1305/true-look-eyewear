@@ -4,10 +4,6 @@ import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import { useCart } from "../hooks/useCart";
 
-/**
- * Component hiển thị icon giỏ hàng với số lượng sản phẩm
- * Thường dùng trong Header/Navigation
- */
 export function CartIcon() {
   const { totalItems, isLoading } = useCart();
 

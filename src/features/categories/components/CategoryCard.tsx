@@ -29,9 +29,7 @@ const statusVariant: Record<
   Inactive: "secondary",
 };
 
-/**
- * Card component hiển thị thông tin category.
- */
+
 export function CategoryCard({
   category,
   showActions = true,

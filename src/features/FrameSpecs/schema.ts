@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-/**
- * Schema validation cho Frame Spec
- */
+
 export const frameSpecSchema = z.object({
   product_id: z.string().min(1, "Product ID không được để trống"),
   type: z.string().min(1, "Loại gọng không được để trống"),

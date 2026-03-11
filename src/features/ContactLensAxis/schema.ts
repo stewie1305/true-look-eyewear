@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-/**
- * Schema validation cho Contact Lens Axis
- */
 export const contactLensAxisSchema = z.object({
   contact_lens_spec_id: z
     .string()

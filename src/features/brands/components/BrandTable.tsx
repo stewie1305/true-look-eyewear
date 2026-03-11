@@ -28,16 +28,7 @@ const statusVariant: Record<
   inactive: "secondary",
   Inactive: "secondary",
 };
-
-/**
- * Table hiển thị danh sách brands cho admin.
- * Sử dụng shadcn Table + Button + Badge.
- */
-export function BrandTable({
-  brands,
-  onDelete,
-  isDeleting,
-}: BrandTableProps) {
+export function BrandTable({ brands, onDelete, isDeleting }: BrandTableProps) {
   return (
     <div className="overflow-x-auto rounded-lg border">
       <Table>
@@ -78,9 +69,7 @@ export function BrandTable({
                     className="border-destructive/30 text-destructive hover:bg-destructive/10"
                     onClick={() => {
                       if (
-                        window.confirm(
-                          `Bạn có chắc muốn xoá "${brand.name}"?`,
-                        )
+                        window.confirm(`Bạn có chắc muốn xoá "${brand.name}"?`)
                       ) {
                         onDelete(brand.id);
                       }

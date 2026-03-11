@@ -45,7 +45,6 @@ export const authService = {
   },
   async getMe(): Promise<User> {
     const response = await apiClient.get("users/me");
-    console.log("getMe response:", response);
 
     // Axios interceptor đã trả về data trực tiếp
     // Nếu response là User object thì return trực tiếp

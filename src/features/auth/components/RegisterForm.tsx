@@ -12,7 +12,6 @@ import { Button } from "@/shared/components/ui/button";
 import { Link, Loader2 } from "lucide-react";
 
 export function RegisterForm() {
-  console.log("render ne `````");
 
   //React query mutation
   const registerMutation = useRegisterMutation();

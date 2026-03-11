@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-/**
- * Schema validation cho Contact Lens Spec
- */
+
 export const contactLensSpecSchema = z
   .object({
     product_id: z.string().min(1, "Product ID không được để trống"),

@@ -1,8 +1,5 @@
 import type { ProductVariant } from "@/features/products/types";
 
-/**
- * Cart Item - Sản phẩm trong giỏ hàng
- */
 export interface CartItem {
   id: string;
   cart_id: string;
@@ -14,9 +11,7 @@ export interface CartItem {
   variant?: ProductVariant;
 }
 
-/**
- * Cart - Giỏ hàng
- */
+
 export interface Cart {
   id: string;
   user_id: string;
@@ -25,24 +20,16 @@ export interface Cart {
   items?: CartItem[];
 }
 
-/**
- * DTO để thêm sản phẩm vào giỏ
- */
 export interface AddToCartDto {
   variant_id: string;
   quantity: number;
 }
 
-/**
- * DTO để cập nhật số lượng sản phẩm trong giỏ
- */
+
 export interface UpdateCartItemDto {
   quantity: number;
 }
 
-/**
- * Response khi lấy giỏ hàng
- */
 export interface MyCartResponse {
   id: string;
   user_id: string;

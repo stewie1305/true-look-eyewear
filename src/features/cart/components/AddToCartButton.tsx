@@ -4,9 +4,7 @@ import { useAddToCart } from "../hooks/useCart";
 import { useState } from "react";
 import type { AddToCartButtonProps } from "../types";
 
-/**
- * Component button thêm sản phẩm vào giỏ hàng
- */
+
 export function AddToCartButton({
   variantId,
   size = "default",

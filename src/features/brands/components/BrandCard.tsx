@@ -29,9 +29,6 @@ const statusVariant: Record<
   Inactive: "secondary",
 };
 
-/**
- * Card component hiển thị thông tin brand.
- */
 export function BrandCard({
   brand,
   showActions = true,

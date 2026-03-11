@@ -6,9 +6,6 @@ import { BrandForm } from "../components/BrandForm";
 import { useCreateBrand } from "../hooks/useBrands";
 import type { CreateBrandDto } from "../types";
 
-/**
- * Trang tạo thương hiệu mới (Admin).
- */
 export function ManageBrandCreate() {
   const { mutate: createBrand, isPending } = useCreateBrand();
 

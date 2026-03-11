@@ -6,9 +6,7 @@ import { CategoryForm } from "../components/CategoryForm";
 import { useCreateCategory } from "../hooks/useCategories";
 import type { CreateCategoryDto } from "../types";
 
-/**
- * Trang tạo danh mục mới (Admin).
- */
+
 export function ManageCategoryCreate() {
   const { mutate: createCategory, isPending } = useCreateCategory();
 

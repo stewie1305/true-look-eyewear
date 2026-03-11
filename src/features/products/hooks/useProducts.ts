@@ -14,14 +14,9 @@ import type {
   ProductFilterParams,
 } from "@/features/products/types";
 
-/**
- * Hook lấy danh sách products với pagination và filters.
- * Đồng bộ filters với URL search params.
- */
 export function useProducts(options?: { forceActive?: boolean }) {
   const [searchParams] = useSearchParams();
 
-  // Parse filters từ URL params
   const filters = useMemo<ProductFilterParams>(() => {
     return {
       page: Number(searchParams.get("page")) || 1,
@@ -47,15 +42,8 @@ export function useProducts(options?: { forceActive?: boolean }) {
   const query = useQuery({
     queryKey: [...QUERY_KEYS.PRODUCTS, filters],
     queryFn: async () => {
-      console.log("🔍 Sending filters to API:", filters);
       const response = await productService.getAll(filters);
-      console.log("📦 Products API Response:", response);
-      console.log(
-        "📊 Response data type:",
-        Array.isArray(response) ? "Array" : "Object",
-      );
       if (!Array.isArray(response) && response?.data) {
-        console.log("📝 Response.data:", response.data);
       }
       return response;
     },
@@ -66,7 +54,6 @@ export function useProducts(options?: { forceActive?: boolean }) {
     ? query.data
     : (query.data?.data ?? []);
 
-  // Client-side filtering cho status vì backend chưa hỗ trợ
   let products = rawProducts;
 
   if (options?.forceActive) {
@@ -74,7 +61,7 @@ export function useProducts(options?: { forceActive?: boolean }) {
       (product) => String(product.status || "").toLowerCase() === "active",
     );
   } else if (filters.status) {
-    // Filter theo status từ URL params
+
     products = products.filter(
       (product) =>
         String(product.status || "").toLowerCase() ===
@@ -90,10 +77,7 @@ export function useProducts(options?: { forceActive?: boolean }) {
   };
 }
 
-/**
- * Hook tạo product mới.
- * Sau khi thành công → invalidate cache + navigate về list.
- */
+
 export function useCreateProduct() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -108,10 +92,7 @@ export function useCreateProduct() {
   });
 }
 
-/**
- * Hook cập nhật product.
- * Sau khi thành công → invalidate cache (list + detail) + navigate về list.
- */
+
 export function useUpdateProduct() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -130,10 +111,7 @@ export function useUpdateProduct() {
   });
 }
 
-/**
- * Hook xóa product.
- * Sau khi thành công → invalidate cache.
- */
+
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
 
@@ -146,9 +124,7 @@ export function useDeleteProduct() {
   });
 }
 
-/**
- * Hook lấy chi tiết 1 product.
- */
+
 export function useProductDetail(id: string) {
   return useQuery({
     queryKey: QUERY_KEYS.PRODUCT_DETAIL(id),

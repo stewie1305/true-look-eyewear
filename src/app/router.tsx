@@ -42,7 +42,6 @@ import ManageUserRoleList from "@/features/user-roles/pages/ManageUserRoleList";
 import { ManageContactLensAxisList } from "@/features/contactLensAxis/pages/ManageContactLensAxisList";
 import { ManageContactLensAxisCreate } from "@/features/contactLensAxis/pages/ManageContactLensAxisCreate";
 import { ManageContactLensAxisEdit } from "@/features/contactLensAxis/pages/ManageContactLensAxisEdit";
-//1. Su dung createBrowserRouter - API moi nhat cua v6
 export const router = createBrowserRouter([
   //Public layout (User)
   {

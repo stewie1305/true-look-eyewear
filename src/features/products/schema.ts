@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-/**
- * Schema validation cho Product Variant
- */
+
 export const productSchema = z.object({
   product_id: z.string().min(1, "Product ID không được để trống"),
   code: z.string().min(1, "Mã sản phẩm không được để trống"),
