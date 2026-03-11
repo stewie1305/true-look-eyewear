@@ -8,7 +8,7 @@ import RegisterPage from "@/features/auth/pages/RegisterPage";
 import { ProtectedRoute } from "@/shared/components/common/ProtectedRoute";
 import AdminLayout from "@/shared/layouts/AdminLayout";
 import UnauthorizedPage from "@/features/auth/pages/UnauthorizedPage";
-import ProfilePage from "@/features/auth/pages/ProfilePage";
+import UserProfilePage from "@/features/users/pages/UserProfilePage";
 import NotFoundPage from "@/features/auth/pages/NotFoundPage";
 import DashboardPage from "@/features/dashboards/pages/DashBoardPage";
 import ManageUserList from "@/features/users/pages/ManageUserList";
@@ -85,7 +85,7 @@ export const router = createBrowserRouter([
         path: "profile",
         element: (
           <ProtectedRoute>
-            <ProfilePage />
+            <UserProfilePage />
           </ProtectedRoute>
         ),
       },
