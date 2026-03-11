@@ -12,12 +12,21 @@ import {
   Eye,
   Users,
   Shield,
+  ChartNoAxesCombined,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
-const navigation = [
+const SUPERSET_LOGIN_URL = "https://superset.tanhuynh.xyz/login/keycloak";
+
+const navigation: Array<{
+  name: string;
+  href: string;
+  icon: LucideIcon;
+  external?: boolean;
+}> = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Quản lý Sản phẩm", href: "/admin/products", icon: Glasses },
   { name: "Quản lý Thương hiệu", href: "/admin/brands", icon: Building2 },
@@ -28,6 +37,12 @@ const navigation = [
   { name: "Quản lý Axis", href: "/admin/contact-lens-axis", icon: Eye },
   { name: "Quản lý Nhân viên", href: "/admin/users", icon: Users },
   { name: "Quản lý Phân quyền", href: "/admin/user-roles", icon: Shield },
+  {
+    name: "Superset BI",
+    href: SUPERSET_LOGIN_URL,
+    icon: ChartNoAxesCombined,
+    external: true,
+  },
 ];
 
 export default function AdminLayout() {
@@ -74,11 +89,25 @@ export default function AdminLayout() {
 
           <nav className="flex-1 space-y-1 px-3 py-4">
             {navigation.map((item) => {
-              const isActive =
-                item.href === "/admin"
+              const isActive = item.external
+                ? false
+                : item.href === "/admin"
                   ? location.pathname === item.href
                   : location.pathname.startsWith(item.href);
-              return (
+              return item.external ? (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  rel="noreferrer"
+                  className={cn(
+                    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-left",
+                    "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                  {item.name}
+                </a>
+              ) : (
                 <Link
                   key={item.name}
                   to={item.href}
