@@ -59,6 +59,9 @@ export const API_ENDPOINTS = {
   ROLES: {
     BASE: "/roles",
   },
+  PROMOTIONS: {
+    BASE: "/promotions",
+  },
 };
 
 export const QUERY_KEYS = {
@@ -84,4 +87,6 @@ export const QUERY_KEYS = {
   USER_ROLES: ["user-roles"],
   ROLES: ["roles"],
   ROLE_DETAIL: (id: string) => ["roles", id],
+  PROMOTIONS: ["promotions"],
+  PROMOTION_DETAIL: (id: string) => ["promotions", id],
 };

@@ -43,6 +43,9 @@ import ManageUserRoleList from "@/features/user-roles/pages/ManageUserRoleList";
 import { ManageContactLensAxisList } from "@/features/contactLensAxis/pages/ManageContactLensAxisList";
 import { ManageContactLensAxisCreate } from "@/features/contactLensAxis/pages/ManageContactLensAxisCreate";
 import { ManageContactLensAxisEdit } from "@/features/contactLensAxis/pages/ManageContactLensAxisEdit";
+import ManagePromotionList from "@/features/promotions/pages/ManagePromotionList";
+import ManagePromotionCreate from "@/features/promotions/pages/ManagePromotionCreate";
+import ManagePromotionEdit from "@/features/promotions/pages/ManagePromotionEdit";
 import { ADMIN_PAGE_ACCESS, ADMIN_PANEL_ROLES } from "@/shared/constants/roles";
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -359,6 +362,30 @@ export const router = createBrowserRouter([
             allowedRoles={ADMIN_PAGE_ACCESS["/admin/contact-lens-axis"]}
           >
             <ManageContactLensAxisEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "promotions",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/promotions"]}>
+            <ManagePromotionList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "promotions/create",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/promotions"]}>
+            <ManagePromotionCreate />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "promotions/:id",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/promotions"]}>
+            <ManagePromotionEdit />
           </ProtectedRoute>
         ),
       },

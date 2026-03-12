@@ -77,6 +77,12 @@ const navigation: Array<{
     allowedRoles: ADMIN_PAGE_ACCESS["/admin/contact-lens-axis"],
   },
   {
+    name: "Quản lý Khuyến mãi",
+    href: "/admin/promotions",
+    icon: Tag,
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/promotions"],
+  },
+  {
     name: "Quản lý Nhân viên",
     href: "/admin/users",
     icon: Users,

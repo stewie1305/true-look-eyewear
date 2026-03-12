@@ -82,6 +82,12 @@ export default function DashboardPage() {
       allowedRoles: ADMIN_PAGE_ACCESS["/admin/contact-lens-axis"],
     },
     {
+      to: "/admin/promotions",
+      label: "Quản lý Khuyến mãi",
+      icon: Tag,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/promotions"],
+    },
+    {
       to: "/admin/users",
       label: "Quản lý Users",
       icon: Users,
