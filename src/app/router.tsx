@@ -12,6 +12,7 @@ import UserProfilePage from "@/features/users/pages/UserProfilePage";
 import EditUserProfilePage from "@/features/users/pages/EditUserProfilePage";
 import NotFoundPage from "@/features/auth/pages/NotFoundPage";
 import DashboardPage from "@/features/dashboards/pages/DashBoardPage";
+import SupersetPage from "@/features/dashboards/pages/SupersetPage";
 import ManageUserList from "@/features/users/pages/ManageUserList";
 import ManageUserCreate from "@/features/users/pages/ManageUserCreate";
 import ManageUserEdit from "@/features/users/pages/ManageUserEdit";
@@ -124,6 +125,7 @@ export const router = createBrowserRouter([
       { path: "users", element: <ManageUserList /> },
       { path: "users/create", element: <ManageUserCreate /> },
       { path: "users/:id", element: <ManageUserEdit /> },
+      { path: "superset", element: <SupersetPage /> },
       { path: "user-roles", element: <ManageUserRoleList /> },
       { path: "products", element: <ManageProductList /> },
       { path: "products/create", element: <ManageProductCreate /> },

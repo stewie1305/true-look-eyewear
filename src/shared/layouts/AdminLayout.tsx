@@ -19,13 +19,10 @@ import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
-const SUPERSET_LOGIN_URL = "https://superset.tanhuynh.xyz/login/keycloak";
-
 const navigation: Array<{
   name: string;
   href: string;
   icon: LucideIcon;
-  external?: boolean;
 }> = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Quản lý Sản phẩm", href: "/admin/products", icon: Glasses },
@@ -37,12 +34,7 @@ const navigation: Array<{
   { name: "Quản lý Axis", href: "/admin/contact-lens-axis", icon: Eye },
   { name: "Quản lý Nhân viên", href: "/admin/users", icon: Users },
   { name: "Quản lý Phân quyền", href: "/admin/user-roles", icon: Shield },
-  {
-    name: "Superset BI",
-    href: SUPERSET_LOGIN_URL,
-    icon: ChartNoAxesCombined,
-    external: true,
-  },
+  { name: "Superset BI", href: "/admin/superset", icon: ChartNoAxesCombined },
 ];
 
 export default function AdminLayout() {
@@ -89,25 +81,11 @@ export default function AdminLayout() {
 
           <nav className="flex-1 space-y-1 px-3 py-4">
             {navigation.map((item) => {
-              const isActive = item.external
-                ? false
-                : item.href === "/admin"
+              const isActive =
+                item.href === "/admin"
                   ? location.pathname === item.href
                   : location.pathname.startsWith(item.href);
-              return item.external ? (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  rel="noreferrer"
-                  className={cn(
-                    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-left",
-                    "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                  )}
-                >
-                  <item.icon className="h-5 w-5" />
-                  {item.name}
-                </a>
-              ) : (
+              return (
                 <Link
                   key={item.name}
                   to={item.href}
