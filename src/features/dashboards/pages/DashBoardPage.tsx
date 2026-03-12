@@ -20,10 +20,88 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Link } from "react-router";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
+import { useAuthStore } from "@/features/auth/store";
+import { ADMIN_PAGE_ACCESS, hasAnyRole } from "@/shared/constants/roles";
+import type { UserRole } from "@/shared/types";
 
 export default function DashboardPage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { role, roles } = useAuthStore();
+  const effectiveRoles = useMemo(
+    () => (roles?.length ? roles : role ? [role] : []),
+    [role, roles],
+  );
+
+  const quickActions: Array<{
+    to: string;
+    label: string;
+    icon: typeof Glasses;
+    allowedRoles: UserRole[];
+  }> = [
+    {
+      to: "/admin/products",
+      label: "Quản lý Sản phẩm",
+      icon: Glasses,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/products"],
+    },
+    {
+      to: "/admin/brands",
+      label: "Quản lý Thương hiệu",
+      icon: Building2,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/brands"],
+    },
+    {
+      to: "/admin/categories",
+      label: "Quản lý Danh mục",
+      icon: Tag,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/categories"],
+    },
+    {
+      to: "/admin/frame-specs",
+      label: "Quản lý Gọng kính",
+      icon: Ruler,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/frame-specs"],
+    },
+    {
+      to: "/admin/rx-lens-specs",
+      label: "Quản lý Tròng kính",
+      icon: Eye,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/rx-lens-specs"],
+    },
+    {
+      to: "/admin/contact-lens-specs",
+      label: "Quản lý Lens",
+      icon: Eye,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/contact-lens-specs"],
+    },
+    {
+      to: "/admin/contact-lens-axis",
+      label: "Quản lý Axis",
+      icon: Eye,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/contact-lens-axis"],
+    },
+    {
+      to: "/admin/users",
+      label: "Quản lý Users",
+      icon: Users,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/users"],
+    },
+    {
+      to: "/admin/superset",
+      label: "View Analytics",
+      icon: BarChart3,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/superset"],
+    },
+  ];
+
+  const visibleQuickActions = useMemo(
+    () =>
+      quickActions.filter((item) =>
+        hasAnyRole(effectiveRoles, item.allowedRoles),
+      ),
+    [effectiveRoles],
+  );
 
   const scroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
@@ -135,111 +213,24 @@ export default function DashboardPage() {
                 ref={scrollContainerRef}
                 className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth hide-scrollbar px-12"
               >
-                <Link
-                  to="/admin/products"
-                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-                  >
-                    <Glasses className="h-6 w-6" />
-                    <span className="font-semibold">Quản lý Sản phẩm</span>
-                  </Button>
-                </Link>
-                <Link
-                  to="/admin/brands"
-                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-                  >
-                    <Building2 className="h-6 w-6" />
-                    <span className="font-semibold">Quản lý Thương hiệu</span>
-                  </Button>
-                </Link>
-                <Link
-                  to="/admin/categories"
-                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-                  >
-                    <Tag className="h-6 w-6" />
-                    <span className="font-semibold">Quản lý Danh mục</span>
-                  </Button>
-                </Link>
-                <Link
-                  to="/admin/frame-specs"
-                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-                  >
-                    <Ruler className="h-6 w-6" />
-                    <span className="font-semibold">Quản lý Gọng kính</span>
-                  </Button>
-                </Link>
-                <Link
-                  to="/admin/rx-lens-specs"
-                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-                  >
-                    <Eye className="h-6 w-6" />
-                    <span className="font-semibold">Quản lý Tròng kính</span>
-                  </Button>
-                </Link>
-                <Link
-                  to="/admin/contact-lens-specs"
-                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-                  >
-                    <Eye className="h-6 w-6" />
-                    <span className="font-semibold">Quản lý Lens</span>
-                  </Button>
-                </Link>
-                <Link
-                  to="/admin/contact-lens-axis"
-                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-                  >
-                    <Eye className="h-6 w-6" />
-                    <span className="font-semibold">Quản lý Axis</span>
-                  </Button>
-                </Link>
-                <Link
-                  to="/admin/users"
-                  className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-                  >
-                    <Users className="h-6 w-6" />
-                    <span className="font-semibold">Quản lý Users</span>
-                  </Button>
-                </Link>
-                <div className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]">
-                  <Button
-                    variant="outline"
-                    className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-                  >
-                    <BarChart3 className="h-6 w-6" />
-                    <span className="font-semibold">View Analytics</span>
-                  </Button>
-                </div>
+                {visibleQuickActions.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
+                    >
+                      <Button
+                        variant="outline"
+                        className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
+                      >
+                        <Icon className="h-6 w-6" />
+                        <span className="font-semibold">{item.label}</span>
+                      </Button>
+                    </Link>
+                  );
+                })}
               </div>
 
               {/* Right Arrow Button */}

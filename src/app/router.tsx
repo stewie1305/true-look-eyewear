@@ -43,6 +43,7 @@ import ManageUserRoleList from "@/features/user-roles/pages/ManageUserRoleList";
 import { ManageContactLensAxisList } from "@/features/contactLensAxis/pages/ManageContactLensAxisList";
 import { ManageContactLensAxisCreate } from "@/features/contactLensAxis/pages/ManageContactLensAxisCreate";
 import { ManageContactLensAxisEdit } from "@/features/contactLensAxis/pages/ManageContactLensAxisEdit";
+import { ADMIN_PAGE_ACCESS, ADMIN_PANEL_ROLES } from "@/shared/constants/roles";
 export const router = createBrowserRouter([
   //Public layout (User)
   {
@@ -116,47 +117,251 @@ export const router = createBrowserRouter([
   {
     path: "admin",
     element: (
-      <ProtectedRoute allowedRoles={["admin"]}>
+      <ProtectedRoute allowedRoles={ADMIN_PANEL_ROLES}>
         <AdminLayout />
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <DashboardPage /> },
-      { path: "users", element: <ManageUserList /> },
-      { path: "users/create", element: <ManageUserCreate /> },
-      { path: "users/:id", element: <ManageUserEdit /> },
-      { path: "superset", element: <SupersetPage /> },
-      { path: "user-roles", element: <ManageUserRoleList /> },
-      { path: "products", element: <ManageProductList /> },
-      { path: "products/create", element: <ManageProductCreate /> },
-      { path: "products/:id", element: <ManageProductEdit /> },
-      { path: "brands", element: <ManageBrandList /> },
-      { path: "brands/create", element: <ManageBrandCreate /> },
-      { path: "brands/:id", element: <ManageBrandEdit /> },
-      { path: "categories", element: <ManageCategoryList /> },
-      { path: "categories/create", element: <ManageCategoryCreate /> },
-      { path: "categories/:id", element: <ManageCategoryEdit /> },
-      { path: "frame-specs", element: <ManageFrameSpecList /> },
-      { path: "frame-specs/create", element: <ManageFrameSpecCreate /> },
-      { path: "frame-specs/:id", element: <ManageFrameSpecEdit /> },
-      { path: "rx-lens-specs", element: <ManageRxLensSpecList /> },
-      { path: "rx-lens-specs/create", element: <ManageRxLensSpecCreate /> },
-      { path: "rx-lens-specs/:id", element: <ManageRxLensSpecEdit /> },
-      { path: "contact-lens-specs", element: <ManageContactLensSpecList /> },
+      {
+        index: true,
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin"]}>
+            <DashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "users",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/users"]}>
+            <ManageUserList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "users/create",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/users"]}>
+            <ManageUserCreate />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "users/:id",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/users"]}>
+            <ManageUserEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "superset",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/superset"]}>
+            <SupersetPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "user-roles",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/user-roles"]}>
+            <ManageUserRoleList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "products",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/products"]}>
+            <ManageProductList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "products/create",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/products"]}>
+            <ManageProductCreate />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "products/:id",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/products"]}>
+            <ManageProductEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "brands",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/brands"]}>
+            <ManageBrandList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "brands/create",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/brands"]}>
+            <ManageBrandCreate />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "brands/:id",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/brands"]}>
+            <ManageBrandEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "categories",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/categories"]}>
+            <ManageCategoryList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "categories/create",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/categories"]}>
+            <ManageCategoryCreate />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "categories/:id",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/categories"]}>
+            <ManageCategoryEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "frame-specs",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/frame-specs"]}
+          >
+            <ManageFrameSpecList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "frame-specs/create",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/frame-specs"]}
+          >
+            <ManageFrameSpecCreate />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "frame-specs/:id",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/frame-specs"]}
+          >
+            <ManageFrameSpecEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "rx-lens-specs",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/rx-lens-specs"]}
+          >
+            <ManageRxLensSpecList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "rx-lens-specs/create",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/rx-lens-specs"]}
+          >
+            <ManageRxLensSpecCreate />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "rx-lens-specs/:id",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/rx-lens-specs"]}
+          >
+            <ManageRxLensSpecEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "contact-lens-specs",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/contact-lens-specs"]}
+          >
+            <ManageContactLensSpecList />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "contact-lens-specs/create",
-        element: <ManageContactLensSpecCreate />,
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/contact-lens-specs"]}
+          >
+            <ManageContactLensSpecCreate />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "contact-lens-specs/:id",
-        element: <ManageContactLensSpecEdit />,
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/contact-lens-specs"]}
+          >
+            <ManageContactLensSpecEdit />
+          </ProtectedRoute>
+        ),
       },
-      { path: "contact-lens-axis", element: <ManageContactLensAxisList /> },
+      {
+        path: "contact-lens-axis",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/contact-lens-axis"]}
+          >
+            <ManageContactLensAxisList />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "contact-lens-axis/create",
-        element: <ManageContactLensAxisCreate />,
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/contact-lens-axis"]}
+          >
+            <ManageContactLensAxisCreate />
+          </ProtectedRoute>
+        ),
       },
-      { path: "contact-lens-axis/:id", element: <ManageContactLensAxisEdit /> },
+      {
+        path: "contact-lens-axis/:id",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/contact-lens-axis"]}
+          >
+            <ManageContactLensAxisEdit />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);

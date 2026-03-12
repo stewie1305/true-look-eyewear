@@ -58,9 +58,14 @@ export interface RegisterResponse {
 export interface AuthState {
   accessToken: string | null;
   role: UserRole | null;
+  roles: UserRole[];
 }
 export interface AuthActions {
-  setAuth: (payload: { accessToken: string; role: UserRole | null }) => void;
+  setAuth: (payload: {
+    accessToken: string;
+    role?: UserRole | null;
+    roles?: UserRole[];
+  }) => void;
   clearAuth: () => void;
 }
 export interface JwtPayload {
@@ -69,5 +74,5 @@ export interface JwtPayload {
   fullName?: string;
   roles?: string[];
   email?: string;
-  role?: UserRole;
+  role?: UserRole | string;
 }

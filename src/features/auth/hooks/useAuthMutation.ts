@@ -10,6 +10,13 @@ import type {
   RegisterDto,
 } from "../types";
 import { jwtDecode } from "jwt-decode";
+import type { UserRole } from "@/shared/types";
+import {
+  ADMIN_PANEL_ROLES,
+  getUniqueRoles,
+  hasAnyRole,
+  normalizeRole,
+} from "@/shared/constants/roles";
 
 export const useRegisterMutation = () => {
   const navigate = useNavigate();
@@ -40,7 +47,8 @@ export const useLoginMutation = () => {
     mutationFn: (data) => authService.login(data),
     onSuccess: (response) => {
       let decoded: JwtPayload | null = null;
-      let userRole: "admin" | "user" | null = null;
+      let userRole: UserRole | null = null;
+      let userRoles: UserRole[] = [];
 
       try {
         decoded = jwtDecode<JwtPayload>(response.accessToken);
@@ -49,26 +57,30 @@ export const useLoginMutation = () => {
           Array.isArray(decoded.roles) &&
           decoded.roles.length > 0
         ) {
-          const roleStr = decoded.roles[0].toLowerCase();
-          if (roleStr.includes("admin")) {
-            userRole = "admin";
-          } else {
-            userRole = "user";
-          }
+          userRoles = getUniqueRoles(
+            decoded.roles.map((role) => normalizeRole(role)),
+          );
+          userRole = userRoles[0] ?? null;
         } else if (decoded.role) {
-          userRole = decoded.role;
+          userRole = normalizeRole(decoded.role);
+          userRoles = getUniqueRoles([userRole]);
         }
       } catch {
         decoded = null;
       }
 
+      if (!userRoles.length && userRole) {
+        userRoles = [userRole];
+      }
+
       setAuth({
         accessToken: response.accessToken,
         role: userRole,
+        roles: userRoles,
       });
       toast.success("Đăng nhập thành công");
-      if (userRole === "admin") {
-        navigate("/admin/rituals", { replace: true });
+      if (hasAnyRole(userRoles, ADMIN_PANEL_ROLES)) {
+        navigate("/admin", { replace: true });
       } else {
         navigate(from, { replace: true });
       }

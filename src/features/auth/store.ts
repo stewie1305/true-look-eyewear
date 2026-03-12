@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import type { AuthActions, AuthState } from "./types";
+import { getUniqueRoles } from "@/shared/constants/roles";
 
 export const useAuthStore = create<AuthState & AuthActions>()(
   devtools(
@@ -8,17 +9,20 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       (set) => ({
         accessToken: null,
         role: null,
+        roles: [],
 
-        setAuth: ({ accessToken, role }) =>
+        setAuth: ({ accessToken, role, roles }) =>
           set({
             accessToken,
-            role,
+            roles: getUniqueRoles([...(roles ?? []), role]),
+            role: role ?? roles?.[0] ?? null,
           }),
 
         clearAuth: () =>
           set({
             accessToken: null,
             role: null,
+            roles: [],
           }),
       }),
       {

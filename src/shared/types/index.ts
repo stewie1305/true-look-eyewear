@@ -40,7 +40,14 @@ export interface SelectOptions {
 }
 
 // ─── User Roles ──────────────────────────────────────────
-export type UserRole = "user" | "admin";
+export type UserRole =
+  | "user"
+  | "admin"
+  | "system_admin"
+  | "sales_staff"
+  | "operation_staff"
+  | "customer"
+  | "manager";
 
 export interface BaseServiceConfig<
   TEntity, //type cua entity chinh ( VD: Ritual)
