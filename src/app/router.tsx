@@ -46,6 +46,11 @@ import { ManageContactLensAxisEdit } from "@/features/contactLensAxis/pages/Mana
 import ManagePromotionList from "@/features/promotions/pages/ManagePromotionList";
 import ManagePromotionCreate from "@/features/promotions/pages/ManagePromotionCreate";
 import ManagePromotionEdit from "@/features/promotions/pages/ManagePromotionEdit";
+import ManageOrderList from "@/features/orders/pages/ManageOrderList";
+import ManageOrderEdit from "@/features/orders/pages/ManageOrderEdit";
+import MyOrdersPage from "@/features/orders/pages/MyOrdersPage";
+import CheckoutPage from "@/features/payments/pages/CheckoutPage";
+import CheckoutSuccessPage from "@/features/payments/pages/CheckoutSuccessPage";
 import { ADMIN_PAGE_ACCESS, ADMIN_PANEL_ROLES } from "@/shared/constants/roles";
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -109,6 +114,30 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AddressPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "orders",
+        element: (
+          <ProtectedRoute>
+            <MyOrdersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "checkout",
+        element: (
+          <ProtectedRoute>
+            <CheckoutPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "checkout/success",
+        element: (
+          <ProtectedRoute>
+            <CheckoutSuccessPage />
           </ProtectedRoute>
         ),
       },
@@ -386,6 +415,22 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/promotions"]}>
             <ManagePromotionEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "orders",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/orders"]}>
+            <ManageOrderList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "orders/:id",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/orders"]}>
+            <ManageOrderEdit />
           </ProtectedRoute>
         ),
       },

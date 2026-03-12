@@ -62,6 +62,16 @@ export const API_ENDPOINTS = {
   PROMOTIONS: {
     BASE: "/promotions",
   },
+  ORDERS: {
+    BASE: "/orders",
+    BY_USER: (userId: string) => `/orders/user/${userId}`,
+    BY_ID: (id: string) => `/orders/${id}`,
+    STATUS: (id: string) => `/orders/${id}/status`,
+  },
+  PAYMENTS: {
+    BASE: "/payments",
+    WEBHOOK: "/payments/webhook",
+  },
 };
 
 export const QUERY_KEYS = {
@@ -89,4 +99,8 @@ export const QUERY_KEYS = {
   ROLE_DETAIL: (id: string) => ["roles", id],
   PROMOTIONS: ["promotions"],
   PROMOTION_DETAIL: (id: string) => ["promotions", id],
+  ORDERS: ["orders"],
+  ORDER_DETAIL: (id: string) => ["orders", id],
+  ORDERS_BY_USER: (userId: string) => ["orders", "user", userId],
+  PAYMENTS: ["payments"],
 };

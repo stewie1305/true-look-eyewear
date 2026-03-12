@@ -11,7 +11,7 @@ export const promotionSchema = z
       .min(0, "Không được âm"),
     start_time: z.string().min(1, "Ngày bắt đầu là bắt buộc"),
     end_time: z.string().min(1, "Ngày kết thúc là bắt buộc"),
-    status: z.enum(["active", "inactive"]).default("active"),
+    status: z.enum(["Active", "Inactive"]).default("Active"),
   })
   .refine((data) => new Date(data.end_time) > new Date(data.start_time), {
     message: "Ngày kết thúc phải sau ngày bắt đầu",

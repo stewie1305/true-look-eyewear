@@ -53,7 +53,7 @@ export function PromotionForm({
       discount: 0,
       start_time: "",
       end_time: "",
-      status: "active",
+      status: "Active",
       ...defaultValues,
     },
   });
@@ -167,17 +167,17 @@ export function PromotionForm({
           <div className="space-y-2">
             <Label htmlFor="status">Trạng thái</Label>
             <Select
-              value={watch("status") ?? "active"}
+              value={watch("status") ?? "Active"}
               onValueChange={(value) =>
-                setValue("status", value as "active" | "inactive")
+                setValue("status", value as "Active" | "Inactive")
               }
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">Hoạt động</SelectItem>
-                <SelectItem value="inactive">Không hoạt động</SelectItem>
+                <SelectItem value="Active">Hoạt động</SelectItem>
+                <SelectItem value="Inactive">Không hoạt động</SelectItem>
               </SelectContent>
             </Select>
           </div>

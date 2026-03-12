@@ -98,6 +98,20 @@ const Header = () => {
             </Link>
           )}
 
+          {token && (
+            <Link
+              to="/orders"
+              className={cn(
+                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                isActive("/orders")
+                  ? "bg-primary/10 text-primary underline underline-offset-4"
+                  : "text-foreground hover:text-primary hover:bg-muted",
+              )}
+            >
+              Orders
+            </Link>
+          )}
+
           {!token ? (
             <Link
               to="/login"

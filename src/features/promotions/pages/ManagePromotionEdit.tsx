@@ -52,8 +52,8 @@ export default function ManagePromotionEdit() {
     start_time: toDatetimeLocal(promotion.start_time),
     end_time: toDatetimeLocal(promotion.end_time),
     status: (promotion.status?.toLowerCase() === "inactive"
-      ? "inactive"
-      : "active") as "active" | "inactive",
+      ? "Inactive"
+      : "Active") as "Active" | "Inactive",
   };
 
   return (

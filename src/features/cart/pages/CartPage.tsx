@@ -6,8 +6,6 @@ import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { LoadingSpinner, EmptyState } from "@/shared/components/common";
-import { useAddresses } from "@/features/address/hooks/useAddresses";
-import type { Address } from "@/features/address/types";
 import {
   useCart,
   useUpdateCartItem,
@@ -23,26 +21,16 @@ export default function CartPage() {
   } | null>(null);
 
   const { items, totalItems, totalAmount, isLoading } = useCart();
-  const { addresses, isLoading: isLoadingAddresses } = useAddresses();
   const updateMutation = useUpdateCartItem();
   const removeMutation = useRemoveFromCart();
-
-  const runCheckout = (address: Address) => {
-    const fullAddress = `${address.street}, ${address.ward}, ${address.district}, ${address.city}`;
-    toast.success(
-      `Đang thanh toán với địa chỉ: ${address.name_recipient} - ${fullAddress}`,
-    );
-  };
 
   useEffect(() => {
     const state = location.state as {
       autoCheckout?: boolean;
-      checkoutWithAddress?: Address;
     } | null;
 
-    if (!state?.autoCheckout || !state.checkoutWithAddress) return;
-
-    runCheckout(state.checkoutWithAddress);
+    if (!state?.autoCheckout) return;
+    toast.info("Đã thêm địa chỉ thành công, vui lòng tiếp tục checkout");
     navigate(location.pathname, { replace: true, state: null });
   }, [location.pathname, location.state, navigate]);
 
@@ -64,17 +52,7 @@ export default function CartPage() {
   };
 
   const handleCheckout = () => {
-    if (!addresses.length) {
-      navigate("/addresses", {
-        state: {
-          fromCheckout: true,
-          returnTo: "/cart",
-        },
-      });
-      return;
-    }
-
-    runCheckout(addresses[0]);
+    navigate("/checkout");
   };
 
   if (isLoading) {
@@ -253,12 +231,7 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <Button
-                className="w-full"
-                size="lg"
-                onClick={handleCheckout}
-                disabled={isLoadingAddresses}
-              >
+              <Button className="w-full" size="lg" onClick={handleCheckout}>
                 Thanh toán
               </Button>
 

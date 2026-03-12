@@ -13,6 +13,24 @@ import type {
   UpdatePromotionDto,
 } from "../types";
 
+const normalizeStatusForApi = (status?: string) => {
+  if (!status) return status;
+  const value = String(status).toLowerCase();
+  if (value === "active") return "Active";
+  if (value === "inactive") return "Inactive";
+  return status;
+};
+
+const normalizePromotionPayload = <T extends { status?: string }>(
+  data: T,
+): T => {
+  if (!data?.status) return data;
+  return {
+    ...data,
+    status: normalizeStatusForApi(data.status),
+  };
+};
+
 export function usePromotions() {
   const [searchParams] = useSearchParams();
   const { role, roles } = useAuthStore();
@@ -83,7 +101,8 @@ export function useCreatePromotion() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreatePromotionDto) => promotionService.create(data),
+    mutationFn: (data: CreatePromotionDto) =>
+      promotionService.create(normalizePromotionPayload(data)),
     onSuccess: () => {
       toast.success("Tạo khuyến mãi thành công!");
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROMOTIONS });
@@ -101,7 +120,7 @@ export function useUpdatePromotion() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdatePromotionDto }) =>
-      promotionService.update(id, data),
+      promotionService.update(id, normalizePromotionPayload(data)),
     onSuccess: (_data, variables) => {
       toast.success("Cập nhật khuyến mãi thành công!");
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROMOTIONS });
