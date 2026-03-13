@@ -49,6 +49,12 @@ export const API_ENDPOINTS = {
   ADDRESSES: {
     BASE: "/api/addresses",
   },
+  SHIPPING: {
+    LOCATIONS: "/shipping/locations",
+    NHANH_FEE: "/shipping/nhanh/fee",
+    NHANH_CREATE_ORDER: "/shipping/nhanh/create-order",
+    NHANH_ORDERS: "/shipping/nhanh/orders",
+  },
   USER_ROLES: {
     BASE: "/user-roles",
     USER: (userId: string) => `/user-roles/user/${userId}`,
@@ -93,6 +99,24 @@ export const QUERY_KEYS = {
   USERS: ["users"],
   USER_DETAIL: (id: string) => ["users", id],
   ADDRESSES: ["addresses"],
+  SHIPPING: {
+    ALL: ["shipping"],
+    CITIES: ["shipping", "cities"],
+    DISTRICTS: (cityId: string) => ["shipping", "districts", cityId],
+    WARDS: (districtId: string) => ["shipping", "wards", districtId],
+    FEE: (
+      toCity: string,
+      toDistrict: string,
+      money: number,
+      weight: number,
+    ) => ["shipping", "fee", toCity, toDistrict, money, weight],
+    ORDERS: (fromDate: string, toDate: string) => [
+      "shipping",
+      "orders",
+      fromDate,
+      toDate,
+    ],
+  },
   USER_ROLES: ["user-roles"],
   ROLES: ["roles"],
   ROLE_DETAIL: (id: string) => ["roles", id],

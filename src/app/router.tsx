@@ -1,5 +1,5 @@
 import { UserLayout } from "@/shared/layouts/UserLayout";
-import { createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 // import MainLayout from "./components/layouts/MainLayout";
 import HomePage from "@/features/landing/pages/HomePage";
 import LoginPage from "@/features/auth/pages/LoginPage";
@@ -52,6 +52,8 @@ import OrderDetailPage from "@/features/orders/pages/OrderDetailPage";
 import PaymentCheckoutPage from "@/features/payments/pages/PaymentCheckoutPage";
 import PaymentFailedPage from "@/features/payments/pages/PaymentFailedPage";
 import PaymentSuccessPage from "@/features/payments/pages/PaymentSuccessPage";
+import ManageShippingCreateOrderPage from "@/features/shipping/pages/ManageShippingCreateOrderPage";
+import ManageShippingLookupOrdersPage from "@/features/shipping/pages/ManageShippingLookupOrdersPage";
 import { ADMIN_PAGE_ACCESS, ADMIN_PANEL_ROLES } from "@/shared/constants/roles";
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -448,6 +450,36 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/orders"]}>
             <ManageOrderList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "shipping-orders",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/shipping-orders"]}
+          >
+            <Navigate to="/admin/shipping-orders/create" replace />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "shipping-orders/create",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/shipping-orders"]}
+          >
+            <ManageShippingCreateOrderPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "shipping-orders/lookup",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/shipping-orders"]}
+          >
+            <ManageShippingLookupOrdersPage />
           </ProtectedRoute>
         ),
       },

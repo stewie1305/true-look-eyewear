@@ -19,6 +19,7 @@ import {
 import { toast } from "sonner";
 import { Badge } from "@/shared/components/ui/badge";
 import { useAddresses } from "@/features/address/hooks/useAddresses";
+import { useShippingFee } from "@/features/shipping/hooks/useShippingLocations";
 import { useUserMe } from "@/features/users/hooks/useUsers";
 import {
   useCreateOrder,
@@ -42,6 +43,10 @@ interface CheckoutResult {
 
 const PENDING_BANK_ORDER_KEY = "pending_bank_order_id";
 const CANCELED_BANK_ORDER_IDS_KEY = "canceled_bank_order_ids";
+const SHIPPING_ORIGIN = {
+  cityName: "Hồ Chí Minh",
+  districtName: "Thành phố Thủ Đức",
+};
 
 export default function PaymentCheckoutPage() {
   const location = useLocation();
@@ -137,10 +142,42 @@ export default function PaymentCheckoutPage() {
 
   const estimatedFinalAmount = Math.max(subtotal - estimatedDiscount, 0);
 
+  const estimatedShippingWeight = useMemo(() => {
+    if (!checkoutItems.length) return 500;
+
+    const totalQuantity = checkoutItems.reduce(
+      (sum, item) => sum + Number(item.quantity || 0),
+      0,
+    );
+
+    return Math.max(500, totalQuantity * 250);
+  }, [checkoutItems]);
+
   const selectedAddress = useMemo(
     () => addresses.find((address) => address.id === selectedAddressId),
     [addresses, selectedAddressId],
   );
+
+  const shippingFeeParams = useMemo(() => {
+    if (defaultOrderId || !selectedAddress) return undefined;
+
+    return {
+      fromCityName: SHIPPING_ORIGIN.cityName,
+      fromDistrictName: SHIPPING_ORIGIN.districtName,
+      toCityName: selectedAddress.city,
+      toDistrictName: selectedAddress.district,
+      shippingWeight: estimatedShippingWeight,
+      money: Math.max(0, subtotal),
+    };
+  }, [defaultOrderId, estimatedShippingWeight, selectedAddress, subtotal]);
+
+  const shippingFeeQuery = useShippingFee(shippingFeeParams);
+
+  const shippingFee = defaultOrderId
+    ? Number(selectedOrder?.extra_fee || 0)
+    : Number(shippingFeeQuery.data?.fee || 0);
+
+  const totalPayable = Math.max(estimatedFinalAmount + shippingFee, 0);
 
   useEffect(() => {
     if (!selectedAddressId && addresses.length > 0) {
@@ -233,13 +270,18 @@ export default function PaymentCheckoutPage() {
       return;
     }
 
+    if (!defaultOrderId && shippingFeeQuery.isError) {
+      toast.error("Không tính được phí ship. Vui lòng kiểm tra lại địa chỉ.");
+      return;
+    }
+
     try {
       const orderId = defaultOrderId
         ? defaultOrderId
         : (
             await createOrderMutation.mutateAsync({
               customer_id: String(currentUser?.id),
-              extra_fee: 0,
+              extra_fee: shippingFee,
               cart_item_ids: selectedCartItemIds.length
                 ? selectedCartItemIds
                 : undefined,
@@ -610,13 +652,39 @@ export default function PaymentCheckoutPage() {
                     -{estimatedDiscount.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Phí vận chuyển</span>
+                  <span
+                    className={
+                      shippingFeeQuery.isLoading || shippingFeeQuery.isError
+                        ? "text-muted-foreground"
+                        : ""
+                    }
+                  >
+                    {defaultOrderId
+                      ? `${shippingFee.toLocaleString("vi-VN")}đ`
+                      : shippingFeeQuery.isLoading
+                        ? "Đang tính..."
+                        : shippingFeeQuery.isError
+                          ? "Không tính được"
+                          : `${shippingFee.toLocaleString("vi-VN")}đ`}
+                  </span>
+                </div>
                 <div className="border-t pt-2 flex items-center justify-between">
-                  <span className="font-semibold">Tổng sau giảm</span>
+                  <span className="font-semibold">Tổng thanh toán</span>
                   <span className="font-semibold text-primary">
-                    {estimatedFinalAmount.toLocaleString("vi-VN")}đ
+                    {totalPayable.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
               </div>
+
+              {!defaultOrderId &&
+                shippingFeeQuery.isError &&
+                selectedAddress && (
+                  <p className="text-xs text-amber-500">
+                    Chưa tính được phí ship tự động cho địa chỉ này.
+                  </p>
+                )}
 
               <div className="border-t pt-3 text-sm space-y-2">
                 <div className="flex items-center justify-between">

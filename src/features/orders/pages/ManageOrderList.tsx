@@ -13,11 +13,7 @@ import {
 import { EmptyState, LoadingSpinner } from "@/shared/components/common";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { OrderTable } from "../components/OrderTable";
-import {
-  useCancelOrder,
-  useOrdersAdmin,
-  useUpdateOrderStatus,
-} from "../hooks/useOrders";
+import { useOrdersAdmin, useUpdateOrderStatus } from "../hooks/useOrders";
 
 export default function ManageOrderList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -28,7 +24,6 @@ export default function ManageOrderList() {
 
   const { orders, isLoading } = useOrdersAdmin();
   const updateStatusMutation = useUpdateOrderStatus();
-  const cancelMutation = useCancelOrder();
 
   const updateSearchParam = useCallback(
     (value: string) => {
@@ -114,13 +109,7 @@ export default function ManageOrderList() {
           onUpdateStatus={(id, status) =>
             updateStatusMutation.mutate({ id, status })
           }
-          onCancel={(id) => {
-            if (window.confirm("Bạn có chắc muốn hủy đơn hàng này?")) {
-              cancelMutation.mutate(id);
-            }
-          }}
           isUpdating={updateStatusMutation.isPending}
-          isCancelling={cancelMutation.isPending}
         />
       )}
     </div>
