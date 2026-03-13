@@ -43,6 +43,7 @@ export const ADMIN_PAGE_ACCESS: Record<string, UserRole[]> = {
   "/admin/contact-lens-axis": OPERATIONS_ROLES,
   "/admin/promotions": MANAGER_ROLES,
   "/admin/orders": OPERATIONS_ROLES,
+  "/admin/support": OPERATIONS_ROLES,
   "/admin/users": MANAGER_ROLES,
   "/admin/user-roles": FULL_ADMIN_ROLES,
   "/admin/superset": FULL_ADMIN_ROLES,

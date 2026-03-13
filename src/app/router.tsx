@@ -52,6 +52,9 @@ import OrderDetailPage from "@/features/orders/pages/OrderDetailPage";
 import PaymentCheckoutPage from "@/features/payments/pages/PaymentCheckoutPage";
 import PaymentFailedPage from "@/features/payments/pages/PaymentFailedPage";
 import PaymentSuccessPage from "@/features/payments/pages/PaymentSuccessPage";
+import SupportChatPage from "@/features/supports/pages/SupportChatPage";
+import ManageSupportList from "@/features/supports/pages/ManageSupportList";
+import ManageSupportChat from "@/features/supports/pages/ManageSupportChat";
 import { ADMIN_PAGE_ACCESS, ADMIN_PANEL_ROLES } from "@/shared/constants/roles";
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -131,6 +134,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <OrderDetailPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "orders/:id/support",
+        element: (
+          <ProtectedRoute>
+            <SupportChatPage />
           </ProtectedRoute>
         ),
       },
@@ -448,6 +459,22 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/orders"]}>
             <ManageOrderList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "support",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/support"]}>
+            <ManageSupportList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "support/:ticketId",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/support"]}>
+            <ManageSupportChat />
           </ProtectedRoute>
         ),
       },

@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, ReceiptText } from "lucide-react";
+import { ArrowLeft, MessageCircle, ReceiptText } from "lucide-react";
 
 import {
   LoadingSpinner,
@@ -146,6 +146,12 @@ export default function OrderDetailPage() {
             <p className="mt-1 text-2xl font-bold text-primary">
               {Number(displayOrder.total || 0).toLocaleString("vi-VN")}đ
             </p>
+            <Button asChild className="mt-3" size="sm">
+              <Link to={`/orders/${displayOrder.id}/support`}>
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Liên hệ hỗ trợ đơn hàng
+              </Link>
+            </Button>
           </div>
 
           <div className="rounded-lg border p-4 space-y-3">
