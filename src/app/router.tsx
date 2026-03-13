@@ -46,6 +46,12 @@ import { ManageContactLensAxisEdit } from "@/features/contactLensAxis/pages/Mana
 import ManagePromotionList from "@/features/promotions/pages/ManagePromotionList";
 import ManagePromotionCreate from "@/features/promotions/pages/ManagePromotionCreate";
 import ManagePromotionEdit from "@/features/promotions/pages/ManagePromotionEdit";
+import ManageOrderList from "@/features/orders/pages/ManageOrderList";
+import MyOrdersPage from "@/features/orders/pages/MyOrdersPage";
+import OrderDetailPage from "@/features/orders/pages/OrderDetailPage";
+import PaymentCheckoutPage from "@/features/payments/pages/PaymentCheckoutPage";
+import PaymentFailedPage from "@/features/payments/pages/PaymentFailedPage";
+import PaymentSuccessPage from "@/features/payments/pages/PaymentSuccessPage";
 import { ADMIN_PAGE_ACCESS, ADMIN_PANEL_ROLES } from "@/shared/constants/roles";
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -109,6 +115,54 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AddressPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "orders",
+        element: (
+          <ProtectedRoute>
+            <MyOrdersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "orders/:id",
+        element: (
+          <ProtectedRoute>
+            <OrderDetailPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "checkout",
+        element: (
+          <ProtectedRoute>
+            <PaymentCheckoutPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "payments",
+        element: (
+          <ProtectedRoute>
+            <PaymentCheckoutPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "payment-success",
+        element: (
+          <ProtectedRoute>
+            <PaymentSuccessPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "payment-failed",
+        element: (
+          <ProtectedRoute>
+            <PaymentFailedPage />
           </ProtectedRoute>
         ),
       },
@@ -386,6 +440,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/promotions"]}>
             <ManagePromotionEdit />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "orders",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/orders"]}>
+            <ManageOrderList />
           </ProtectedRoute>
         ),
       },

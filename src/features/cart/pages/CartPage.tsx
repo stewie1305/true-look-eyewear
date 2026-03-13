@@ -1,7 +1,6 @@
 import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/shared/components/ui/button";
 import { Card } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
@@ -21,29 +20,73 @@ export default function CartPage() {
     id: string;
     name: string;
   } | null>(null);
+  const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
 
   const { items, totalItems, totalAmount, isLoading } = useCart();
   const { addresses, isLoading: isLoadingAddresses } = useAddresses();
   const updateMutation = useUpdateCartItem();
   const removeMutation = useRemoveFromCart();
 
-  const runCheckout = (address: Address) => {
-    const fullAddress = `${address.street}, ${address.ward}, ${address.district}, ${address.city}`;
-    toast.success(
-      `Đang thanh toán với địa chỉ: ${address.name_recipient} - ${fullAddress}`,
-    );
+  useEffect(() => {
+    if (!items.length) {
+      setSelectedItemIds([]);
+      return;
+    }
+
+    setSelectedItemIds((prev) => {
+      if (!prev.length) {
+        return items.map((item) => item.id);
+      }
+
+      const validIds = new Set(items.map((item) => item.id));
+      return prev.filter((id) => validIds.has(id));
+    });
+  }, [items]);
+
+  const selectedItems = useMemo(
+    () => items.filter((item) => selectedItemIds.includes(item.id)),
+    [items, selectedItemIds],
+  );
+
+  const selectedTotalAmount = useMemo(
+    () =>
+      selectedItems.reduce((sum, item) => {
+        const price = Number(item.variant?.price || 0);
+        return sum + price * item.quantity;
+      }, 0),
+    [selectedItems],
+  );
+
+  const isAllSelected =
+    items.length > 0 && selectedItemIds.length === items.length;
+
+  const toggleSelectItem = (id: string, checked: boolean) => {
+    setSelectedItemIds((prev) => {
+      if (checked) return Array.from(new Set([...prev, id]));
+      return prev.filter((itemId) => itemId !== id);
+    });
+  };
+
+  const toggleSelectAll = (checked: boolean) => {
+    setSelectedItemIds(checked ? items.map((item) => item.id) : []);
   };
 
   useEffect(() => {
     const state = location.state as {
       autoCheckout?: boolean;
       checkoutWithAddress?: Address;
+      selectedCartItemIds?: string[];
     } | null;
 
     if (!state?.autoCheckout || !state.checkoutWithAddress) return;
 
-    runCheckout(state.checkoutWithAddress);
-    navigate(location.pathname, { replace: true, state: null });
+    navigate("/checkout", {
+      replace: true,
+      state: {
+        checkoutWithAddress: state.checkoutWithAddress,
+        selectedCartItemIds: state.selectedCartItemIds,
+      },
+    });
   }, [location.pathname, location.state, navigate]);
 
   const handleUpdateQuantity = (id: string, newQuantity: number) => {
@@ -64,17 +107,26 @@ export default function CartPage() {
   };
 
   const handleCheckout = () => {
+    if (!selectedItemIds.length) {
+      return;
+    }
+
     if (!addresses.length) {
       navigate("/addresses", {
         state: {
           fromCheckout: true,
-          returnTo: "/cart",
+          returnTo: "/checkout",
+          selectedCartItemIds: selectedItemIds,
         },
       });
       return;
     }
 
-    runCheckout(addresses[0]);
+    navigate("/checkout", {
+      state: {
+        selectedCartItemIds: selectedItemIds,
+      },
+    });
   };
 
   if (isLoading) {
@@ -122,9 +174,33 @@ export default function CartPage() {
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <input
+                  type="checkbox"
+                  checked={isAllSelected}
+                  onChange={(e) => toggleSelectAll(e.target.checked)}
+                />
+                Chọn tất cả sản phẩm
+              </label>
+              <span className="text-sm text-muted-foreground">
+                Đã chọn {selectedItemIds.length}/{items.length}
+              </span>
+            </div>
+
             {items.map((item) => (
               <Card key={item.id} className="p-4">
                 <div className="flex gap-4">
+                  <div className="pt-1">
+                    <input
+                      type="checkbox"
+                      checked={selectedItemIds.includes(item.id)}
+                      onChange={(e) =>
+                        toggleSelectItem(item.id, e.target.checked)
+                      }
+                    />
+                  </div>
+
                   {/* Image */}
                   <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-muted">
                     {item.variant?.images?.[0]?.path ? (
@@ -233,9 +309,11 @@ export default function CartPage() {
 
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Tạm tính</span>
+                  <span className="text-muted-foreground">
+                    Tạm tính đã chọn
+                  </span>
                   <span className="font-medium">
-                    {totalAmount.toLocaleString("vi-VN")}đ
+                    {selectedTotalAmount.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
 
@@ -248,7 +326,7 @@ export default function CartPage() {
                   <span className="font-semibold">Tổng cộng</span>
 
                   <span className="text-xl font-bold text-primary">
-                    {totalAmount.toLocaleString("vi-VN")}đ
+                    {selectedTotalAmount.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
               </div>
@@ -257,7 +335,7 @@ export default function CartPage() {
                 className="w-full"
                 size="lg"
                 onClick={handleCheckout}
-                disabled={isLoadingAddresses}
+                disabled={isLoadingAddresses || !selectedItemIds.length}
               >
                 Thanh toán
               </Button>

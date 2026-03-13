@@ -30,6 +30,7 @@ export default function AddressPage() {
   const checkoutState = location.state as {
     fromCheckout?: boolean;
     returnTo?: string;
+    selectedCartItemIds?: string[];
   } | null;
   const fromCheckout = !!checkoutState?.fromCheckout;
   const returnTo = checkoutState?.returnTo || "/cart";
@@ -58,6 +59,7 @@ export default function AddressPage() {
             state: {
               autoCheckout: true,
               checkoutWithAddress: createdAddress,
+              selectedCartItemIds: checkoutState?.selectedCartItemIds,
             },
           });
           return;

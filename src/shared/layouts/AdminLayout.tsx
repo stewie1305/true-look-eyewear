@@ -13,6 +13,7 @@ import {
   Users,
   Shield,
   ChartNoAxesCombined,
+  ClipboardList,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
@@ -81,6 +82,12 @@ const navigation: Array<{
     href: "/admin/promotions",
     icon: Tag,
     allowedRoles: ADMIN_PAGE_ACCESS["/admin/promotions"],
+  },
+  {
+    name: "Quản lý Đơn hàng",
+    href: "/admin/orders",
+    icon: ClipboardList,
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/orders"],
   },
   {
     name: "Quản lý Nhân viên",
