@@ -10,6 +10,7 @@ import {
   Tag,
   Ruler,
   Eye,
+  Image as ImageIcon,
   Users,
   Shield,
   ChartNoAxesCombined,
@@ -41,6 +42,12 @@ const navigation: Array<{
     href: "/admin/products",
     icon: Glasses,
     allowedRoles: ADMIN_PAGE_ACCESS["/admin/products"],
+  },
+  {
+    name: "Quản lý Ảnh",
+    href: "/admin/images",
+    icon: ImageIcon,
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/images"],
   },
   {
     name: "Quản lý Thương hiệu",

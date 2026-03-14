@@ -11,6 +11,7 @@ import {
   Users,
   ShoppingBag,
   Eye,
+  Image as ImageIcon,
   Package,
   Glasses,
   Building2,
@@ -44,6 +45,12 @@ export default function DashboardPage() {
       label: "Quản lý Sản phẩm",
       icon: Glasses,
       allowedRoles: ADMIN_PAGE_ACCESS["/admin/products"],
+    },
+    {
+      to: "/admin/images",
+      label: "Quản lý Ảnh",
+      icon: ImageIcon,
+      allowedRoles: ADMIN_PAGE_ACCESS["/admin/images"],
     },
     {
       to: "/admin/brands",

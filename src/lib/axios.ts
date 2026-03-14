@@ -17,6 +17,11 @@ const apiClient = axios.create({
 //request Interceptor: attach token
 apiClient.interceptors.request.use((config) => {
   const accessToken = useAuthStore.getState().accessToken; // dung getState vi ts la tinh chi lay gia tri, kh phai tsx nen kh dc dung hook, dung hook no re render
+
+  if (config.data instanceof FormData && config.headers) {
+    delete config.headers["Content-Type"];
+  }
+
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }

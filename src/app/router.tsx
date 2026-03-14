@@ -22,6 +22,9 @@ import { ProductDetail } from "@/features/products/pages/ProductDetail";
 import ManageProductList from "@/features/products/pages/ManageProductList";
 import ManageProductCreate from "@/features/products/pages/ManageProductCreate";
 import ManageProductEdit from "@/features/products/pages/ManageProductEdit";
+import ManageImageList from "@/features/images/pages/ManageImageList";
+import ManageImageCreate from "@/features/images/pages/ManageImageCreate";
+import ManageImageDetail from "@/features/images/pages/ManageImageDetail";
 import ManageBrandList from "@/features/brands/pages/ManageBrandList";
 import ManageBrandCreate from "@/features/brands/pages/ManageBrandCreate";
 import ManageBrandEdit from "@/features/brands/pages/ManageBrandEdit";
@@ -234,6 +237,30 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/products"]}>
             <ManageProductList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "images",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/images"]}>
+            <ManageImageList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "images/create",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/images"]}>
+            <ManageImageCreate />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "images/:id",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/images"]}>
+            <ManageImageDetail />
           </ProtectedRoute>
         ),
       },
