@@ -13,6 +13,20 @@ export const imageService = {
     return response as unknown as Image;
   },
 
+  getBlobById: async (id: string | number): Promise<Blob> => {
+    const response = await apiClient.get(
+      `${API_ENDPOINTS.IMAGES.BASE}/${id}`,
+      {
+        responseType: "blob",
+        headers: { Accept: "image/*" },
+        skipToast: true,
+      } as any,
+    );
+    return response as unknown as Blob;
+  },
+};
+
+export const adminImageService = {
   create: async (data: CreateImagePayload): Promise<Image> => {
     const formData = new FormData();
     if (data.variant_id) {

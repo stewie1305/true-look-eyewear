@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { Eye, Image as ImageIcon, Trash2 } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 
-import type { Image } from "@/features/images/types";
+import type { Image } from "../types";
+import { ImagePreview } from "./ImagePreview";
 import { Button } from "@/shared/components/ui/button";
 import {
   Table,
@@ -35,29 +36,37 @@ export function ImageTable({ images, onDelete, isDeleting }: ImageTableProps) {
             <TableRow key={image.id}>
               <TableCell>
                 <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-md border bg-muted">
-                  {image.path ? (
-                    <img
-                      src={image.path}
-                      alt={image.variant?.name || image.id}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <ImageIcon className="h-5 w-5 text-muted-foreground" />
-                  )}
+                  <ImagePreview
+                    id={image.id}
+                    path={image.path}
+                    alt={image.variant?.name || image.id}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
               </TableCell>
               <TableCell>
                 <div className="space-y-1">
                   <p className="font-medium">
-                    {image.variant?.name || image.variant_id}
+                    {image.variant?.name || image.variant_id || "—"}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {image.variant?.code || "Không có mã variant"}
                   </p>
+                  {image.variant?.product?.name && (
+                    <p className="text-xs text-muted-foreground">
+                      {image.variant.product.name}
+                    </p>
+                  )}
+                  <p className="text-[11px] font-mono text-muted-foreground">
+                    ID: {image.id}
+                  </p>
                 </div>
               </TableCell>
               <TableCell>
-                <p className="max-w-md truncate text-sm text-muted-foreground">
+                <p
+                  className="max-w-md truncate text-sm text-muted-foreground"
+                  title={image.path}
+                >
                   {image.path}
                 </p>
               </TableCell>
@@ -75,13 +84,17 @@ export function ImageTable({ images, onDelete, isDeleting }: ImageTableProps) {
                     className="border-destructive/30 text-destructive hover:bg-destructive/10"
                     disabled={isDeleting}
                     onClick={() => {
-                      if (window.confirm("Bạn có chắc muốn xóa ảnh này?")) {
+                      if (
+                        window.confirm(
+                          `Bạn có chắc muốn xoá ảnh "${image.id}"?`,
+                        )
+                      ) {
                         onDelete(image.id);
                       }
                     }}
                   >
                     <Trash2 className="mr-1 h-3 w-3" />
-                    Xóa
+                    Xoá
                   </Button>
                 </div>
               </TableCell>

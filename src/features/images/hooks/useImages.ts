@@ -3,11 +3,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
-import { imageService } from "@/features/images/services";
-import type {
-  CreateImagePayload,
-  ImageFilterParams,
-} from "@/features/images/types";
+import { adminImageService, imageService } from "../services";
+import type { CreateImagePayload, ImageFilterParams } from "../types";
 import { productService } from "@/features/products/services";
 import type { ProductVariant } from "@/features/products/types";
 import { QUERY_KEYS } from "@/shared/constants";
@@ -32,28 +29,36 @@ export function useImages() {
   let images = Array.isArray(query.data) ? query.data : [];
 
   if (filters.search) {
-    const needle = filters.search.toLowerCase();
-    images = images.filter((image) => {
-      const variantName = String(image.variant?.name || "").toLowerCase();
-      const variantCode = String(image.variant?.code || "").toLowerCase();
-      const productName = String(
-        image.variant?.product?.name || "",
-      ).toLowerCase();
-      return (
-        String(image.id || "")
-          .toLowerCase()
-          .includes(needle) ||
-        String(image.path || "")
-          .toLowerCase()
-          .includes(needle) ||
-        String(image.variant_id || "")
-          .toLowerCase()
-          .includes(needle) ||
-        variantName.includes(needle) ||
-        variantCode.includes(needle) ||
-        productName.includes(needle)
+    const searchValue = filters.search.trim();
+    const isNumeric = /^\d+$/.test(searchValue);
+    if (isNumeric) {
+      images = images.filter(
+        (image) => String(image.variant_id || "") === searchValue,
       );
-    });
+    } else {
+      const needle = searchValue.toLowerCase();
+      images = images.filter((image) => {
+        const variantName = String(image.variant?.name || "").toLowerCase();
+        const variantCode = String(image.variant?.code || "").toLowerCase();
+        const productName = String(
+          image.variant?.product?.name || "",
+        ).toLowerCase();
+        return (
+          String(image.id || "")
+            .toLowerCase()
+            .includes(needle) ||
+          String(image.path || "")
+            .toLowerCase()
+            .includes(needle) ||
+          String(image.variant_id || "")
+            .toLowerCase()
+            .includes(needle) ||
+          variantName.includes(needle) ||
+          variantCode.includes(needle) ||
+          productName.includes(needle)
+        );
+      });
+    }
   }
 
   if (filters.variant_id) {
@@ -70,10 +75,40 @@ export function useImages() {
 }
 
 export function useImageDetail(id: string) {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: QUERY_KEYS.IMAGE_DETAIL(id),
-    queryFn: () => imageService.getById(id),
+    queryFn: async () => {
+      const cachedEntries = queryClient.getQueriesData({
+        queryKey: QUERY_KEYS.IMAGES,
+      });
+      const cachedImages = cachedEntries
+        .flatMap(([, data]) => (Array.isArray(data) ? data : []))
+        .filter(Boolean);
+      const cachedMatch = cachedImages.find(
+        (image) => String(image.id) === String(id),
+      );
+      if (cachedMatch) {
+        return cachedMatch;
+      }
+
+      const images = await imageService.getAll();
+      return (
+        images.find((image) => String(image.id) === String(id)) ?? null
+      );
+    },
     enabled: !!id,
+  });
+}
+
+export function useImageBlob(id?: string) {
+  return useQuery({
+    queryKey: ["image-blob", id],
+    queryFn: () => imageService.getBlobById(id!),
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -82,7 +117,7 @@ export function useCreateImage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateImagePayload) => imageService.create(data),
+    mutationFn: (data: CreateImagePayload) => adminImageService.create(data),
     onSuccess: () => {
       toast.success("Tạo ảnh thành công!");
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.IMAGES });
@@ -98,13 +133,13 @@ export function useDeleteImage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => imageService.remove(id),
+    mutationFn: (id: string) => adminImageService.remove(id),
     onSuccess: () => {
-      toast.success("Xóa ảnh thành công!");
+      toast.success("Xoá ảnh thành công!");
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.IMAGES });
     },
     onError: (error: any) => {
-      toast.error(error?.message || "Xóa ảnh thất bại");
+      toast.error(error?.message || "Xoá ảnh thất bại");
     },
   });
 }

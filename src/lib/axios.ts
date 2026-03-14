@@ -11,7 +11,7 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
   timeout: 15_000, //15s timeout
-  withCredentials: true, // cho phép gửi cookie (refresh token) trong các request
+  withCredentials: true, // cho phÃ©p gá»­i cookie (refresh token) trong cÃ¡c request
 });
 
 //request Interceptor: attach token
@@ -66,7 +66,7 @@ apiClient.interceptors.response.use(
     const notAuthReqs = !originalRequest.url?.includes("auth");
     const is401 = error.response?.status === 401;
     const notRetriedYet = !originalRequest._retry;
-    // tránh loop vô hạn
+    // trÃ¡nh loop vÃ´ háº¡n
     if (is401 && notAuthReqs && notRetriedYet) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -101,7 +101,7 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         proccessQueue(refreshError, null);
         useAuthStore.getState().clearAuth();
-        toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại");
+        toast.error("PhiÃªn Ä‘Äƒng nháº­p Ä‘Ã£ háº¿t háº¡n, vui lÃ²ng Ä‘Äƒng nháº­p láº¡i");
         window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
@@ -111,10 +111,11 @@ apiClient.interceptors.response.use(
     const message =
       error.response?.data?.message ??
       error.message ??
-      "Đã có lỗi xảy ra, vui lòng thử lại"; //?? la chap nhan cho rong, rong thi chay qua cai sau
+      "ÄÃ£ cÃ³ lá»—i xáº£y ra, vui lÃ²ng thá»­ láº¡i"; //?? la chap nhan cho rong, rong thi chay qua cai sau
     error.message = message;
     const isLogoutEndpoint = originalRequest.url?.includes("/auth/logout");
-    if (!isLogoutEndpoint) {
+    const skipToast = originalRequest?.skipToast;
+    if (!isLogoutEndpoint && !skipToast) {
       toast.error(message);
     }
     return Promise.reject(error);

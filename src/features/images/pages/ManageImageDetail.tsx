@@ -3,10 +3,11 @@ import {
   ArrowLeft,
   ExternalLink,
   Image as ImageIcon,
+  Loader2,
   Package,
 } from "lucide-react";
 
-import { useImageDetail } from "@/features/images/hooks/useImages";
+import { useImageDetail } from "../hooks/useImages";
 import { Button } from "@/shared/components/ui/button";
 import {
   Card,
@@ -15,26 +16,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import { LoadingSpinner } from "@/shared/components/common";
+import { ImagePreview } from "../components/ImagePreview";
 
 export default function ManageImageDetail() {
-  const { id = "" } = useParams();
-  const { data: image, isLoading } = useImageDetail(id);
+  const { id } = useParams<{ id: string }>();
+  const { data: image, isLoading } = useImageDetail(id || "");
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   if (!image) {
     return (
-      <div className="space-y-4">
-        <Button variant="ghost" size="sm" asChild>
-          <Link to="/admin/images">
-            <ArrowLeft className="mr-1 h-4 w-4" />
-            Quay lại danh sách
-          </Link>
+      <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
+        <p className="text-muted-foreground">Không tìm thấy ảnh.</p>
+        <Button asChild>
+          <Link to="/admin/images">Quay lại danh sách</Link>
         </Button>
-        <p className="text-sm text-muted-foreground">Không tìm thấy ảnh.</p>
       </div>
     );
   }
@@ -65,10 +67,12 @@ export default function ManageImageDetail() {
           </CardHeader>
           <CardContent>
             <div className="overflow-hidden rounded-lg border bg-muted">
-              <img
-                src={image.path}
+              <ImagePreview
+                id={image.id}
+                path={image.path}
                 alt={image.variant?.name || image.id}
                 className="h-full w-full object-contain"
+                placeholderClassName="h-10 w-10 text-muted-foreground"
               />
             </div>
           </CardContent>

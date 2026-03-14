@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
-import { ImageForm } from "@/features/images/components/ImageForm";
-import { useCreateImage } from "@/features/images/hooks/useImages";
-import type { CreateImagePayload } from "@/features/images/types";
 import { Button } from "@/shared/components/ui/button";
+import { ImageForm } from "../components/ImageForm";
+import { useCreateImage } from "../hooks/useImages";
+import type { CreateImagePayload } from "../types";
 
-export default function ManageImageCreate() {
+export function ManageImageCreate() {
   const { mutate: createImage, isPending } = useCreateImage();
 
   const handleSubmit = (data: CreateImagePayload) => {
@@ -14,7 +14,7 @@ export default function ManageImageCreate() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-2xl">
       <Button variant="ghost" size="sm" asChild className="mb-6">
         <Link to="/admin/images">
           <ArrowLeft className="mr-1 h-4 w-4" />
@@ -32,3 +32,5 @@ export default function ManageImageCreate() {
     </div>
   );
 }
+
+export default ManageImageCreate;

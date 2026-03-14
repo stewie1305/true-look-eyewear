@@ -3,8 +3,8 @@ import { Loader2, Image as ImageIcon, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
-import { useImageVariantOptions } from "@/features/images/hooks/useImages";
-import type { CreateImagePayload } from "@/features/images/types";
+import { useImageVariantOptions } from "../hooks/useImages";
+import type { CreateImagePayload } from "../types";
 import { Button } from "@/shared/components/ui/button";
 import {
   Card,
