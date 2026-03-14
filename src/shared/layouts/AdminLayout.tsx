@@ -15,6 +15,7 @@ import {
   ChartNoAxesCombined,
   ClipboardList,
   Truck,
+  MessageSquare,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
@@ -89,6 +90,12 @@ const navigation: Array<{
     href: "/admin/orders",
     icon: ClipboardList,
     allowedRoles: ADMIN_PAGE_ACCESS["/admin/orders"],
+  },
+  {
+    name: "Hỗ trợ Khách hàng",
+    href: "/admin/support",
+    icon: MessageSquare,
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/support"],
   },
   {
     name: "Đơn giao Nhanh.vn",

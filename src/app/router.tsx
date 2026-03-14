@@ -471,10 +471,6 @@ export const router = createBrowserRouter([
             allowedRoles={ADMIN_PAGE_ACCESS["/admin/shipping-orders"]}
           >
             <Navigate to="/admin/shipping-orders/create" replace />
-        path: "support",
-        element: (
-          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/support"]}>
-            <ManageSupportList />
           </ProtectedRoute>
         ),
       },
@@ -495,6 +491,18 @@ export const router = createBrowserRouter([
             allowedRoles={ADMIN_PAGE_ACCESS["/admin/shipping-orders"]}
           >
             <ManageShippingLookupOrdersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "support",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/support"]}>
+            <ManageSupportList />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "support/:ticketId",
         element: (
           <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/support"]}>
