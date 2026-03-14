@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { LoadingSpinner } from "@/shared/components/common";
 import { cn } from "@/lib/utils";
-import { useSendMessage, useSupportMessages } from "../hooks/useSupport";
+import { useSupportMessages } from "../hooks/useSupport";
+import { useSupportSocket } from "../hooks/useSupportSocket";
 import type { SupportMessage } from "../types";
 
 interface SupportChatBoxProps {
@@ -59,23 +61,59 @@ export default function SupportChatBox({
   currentUserId,
 }: SupportChatBoxProps) {
   const [text, setText] = useState("");
+  const [chatMessages, setChatMessages] = useState<SupportMessage[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { data: messages = [], isLoading } = useSupportMessages(ticketId);
-  const { mutate: sendMessage, isPending } = useSendMessage(ticketId);
+
+  useEffect(() => {
+    setChatMessages(messages);
+  }, [messages]);
+
+  const handleIncomingMessage = useCallback((incoming: SupportMessage) => {
+    setChatMessages((prev) => {
+      if (prev.some((msg) => msg.id === incoming.id)) return prev;
+      return [...prev, incoming];
+    });
+  }, []);
+
+  const { isConnected, sendMessageSocket } = useSupportSocket({
+    ticketId,
+    currentUserId,
+    onMessage: handleIncomingMessage,
+  });
 
   // Tự cuộn xuống cuối khi có tin nhắn mới
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [chatMessages]);
 
   const handleSend = () => {
     const trimmed = text.trim();
-    if (!trimmed || isPending) return;
-    sendMessage(
-      { ticketId, message: trimmed },
-      { onSuccess: () => setText("") },
-    );
+    if (!trimmed) return;
+
+    const optimisticMessage: SupportMessage = {
+      id: -Date.now(),
+      ticketId,
+      senderId: currentUserId,
+      senderRole: "CUSTOMER",
+      message: trimmed,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+      ticket: "",
+    };
+
+    setChatMessages((prev) => [...prev, optimisticMessage]);
+    setText("");
+
+    const sent = sendMessageSocket(trimmed);
+    if (!sent) {
+      setChatMessages((prev) =>
+        prev.filter((msg) => msg.id !== optimisticMessage.id),
+      );
+      toast.error("Mất kết nối chat realtime. Vui lòng thử lại.");
+      return;
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -93,12 +131,12 @@ export default function SupportChatBox({
     <div className="flex h-full flex-col">
       {/* Danh sách tin nhắn */}
       <div className="flex-1 overflow-y-auto space-y-3 p-4">
-        {messages.length === 0 ? (
+        {chatMessages.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground pt-10">
             Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!
           </p>
         ) : (
-          messages.map((msg) => (
+          chatMessages.map((msg) => (
             <MessageBubble
               key={msg.id}
               msg={msg}
@@ -116,21 +154,17 @@ export default function SupportChatBox({
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Nhập tin nhắn..."
-          disabled={isPending}
           className="flex-1"
         />
-        <Button
-          size="icon"
-          onClick={handleSend}
-          disabled={!text.trim() || isPending}
-        >
-          {isPending ? (
-            <LoadingSpinner size="sm" />
-          ) : (
-            <Send className="h-4 w-4" />
-          )}
+        <Button size="icon" onClick={handleSend} disabled={!text.trim()}>
+          <Send className="h-4 w-4" />
         </Button>
       </div>
+      {!isConnected && (
+        <p className="px-3 pb-2 text-xs text-muted-foreground">
+          Đang kết nối realtime...
+        </p>
+      )}
     </div>
   );
 }

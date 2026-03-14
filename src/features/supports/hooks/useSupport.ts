@@ -24,7 +24,7 @@ export function useSupportMessages(ticketId: number | undefined) {
     queryKey: QUERY_KEYS.SUPPORT_MESSAGES(ticketId ?? 0),
     queryFn: () => supportService.getMessages(ticketId!),
     enabled: Boolean(ticketId),
-    refetchInterval: 5000, // polling mỗi 5 giây để nhận tin nhắn mới
+    refetchInterval: 4000,
   });
 }
 
