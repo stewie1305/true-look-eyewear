@@ -35,6 +35,7 @@ export const OPERATIONS_ROLES: UserRole[] = [
 export const ADMIN_PAGE_ACCESS: Record<string, UserRole[]> = {
   "/admin": ADMIN_PANEL_ROLES,
   "/admin/products": PRODUCT_MANAGEMENT_ROLES,
+  "/admin/images": ADMIN_PANEL_ROLES,
   "/admin/brands": MANAGER_ROLES,
   "/admin/categories": MANAGER_ROLES,
   "/admin/frame-specs": OPERATIONS_ROLES,

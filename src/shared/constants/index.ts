@@ -12,6 +12,10 @@ export const API_ENDPOINTS = {
   PRODUCTS: {
     BASE: "/product-variants",
   },
+  IMAGES: {
+    BASE: "/images",
+    UPLOAD: "/images/upload",
+  },
   BRANDS: {
     BASE: "/brands",
   },
@@ -89,6 +93,8 @@ export const API_ENDPOINTS = {
 export const QUERY_KEYS = {
   PRODUCTS: ["products"],
   PRODUCT_DETAIL: (id: string) => ["products", id],
+  IMAGES: ["images"],
+  IMAGE_DETAIL: (id: string) => ["images", id],
   BRANDS: ["brands"],
   BRAND_DETAIL: (id: string) => ["brands", id],
   CATEGORIES: ["categories"],
