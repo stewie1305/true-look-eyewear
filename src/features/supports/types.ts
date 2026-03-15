@@ -1,6 +1,6 @@
 export interface SupportMessage {
-  id: number;
-  ticketId: number;
+  id: string | number;
+  ticketId: string | number;
   senderId: string;
   senderRole: string;
   message: string;
@@ -10,7 +10,7 @@ export interface SupportMessage {
 }
 
 export interface SupportTicket {
-  id: number;
+  id: string | number;
   orderId: string;
   customerId: string;
   status: string;
@@ -19,6 +19,6 @@ export interface SupportTicket {
 }
 
 export interface SendMessageDto {
-  ticketId: number;
+  ticketId: string | number;
   message: string;
 }

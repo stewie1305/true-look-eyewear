@@ -82,10 +82,10 @@ export const API_ENDPOINTS = {
     WEBHOOK: "/payments/webhook",
   },
   SUPPORT: {
-    TICKETS: "/support/tickets",
+    TICKETS: "/support",
     TICKET: (orderId: string, customerId: string) =>
       `/support/tickets/${orderId}/${customerId}`,
-    MESSAGES: (ticketId: number) => `/support/messages/${ticketId}`,
+    MESSAGES: (ticketId: string | number) => `/support/messages/${ticketId}`,
     SEND_MESSAGE: "/support/messages",
   },
 };
@@ -144,5 +144,8 @@ export const QUERY_KEYS = {
     orderId,
     customerId,
   ],
-  SUPPORT_MESSAGES: (ticketId: number) => ["support-messages", ticketId],
+  SUPPORT_MESSAGES: (ticketId: string | number) => [
+    "support-messages",
+    String(ticketId),
+  ],
 };

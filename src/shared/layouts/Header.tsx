@@ -26,11 +26,11 @@ const Header = () => {
         "transition-all duration-200",
       )}
     >
-      <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4">
+      <div className="max-w-7xl mx-auto flex h-16 items-center gap-4 px-4">
         {/* ================= LOGO ================= */}
         <Link
           to="/"
-          className="flex flex-col leading-none hover:opacity-80 transition"
+          className="shrink-0 flex flex-col leading-none hover:opacity-80 transition"
         >
           {/* Main Brand */}
           <div
@@ -41,10 +41,10 @@ const Header = () => {
             {/* OO thành kính */}
             <span className="relative flex items-center mx-1">
               <span className="w-5 h-5 border border-current rounded-full"></span>
-              <span className="w-5 h-5 border border-current rounded-full -ml-[4px]"></span>
+              <span className="w-5 h-5 border border-current rounded-full -ml-1"></span>
 
               {/* Bridge */}
-              <span className="absolute w-3 h-[1px] bg-current left-1/2 -translate-x-1/2"></span>
+              <span className="absolute w-3 h-px bg-current left-1/2 -translate-x-1/2"></span>
             </span>
             K
           </div>
@@ -59,11 +59,11 @@ const Header = () => {
         </Link>
 
         {/* ================= NAVIGATION ================= */}
-        <nav className="flex items-center gap-1">
+        <nav className="ml-auto flex min-w-0 items-center gap-0.5">
           <Link
             to="/"
             className={cn(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              "shrink-0 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-all",
               isActive("/")
                 ? "bg-primary/10 text-primary underline underline-offset-4"
                 : "text-foreground hover:text-primary hover:bg-muted",
@@ -75,7 +75,7 @@ const Header = () => {
           <Link
             to="/products"
             className={cn(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              "shrink-0 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-all",
               isActive("/products")
                 ? "bg-primary/10 text-primary underline underline-offset-4"
                 : "text-foreground hover:text-primary hover:bg-muted",
@@ -88,7 +88,7 @@ const Header = () => {
             <Link
               to="/profile"
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                "shrink-0 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-all",
                 isActive("/profile")
                   ? "bg-primary/10 text-primary underline underline-offset-4"
                   : "text-foreground hover:text-primary hover:bg-muted",
@@ -102,7 +102,7 @@ const Header = () => {
             <Link
               to="/orders"
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                "shrink-0 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-all",
                 isActive("/orders")
                   ? "bg-primary/10 text-primary underline underline-offset-4"
                   : "text-foreground hover:text-primary hover:bg-muted",
@@ -127,7 +127,7 @@ const Header = () => {
           ) : (
             <button
               onClick={() => logoutMutation.mutate()}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-all"
+              className="shrink-0 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-all"
             >
               Logout
             </button>

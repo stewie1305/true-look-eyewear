@@ -56,7 +56,7 @@ export default function SupportChatPage() {
       </Button>
 
       {/* Header */}
-      <Card>
+      <Card className="border-border/70 bg-card/90 backdrop-blur-sm">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <MessageCircle className="h-5 w-5 text-primary" />
@@ -70,7 +70,7 @@ export default function SupportChatPage() {
       </Card>
 
       {/* Chat box */}
-      <Card className="h-130 flex flex-col overflow-hidden">
+      <Card className="flex h-[68vh] min-h-115 max-h-190 flex-col overflow-hidden border-border/70 bg-card/95 shadow-lg">
         <CardContent className="flex-1 p-0 overflow-hidden">
           {ticket ? (
             <SupportChatBox ticketId={ticket.id} currentUserId={customerId} />

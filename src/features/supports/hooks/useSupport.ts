@@ -19,9 +19,9 @@ export function useSupportTicket(orderId: string, customerId: string) {
 /**
  * Hook lấy toàn bộ tin nhắn của một ticket
  */
-export function useSupportMessages(ticketId: number | undefined) {
+export function useSupportMessages(ticketId: string | number | undefined) {
   return useQuery({
-    queryKey: QUERY_KEYS.SUPPORT_MESSAGES(ticketId ?? 0),
+    queryKey: QUERY_KEYS.SUPPORT_MESSAGES(ticketId ?? ""),
     queryFn: () => supportService.getMessages(ticketId!),
     enabled: Boolean(ticketId),
     refetchInterval: 4000,
@@ -43,14 +43,14 @@ export function useAllSupportTickets() {
 /**
  * Hook gửi tin nhắn vào một ticket
  */
-export function useSendMessage(ticketId: number | undefined) {
+export function useSendMessage(ticketId: string | number | undefined) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (dto: SendMessageDto) => supportService.sendMessage(dto),
     onSuccess: () => {
       void queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.SUPPORT_MESSAGES(ticketId ?? 0),
+        queryKey: QUERY_KEYS.SUPPORT_MESSAGES(ticketId ?? ""),
       });
     },
     onError: () => {

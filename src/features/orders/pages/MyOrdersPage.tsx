@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ClipboardList } from "lucide-react";
 
@@ -23,32 +22,14 @@ const statusVariant: Record<
 export default function MyOrdersPage() {
   const { data: currentUser, isLoading: isLoadingUser } = useUserMe();
   const { orders, isLoading } = useMyOrders(currentUser?.id);
-  const canceledOrderIds = useMemo(() => {
-    try {
-      const raw = localStorage.getItem("canceled_bank_order_ids");
-      const parsed = raw ? (JSON.parse(raw) as unknown) : [];
-      return Array.isArray(parsed)
-        ? parsed.map((id) => String(id))
-        : ([] as string[]);
-    } catch {
-      return [] as string[];
-    }
-  }, []);
+  const displayOrders = orders.filter((order) => {
+    const normalizedStatus = String(order.status || "pending").toLowerCase();
+    const isCanceledByStatus = ["cancel", "cancelled", "canceled"].includes(
+      normalizedStatus,
+    );
 
-  const displayOrders = useMemo(
-    () =>
-      orders.filter((order) => {
-        const isCanceledByLocal = canceledOrderIds.includes(String(order.id));
-        const normalizedStatus = String(order.status || "").toLowerCase();
-        const hasValidStatus = normalizedStatus.length > 0;
-        const isCanceledByStatus = ["cancel", "cancelled", "canceled"].includes(
-          normalizedStatus,
-        );
-
-        return hasValidStatus && !isCanceledByLocal && !isCanceledByStatus;
-      }),
-    [canceledOrderIds, orders],
-  );
+    return !isCanceledByStatus;
+  });
 
   if (isLoadingUser || isLoading) {
     return <LoadingSpinner className="py-20" size="lg" />;
