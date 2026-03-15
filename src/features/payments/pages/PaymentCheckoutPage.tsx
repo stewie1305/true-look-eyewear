@@ -353,7 +353,7 @@ export default function PaymentCheckoutPage() {
           </CardHeader>
           <CardContent className="space-y-5">
             {checkoutResult.qrCode ? (
-              <div className="mx-auto w-fit rounded-lg border bg-white p-3">
+              <div className="mx-auto w-fit rounded-lg border bg-card p-3">
                 <img
                   src={getQrImageSrc(checkoutResult.qrCode)}
                   alt="QR thanh toán"
@@ -379,7 +379,7 @@ export default function PaymentCheckoutPage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Giảm giá</span>
-                  <span className="font-medium text-green-600">
+                  <span className="font-medium text-primary">
                     -
                     {Number(checkoutResult.discount || 0).toLocaleString(
                       "vi-VN",
@@ -557,14 +557,14 @@ export default function PaymentCheckoutPage() {
                     Đang áp dụng: {selectedPromotion.name}
                   </Badge>
                   {!isPromotionEligible && (
-                    <p className="text-xs text-amber-500">
+                    <p className="text-xs text-destructive">
                       Đơn hàng chưa đạt mức tối thiểu{" "}
                       {promotionRequirement.toLocaleString("vi-VN")}đ, hiện tại
                       là {subtotal.toLocaleString("vi-VN")}đ.
                     </p>
                   )}
                   {isPromotionEligible && (
-                    <p className="text-xs text-emerald-500">
+                    <p className="text-xs text-primary">
                       Ước tính giảm {estimatedDiscount.toLocaleString("vi-VN")}đ
                       cho đơn này.
                     </p>
@@ -644,9 +644,7 @@ export default function PaymentCheckoutPage() {
                   <span className="text-muted-foreground">Giảm giá</span>
                   <span
                     className={
-                      estimatedDiscount > 0
-                        ? "text-emerald-500 font-medium"
-                        : ""
+                      estimatedDiscount > 0 ? "text-primary font-medium" : ""
                     }
                   >
                     -{estimatedDiscount.toLocaleString("vi-VN")}đ
@@ -681,7 +679,7 @@ export default function PaymentCheckoutPage() {
               {!defaultOrderId &&
                 shippingFeeQuery.isError &&
                 selectedAddress && (
-                  <p className="text-xs text-amber-500">
+                  <p className="text-xs text-destructive">
                     Chưa tính được phí ship tự động cho địa chỉ này.
                   </p>
                 )}

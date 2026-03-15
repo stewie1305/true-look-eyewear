@@ -105,7 +105,7 @@ function EyewearShowcase({
   };
 
   useFrame(() => {
-    const p = Number(smoothProgress.get()); 
+    const p = Number(smoothProgress.get());
 
     const shifts = [
       0,
@@ -196,7 +196,7 @@ export default function HomePage() {
     if (!prefersReducedMotion) {
       lenis = new Lenis({
         duration: 1.4,
-        lerp: 0.05, 
+        lerp: 0.05,
         smoothWheel: true,
         wheelMultiplier: 0.9,
       });
@@ -285,14 +285,15 @@ export default function HomePage() {
       </AnimatePresence>
 
       {/* 1. HERO */}
-      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-background">
         <motion.img
           style={{ scale: useTransform(globalScroll, [0, 0.3], [1, 1.15]) }}
           src={ASSETS.hero}
           className="absolute inset-0 w-full h-full object-cover brightness-[0.5] dark:brightness-[0.3]"
           alt=""
         />
-        <h1 className="relative z-10 text-[15vw] font-serif italic text-white drop-shadow-2xl">
+        <div className="absolute inset-0 bg-background/40 dark:bg-background/20" />
+        <h1 className="relative z-10 text-[15vw] font-serif italic text-foreground drop-shadow-2xl">
           True Look
         </h1>
       </section>

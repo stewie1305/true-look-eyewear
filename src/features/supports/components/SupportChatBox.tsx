@@ -269,7 +269,7 @@ export default function SupportChatBox({
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="flex-1 space-y-3 overflow-y-auto p-4 pr-2 scroll-smooth [scrollbar-width:thin] [scrollbar-color:rgba(148,163,184,0.45)_transparent]"
+        className="flex-1 space-y-3 overflow-y-auto p-4 pr-2 scroll-smooth [scrollbar-width:thin]"
       >
         {chatMessages.length === 0 ? (
           <div className="pt-10">

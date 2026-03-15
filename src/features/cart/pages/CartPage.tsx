@@ -350,7 +350,7 @@ export default function CartPage() {
 
       {/* Delete Dialog */}
       {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <Card className="w-full max-w-sm mx-4 p-6 shadow-xl rounded-2xl">
             <div className="flex items-start gap-4 mb-5">
               {/* Icon */}

@@ -16,6 +16,7 @@ import { useProductDetail } from "../hooks/useProducts";
 import { useImageBlobUrl } from "@/features/images/hooks/useImages";
 import type { ProductVariant, VariantImage } from "../types";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
+import { cn } from "@/lib/utils";
 
 // Component con load blob URL cho từng ảnh riêng lẻ
 function ImageBlobImg({
@@ -37,16 +38,12 @@ function ImageBlobImg({
     <img
       src={blobUrl}
       alt={alt}
-      className={className}
+      className={cn(
+        className,
+        (selected || onClick) && "cursor-pointer",
+        selected && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+      )}
       onClick={onClick}
-      style={
-        selected !== undefined
-          ? {
-              outline: selected ? "2px solid hsl(var(--primary))" : "none",
-              cursor: "pointer",
-            }
-          : undefined
-      }
     />
   );
 }
@@ -243,7 +240,7 @@ export function ProductDetail() {
               <span className="text-sm font-medium">Tồn kho:</span>
               <span
                 className={
-                  variant.quantity > 0 ? "text-green-600" : "text-red-600"
+                  variant.quantity > 0 ? "text-primary" : "text-destructive"
                 }
               >
                 {variant.quantity > 0 ? `${variant.quantity} cái` : "Hết hàng"}

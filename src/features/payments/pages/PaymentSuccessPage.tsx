@@ -69,7 +69,7 @@ export default function PaymentSuccessPage() {
     <div className="container mx-auto max-w-xl px-4 py-10">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-green-600">
+          <CardTitle className="flex items-center gap-2 text-primary">
             <CheckCircle2 className="h-6 w-6" />
             Thanh toán thành công
           </CardTitle>

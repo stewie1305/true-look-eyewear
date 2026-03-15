@@ -38,7 +38,7 @@ export function LoginForm() {
           className={errors.username ? "border-destructive" : ""}
         />
         {errors.username && (
-          <p className="text-xs text-red-500">{errors.username.message}</p>
+          <p className="text-xs text-destructive">{errors.username.message}</p>
         )}
       </div>
       <div className="space-y-2">
@@ -51,7 +51,7 @@ export function LoginForm() {
           className={errors.password ? "border-destructive" : ""}
         />
         {errors.password && (
-          <p className="text-xs text-red-500">{errors.password.message}</p>
+          <p className="text-xs text-destructive">{errors.password.message}</p>
         )}
         <div className="text-right">
           <Link

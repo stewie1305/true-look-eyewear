@@ -66,6 +66,14 @@ apiClient.interceptors.response.use(
     const notAuthReqs = !originalRequest.url?.includes("auth");
     const is401 = error.response?.status === 401;
     const notRetriedYet = !originalRequest._retry;
+    const accessToken = useAuthStore.getState().accessToken;
+    const hasAuthHeader = Boolean(originalRequest?.headers?.Authorization);
+    const isAuthenticatedRequest = Boolean(accessToken || hasAuthHeader);
+
+    if (is401 && !isAuthenticatedRequest) {
+      return Promise.reject(error);
+    }
+
     // trÃ¡nh loop vÃ´ háº¡n
     if (is401 && notAuthReqs && notRetriedYet) {
       if (isRefreshing) {
@@ -101,7 +109,9 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         proccessQueue(refreshError, null);
         useAuthStore.getState().clearAuth();
-        toast.error("PhiÃªn Ä‘Äƒng nháº­p Ä‘Ã£ háº¿t háº¡n, vui lÃ²ng Ä‘Äƒng nháº­p láº¡i");
+        toast.error(
+          "PhiÃªn Ä‘Äƒng nháº­p Ä‘Ã£ háº¿t háº¡n, vui lÃ²ng Ä‘Äƒng nháº­p láº¡i",
+        );
         window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
@@ -115,7 +125,8 @@ apiClient.interceptors.response.use(
     error.message = message;
     const isLogoutEndpoint = originalRequest.url?.includes("/auth/logout");
     const skipToast = originalRequest?.skipToast;
-    if (!isLogoutEndpoint && !skipToast) {
+    const skip401GuestToast = is401 && !isAuthenticatedRequest;
+    if (!isLogoutEndpoint && !skipToast && !skip401GuestToast) {
       toast.error(message);
     }
     return Promise.reject(error);

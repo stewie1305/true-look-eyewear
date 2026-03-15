@@ -76,7 +76,6 @@ export default function ForgotPasswordPage() {
       return;
     }
 
-
     resetPasswordMutation.mutate({
       email: email.trim(),
       otp: trimmedOtp,
@@ -85,7 +84,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-b from-background to-muted/30 px-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold">
@@ -112,7 +111,7 @@ export default function ForgotPasswordPage() {
                 />
               </div>
 
-              {error && <p className="text-xs text-red-500">{error}</p>}
+              {error && <p className="text-xs text-destructive">{error}</p>}
 
               <Button
                 type="submit"
@@ -187,7 +186,7 @@ export default function ForgotPasswordPage() {
                 />
               </div>
 
-              {error && <p className="text-xs text-red-500">{error}</p>}
+              {error && <p className="text-xs text-destructive">{error}</p>}
 
               <div className="flex gap-2">
                 <Button

@@ -22,7 +22,9 @@ export function ContactLensAxisCard({
   isDeleting = false,
 }: ContactLensAxisCardProps) {
   const getStatusColor = (status: string) => {
-    return status?.toLowerCase() === "active" ? "bg-green-100" : "bg-red-100";
+    return status?.toLowerCase() === "active"
+      ? "border-primary/20 bg-primary/10 text-primary"
+      : "border-destructive/20 bg-destructive/10 text-destructive";
   };
 
   return (

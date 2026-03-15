@@ -9,10 +9,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/shared/components/ui/label";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
-import { Link, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function RegisterForm() {
-
   //React query mutation
   const registerMutation = useRegisterMutation();
 
@@ -136,7 +136,7 @@ export function RegisterForm() {
           <option value="F">Nữ</option>
         </select>
         {errors.gender && (
-          <p className="text-red-500 text-xs">{errors.gender.message}</p>
+          <p className="text-destructive text-xs">{errors.gender.message}</p>
         )}
       </div>
       {/* BIRTHDAY */}
@@ -144,7 +144,7 @@ export function RegisterForm() {
         <Label htmlFor="birthday">Ngày sinh</Label>
         <Input id="birthday" type="date" {...register("birthday")} />
         {errors.birthday && (
-          <p className="text-red-500 text-xs">{errors.birthday.message}</p>
+          <p className="text-destructive text-xs">{errors.birthday.message}</p>
         )}
       </div>
       <Button
