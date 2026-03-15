@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -93,9 +93,7 @@ export function useImageDetail(id: string) {
       }
 
       const images = await imageService.getAll();
-      return (
-        images.find((image) => String(image.id) === String(id)) ?? null
-      );
+      return images.find((image) => String(image.id) === String(id)) ?? null;
     },
     enabled: !!id,
   });
@@ -162,4 +160,40 @@ export function useImageVariantOptions() {
     isLoading: query.isLoading,
     error: query.error,
   };
+}
+
+/**
+ * Fetch ảnh qua API có auth (GET /images/:id yêu cầu JWT)
+ * Trả về blob URL để dùng trong <img src>
+ */
+export function useImageBlobUrl(imageId?: string | null): string {
+  const [blobUrl, setBlobUrl] = useState("");
+
+  useEffect(() => {
+    if (!imageId) {
+      setBlobUrl("");
+      return;
+    }
+
+    let active = true;
+    let currentUrl = "";
+
+    imageService
+      .getBlobById(imageId)
+      .then((blob) => {
+        if (!active) return;
+        currentUrl = URL.createObjectURL(blob);
+        setBlobUrl(currentUrl);
+      })
+      .catch(() => {
+        if (active) setBlobUrl("");
+      });
+
+    return () => {
+      active = false;
+      if (currentUrl) URL.revokeObjectURL(currentUrl);
+    };
+  }, [imageId]);
+
+  return blobUrl;
 }

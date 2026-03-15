@@ -9,6 +9,7 @@ import {
 } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
+import { useImageBlobUrl } from "@/features/images/hooks/useImages";
 import type { Product } from "../types";
 import { Tag, ImageOff } from "lucide-react";
 
@@ -20,14 +21,15 @@ export function ProductCard({ product }: ProductCardProps) {
   const firstCategory = product.categories?.[0];
   const frameSpec = product.specs?.frame_specs?.[0];
   const productImage = product.images?.[0];
+  const imageSrc = useImageBlobUrl(productImage?.id);
 
   return (
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
       {/* Product Image */}
       <div className="relative aspect-square overflow-hidden bg-muted">
-        {productImage?.path ? (
+        {imageSrc ? (
           <img
-            src={productImage.path}
+            src={imageSrc}
             alt={product.name}
             className="h-full w-full object-cover transition-transform group-hover:scale-105"
           />

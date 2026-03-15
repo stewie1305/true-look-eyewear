@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
   Glasses,
   Package,
   Palette,
@@ -10,14 +13,137 @@ import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import { LoadingSpinner, EmptyState } from "@/shared/components/common";
 import { useProductDetail } from "../hooks/useProducts";
-import type { ProductVariant } from "../types";
+import { useImageBlobUrl } from "@/features/images/hooks/useImages";
+import type { ProductVariant, VariantImage } from "../types";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
+
+// Component con load blob URL cho từng ảnh riêng lẻ
+function ImageBlobImg({
+  imageId,
+  alt,
+  className,
+  onClick,
+  selected,
+}: {
+  imageId: string;
+  alt: string;
+  className?: string;
+  onClick?: () => void;
+  selected?: boolean;
+}) {
+  const blobUrl = useImageBlobUrl(imageId);
+  if (!blobUrl) return null;
+  return (
+    <img
+      src={blobUrl}
+      alt={alt}
+      className={className}
+      onClick={onClick}
+      style={
+        selected !== undefined
+          ? {
+              outline: selected ? "2px solid hsl(var(--primary))" : "none",
+              cursor: "pointer",
+            }
+          : undefined
+      }
+    />
+  );
+}
+
+// Gallery: ảnh lớn + thumbnail strip
+function ProductImageGallery({
+  images,
+  name,
+}: {
+  images: VariantImage[];
+  name: string;
+}) {
+  const [selectedIdx, setSelectedIdx] = useState(0);
+  const selectedImage = images[selectedIdx];
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* Ảnh chính + nút prev/next */}
+      <div className="relative flex items-center justify-center rounded-lg bg-muted p-8 min-h-64">
+        {selectedImage ? (
+          <ImageBlobImg
+            imageId={selectedImage.id}
+            alt={name}
+            className="max-h-96 w-full object-contain"
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center gap-2 py-20 text-muted-foreground">
+            <Glasses className="h-16 w-16" />
+            <p>Không có hình ảnh</p>
+          </div>
+        )}
+
+        {/* Prev / Next buttons */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={() =>
+                setSelectedIdx((i) => (i - 1 + images.length) % images.length)
+              }
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-1.5 shadow hover:bg-background transition"
+              aria-label="Ảnh trước"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => setSelectedIdx((i) => (i + 1) % images.length)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-1.5 shadow hover:bg-background transition"
+              aria-label="Ảnh sau"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+            {/* Dot indicators */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {images.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedIdx(idx)}
+                  className={`h-1.5 rounded-full transition-all ${idx === selectedIdx ? "w-4 bg-primary" : "w-1.5 bg-muted-foreground/40"}`}
+                  aria-label={`Ảnh ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Thumbnail strip — chỉ hiện nếu có > 1 ảnh */}
+      {images.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {images.map((img, idx) => (
+            <div
+              key={img.id}
+              className={`shrink-0 w-16 h-16 rounded-md overflow-hidden bg-muted border-2 transition-colors ${
+                idx === selectedIdx ? "border-primary" : "border-transparent"
+              }`}
+            >
+              <ImageBlobImg
+                imageId={img.id}
+                alt={`${name} ${idx + 1}`}
+                className="w-full h-full object-cover"
+                onClick={() => setSelectedIdx(idx)}
+                selected={idx === selectedIdx}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data, isLoading, error } = useProductDetail(id || "");
-  const variant = data as ProductVariant | undefined;
+  const rawData = data as ProductVariant | ProductVariant[] | undefined;
+  const variant = Array.isArray(rawData) ? rawData[0] : rawData;
   const isActive = String(variant?.status || "").toLowerCase() === "active";
 
   const handleBackToPrevious = () => {
@@ -27,6 +153,8 @@ export function ProductDetail() {
     }
     navigate("/products");
   };
+
+  const variantImages = variant?.images ?? [];
 
   if (isLoading) return <LoadingSpinner className="py-20" size="lg" />;
 
@@ -48,7 +176,6 @@ export function ProductDetail() {
   }
 
   const product = variant.product;
-  const variantImage = variant.images?.[0];
   const frameSpec = product.specs?.frame_specs?.[0];
   const price = parseFloat(variant.price).toLocaleString("vi-VN");
 
@@ -66,21 +193,8 @@ export function ProductDetail() {
       </Button>
 
       <div className="grid gap-8 md:grid-cols-2">
-        {/* Product Image */}
-        <div className="flex items-center justify-center rounded-lg bg-muted p-8">
-          {variantImage?.path ? (
-            <img
-              src={variantImage.path}
-              alt={variant.name}
-              className="max-h-96 w-full object-contain"
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center gap-2 py-20 text-muted-foreground">
-              <Glasses className="h-16 w-16" />
-              <p>Không có hình ảnh</p>
-            </div>
-          )}
-        </div>
+        {/* Product Images */}
+        <ProductImageGallery images={variantImages} name={variant.name} />
 
         {/* Product Info */}
         <div className="space-y-6">
