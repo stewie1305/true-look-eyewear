@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Image as ImageIcon } from "lucide-react";
 
 import { useImageBlob } from "../hooks/useImages";
-import { env } from "@/lib/env";
+import { getImageUrl } from "@/lib/env";
 
 interface ImagePreviewProps {
   id?: string;
@@ -11,16 +11,6 @@ interface ImagePreviewProps {
   className?: string;
   placeholderClassName?: string;
 }
-
-const resolveImagePath = (path?: string) => {
-  if (!path) return "";
-  if (path.startsWith("http") || path.startsWith("data:")) {
-    return path;
-  }
-  const base = env.API_URL.replace(/\/+$/, "");
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  return `${base}${cleanPath}`;
-};
 
 export function ImagePreview({
   id,
@@ -55,7 +45,7 @@ export function ImagePreview({
     };
   }, [blob]);
 
-  const fallbackSrc = useMemo(() => resolveImagePath(path), [path]);
+  const fallbackSrc = useMemo(() => getImageUrl(path), [path]);
   const shouldUseFallback = isError || blobValid === false;
   const src = objectUrl || (shouldUseFallback ? fallbackSrc : "");
 

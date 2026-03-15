@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import type { Product } from "../types";
+import { getImageUrl } from "@/lib/env";
 import { Tag, ImageOff } from "lucide-react";
 
 interface ProductCardProps {
@@ -27,7 +28,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="relative aspect-square overflow-hidden bg-muted">
         {productImage?.path ? (
           <img
-            src={productImage.path}
+            src={getImageUrl(productImage.path)}
             alt={product.name}
             className="h-full w-full object-cover transition-transform group-hover:scale-105"
           />

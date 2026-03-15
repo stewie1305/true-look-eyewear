@@ -1,17 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Glasses,
-  Package,
-  Palette,
-  Package2,
-} from "lucide-react";
+import { ArrowLeft, Glasses, Package, Palette, Package2 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import { LoadingSpinner, EmptyState } from "@/shared/components/common";
 import { useProductDetail } from "../hooks/useProducts";
 import type { ProductVariant } from "../types";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
+import { ImagePreview } from "@/features/images/components/ImagePreview";
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -69,10 +64,12 @@ export function ProductDetail() {
         {/* Product Image */}
         <div className="flex items-center justify-center rounded-lg bg-muted p-8">
           {variantImage?.path ? (
-            <img
-              src={variantImage.path}
+            <ImagePreview
+              id={variantImage.id}
+              path={variantImage.path}
               alt={variant.name}
               className="max-h-96 w-full object-contain"
+              placeholderClassName="h-10 w-10 text-muted-foreground"
             />
           ) : (
             <div className="flex flex-col items-center justify-center gap-2 py-20 text-muted-foreground">

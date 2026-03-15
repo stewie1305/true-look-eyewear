@@ -7,6 +7,7 @@ import { Badge } from "@/shared/components/ui/badge";
 import { LoadingSpinner, EmptyState } from "@/shared/components/common";
 import { useAddresses } from "@/features/address/hooks/useAddresses";
 import type { Address } from "@/features/address/types";
+import { getImageUrl } from "@/lib/env";
 import {
   useCart,
   useUpdateCartItem,
@@ -205,7 +206,7 @@ export default function CartPage() {
                   <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-muted">
                     {item.variant?.images?.[0]?.path ? (
                       <img
-                        src={item.variant.images[0].path}
+                        src={getImageUrl(item.variant.images[0].path)}
                         alt={item.variant.name}
                         className="h-full w-full object-cover"
                       />

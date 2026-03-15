@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import { ImagePreview } from "../components/ImagePreview";
+import { getImageUrl } from "@/lib/env";
 
 export default function ManageImageDetail() {
   const { id } = useParams<{ id: string }>();
@@ -109,7 +110,7 @@ export default function ManageImageDetail() {
             <div>
               <p className="text-muted-foreground">Đường dẫn</p>
               <a
-                href={image.path}
+                href={getImageUrl(image.path)}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1 break-all text-primary hover:underline"

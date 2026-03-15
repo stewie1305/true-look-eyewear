@@ -9,3 +9,17 @@ if (!API_URL) {
 export const env = {
   API_URL,
 } as const;
+
+export const getImageUrl = (path?: string): string => {
+  if (!path) return "";
+  if (path.startsWith("http") || path.startsWith("data:")) return path;
+  const base = API_URL.replace(/\/+$/, "");
+  const normalizedPath = path
+    .trim()
+    .replace(/^\.\//, "")
+    .replace(/^\/?src\/uploads\//, "uploads/");
+  const cleanPath = normalizedPath.startsWith("/")
+    ? normalizedPath
+    : `/${normalizedPath}`;
+  return `${base}${cleanPath}`;
+};
