@@ -76,6 +76,7 @@ export function useMyOrders(userId?: string) {
     orders,
     isLoading: query.isLoading,
     error: query.error,
+    refetch: query.refetch,
   };
 }
 

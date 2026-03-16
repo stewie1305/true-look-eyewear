@@ -80,6 +80,8 @@ export const API_ENDPOINTS = {
   PAYMENTS: {
     BASE: "/payments",
     WEBHOOK: "/payments/webhook",
+    SUCCESS: "/payments/success",
+    CANCEL: "/payments/cancel",
   },
   SUPPORT: {
     TICKETS: "/support",

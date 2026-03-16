@@ -22,13 +22,17 @@ const statusVariant: Record<
 export default function MyOrdersPage() {
   const { data: currentUser, isLoading: isLoadingUser } = useUserMe();
   const { orders, isLoading } = useMyOrders(currentUser?.id);
-  const displayOrders = orders.filter((order) => {
-    const normalizedStatus = String(order.status || "pending").toLowerCase();
-    const isCanceledByStatus = ["cancel", "cancelled", "canceled"].includes(
+
+  const isUnpaidOrder = (status: string) => {
+    const normalizedStatus = String(status || "pending").toLowerCase();
+    return ["pending", "cancel", "cancelled", "canceled"].includes(
       normalizedStatus,
     );
+  };
 
-    return !isCanceledByStatus;
+  const displayOrders = orders.filter((order) => {
+    const normalizedStatus = String(order.status || "pending").toLowerCase();
+    return !isUnpaidOrder(normalizedStatus);
   });
 
   if (isLoadingUser || isLoading) {

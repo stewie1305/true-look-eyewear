@@ -6,12 +6,35 @@ import { Card } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { LoadingSpinner, EmptyState } from "@/shared/components/common";
 import { useAddresses } from "@/features/address/hooks/useAddresses";
+import { useImageBlobUrl } from "@/features/images/hooks/useImages";
 import type { Address } from "@/features/address/types";
 import {
   useCart,
   useUpdateCartItem,
   useRemoveFromCart,
 } from "../hooks/useCart";
+
+function CartItemImage({
+  imageId,
+  alt,
+}: {
+  imageId?: string | null;
+  alt: string;
+}) {
+  const imageSrc = useImageBlobUrl(imageId);
+
+  if (!imageSrc) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+      </div>
+    );
+  }
+
+  return (
+    <img src={imageSrc} alt={alt} className="h-full w-full object-cover" />
+  );
+}
 
 export default function CartPage() {
   const location = useLocation();
@@ -22,7 +45,7 @@ export default function CartPage() {
   } | null>(null);
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
 
-  const { items, totalItems, totalAmount, isLoading } = useCart();
+  const { items, totalItems, isLoading } = useCart();
   const { addresses, isLoading: isLoadingAddresses } = useAddresses();
   const updateMutation = useUpdateCartItem();
   const removeMutation = useRemoveFromCart();
@@ -203,17 +226,10 @@ export default function CartPage() {
 
                   {/* Image */}
                   <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-muted">
-                    {item.variant?.images?.[0]?.path ? (
-                      <img
-                        src={item.variant.images[0].path}
-                        alt={item.variant.name}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <ShoppingCart className="h-8 w-8 text-muted-foreground" />
-                      </div>
-                    )}
+                    <CartItemImage
+                      imageId={item.variant?.images?.[0]?.id}
+                      alt={item.variant?.name || "Cart item"}
+                    />
                   </div>
 
                   {/* Info */}

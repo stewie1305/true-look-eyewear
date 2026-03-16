@@ -1,4 +1,6 @@
-import { AlertCircle, ReceiptText } from "lucide-react";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { AlertCircle } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/shared/components/ui/button";
@@ -8,16 +10,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
+import { paymentService } from "../services";
 
 export default function PaymentFailedPage() {
   const [searchParams] = useSearchParams();
+  const redirectParams = useMemo(
+    () => Object.fromEntries(searchParams.entries()),
+    [searchParams],
+  );
 
-  const orderId =
-    searchParams.get("orderId") ||
-    searchParams.get("order_id") ||
-    searchParams.get("orderCode") ||
-    searchParams.get("order_code") ||
-    "";
+  useQuery({
+    queryKey: ["payments", "cancel-redirect", redirectParams],
+    queryFn: () => paymentService.getCancelRedirect(redirectParams),
+    enabled: Object.keys(redirectParams).length > 0,
+    retry: false,
+  });
 
   return (
     <div className="container mx-auto max-w-xl px-4 py-10">
@@ -31,33 +38,12 @@ export default function PaymentFailedPage() {
 
         <CardContent className="space-y-5">
           <p className="text-sm text-muted-foreground">
-            Giao dịch đã bị huỷ hoặc chưa hoàn tất. Bạn có thể thử thanh toán
-            lại cho đơn hàng này.
+            Giao dịch đã bị huỷ hoặc chưa hoàn tất.
           </p>
 
-          <div className="rounded-lg border p-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Mã đơn hàng</span>
-              <span className="font-medium">
-                {orderId ? `#${orderId}` : "-"}
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Button asChild>
-              <Link to={orderId ? `/checkout?orderId=${orderId}` : "/checkout"}>
-                Thanh toán lại
-              </Link>
-            </Button>
-
-            <Button variant="outline" asChild>
-              <Link to="/orders">
-                <ReceiptText className="mr-2 h-4 w-4" />
-                Về đơn hàng
-              </Link>
-            </Button>
-          </div>
+          <Button className="w-full" asChild>
+            <Link to="/products">Tiếp tục mua sắm</Link>
+          </Button>
         </CardContent>
       </Card>
     </div>

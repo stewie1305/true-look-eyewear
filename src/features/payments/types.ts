@@ -1,6 +1,3 @@
-
-
-
 export interface CreatePaymentDto {
   orderId: string;
   promotionId?: string;
@@ -18,4 +15,9 @@ export interface PaymentCheckoutResponse {
 export interface PaymentWebhookResponse {
   error: number;
   message: string;
+}
+
+export interface PaymentRedirectResponse {
+  message: string;
+  data?: Record<string, unknown>;
 }
