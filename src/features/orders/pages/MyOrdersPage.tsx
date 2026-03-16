@@ -23,17 +23,7 @@ export default function MyOrdersPage() {
   const { data: currentUser, isLoading: isLoadingUser } = useUserMe();
   const { orders, isLoading } = useMyOrders(currentUser?.id);
 
-  const isUnpaidOrder = (status: string) => {
-    const normalizedStatus = String(status || "pending").toLowerCase();
-    return ["pending", "cancel", "cancelled", "canceled"].includes(
-      normalizedStatus,
-    );
-  };
-
-  const displayOrders = orders.filter((order) => {
-    const normalizedStatus = String(order.status || "pending").toLowerCase();
-    return !isUnpaidOrder(normalizedStatus);
-  });
+  const displayOrders = orders;
 
   if (isLoadingUser || isLoading) {
     return <LoadingSpinner className="py-20" size="lg" />;

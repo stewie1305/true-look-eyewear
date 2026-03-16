@@ -1,73 +1,178 @@
-# React + TypeScript + Vite
+# TRUE LOOK EYEWEAR - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend cho hệ thống bán kính TRUE LOOK, xây bằng React + TypeScript + Vite.
 
-Currently, two official plugins are available:
+## 1) Tổng quan
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Dự án gồm:
 
-## React Compiler
+- Website khách hàng: xem sản phẩm, giỏ hàng, đặt hàng, thanh toán, theo dõi đơn.
+- Trang quản trị: quản lý sản phẩm, ảnh, thương hiệu, danh mục, khuyến mãi, đơn hàng, hỗ trợ, phân quyền, v.v.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 2) Công nghệ sử dụng
 
-## Expanding the ESLint configuration
+- React 19 + TypeScript
+- Vite
+- React Router
+- TanStack Query
+- Axios
+- Zustand
+- React Hook Form + Zod
+- Tailwind CSS
+- Sonner (toast)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 3) Yêu cầu môi trường
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js >= 20
+- npm >= 10
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 4) Cài đặt và chạy dự án
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Cài dependencies
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Cấu hình môi trường
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Tạo file `.env` ở root `true-look-fe`:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_API_URL=http://localhost:3000/
 ```
+
+> Bắt buộc có `VITE_API_URL`, nếu thiếu app sẽ throw lỗi trong runtime.
+
+### Chạy dev
+
+```bash
+npm run dev
+```
+
+### Build production
+
+```bash
+npm run build
+```
+
+### Preview bản build
+
+```bash
+npm run preview
+```
+
+### Lint
+
+```bash
+npm run lint
+```
+
+## 5) Scripts chính
+
+- `npm run dev`: chạy local dev server
+- `npm run build`: compile TypeScript + build Vite
+- `npm run preview`: chạy bản build local
+- `npm run lint`: kiểm tra eslint
+
+## 6) Cấu trúc thư mục chính
+
+```text
+src/
+  app/                  # router, store, providers
+  features/             # modules theo domain (auth, products, orders, payments...)
+  lib/                  # axios, env, query client, utils
+  shared/               # components dùng chung, constants, layouts, hooks, types
+  styles/               # global styles
+```
+
+## 7) Luồng chức năng chính
+
+### Khách hàng
+
+- Đăng nhập / đăng ký
+- Duyệt sản phẩm và xem chi tiết
+- Thêm giỏ hàng, chọn địa chỉ
+- Checkout (COD hoặc chuyển khoản)
+- Trang kết quả thanh toán:
+  - `/payments/success`
+  - `/payments/cancel`
+- Xem đơn hàng tại `/orders`
+
+### Quản trị
+
+- Vào `/admin`
+- Các màn hình hiển thị theo quyền role (RBAC)
+- Quản lý users, products, images, orders, support, shipping, promotions...
+
+## 8) Danh sách tài khoản test
+
+> ⚠️ Chỉ dùng cho môi trường test/dev. Không dùng các tài khoản này cho production.
+
+### Mật khẩu chung cho nhóm staff/admin
+
+- Password: `Hoang123@`
+
+### Tài khoản
+
+- Admin
+  - Username: `tester01`
+  - Password: `Hoang123@`
+
+- Sales Staff
+  - Username: `mhoang09`
+  - Password: `Hoang123@`
+
+- Operation Staff
+  - Username: `mhoang10`
+  - Password: `Hoang123@`
+
+- Manager
+  - Username: `mhoang11`
+  - Password: `Hoang123@`
+
+- Sales + Operation
+  - Username: `mhoang14`
+  - Password: `Hoang123@`
+
+- Customer
+  - Username: `mhoang01`
+  - Password: `Hoang1305@`
+
+## 9) Một số route quan trọng
+
+### Public / User
+
+- `/` - Trang chủ
+- `/products` - Danh sách sản phẩm
+- `/products/:id` - Chi tiết sản phẩm
+- `/cart` - Giỏ hàng
+- `/checkout` - Thanh toán
+- `/payments/success` - Kết quả thanh toán thành công
+- `/payments/cancel` - Kết quả thanh toán thất bại / hủy
+- `/orders` - Đơn hàng của tôi
+- `/profile` - Hồ sơ cá nhân
+
+### Admin
+
+- `/admin` - Dashboard
+- `/admin/users` - Quản lý nhân viên
+- `/admin/products` - Quản lý sản phẩm
+- `/admin/orders` - Quản lý đơn hàng
+- `/admin/support` - Hỗ trợ khách hàng
+- `/admin/shipping-orders` - Đơn giao Nhanh.vn
+- `/admin/user-roles` - Quản lý phân quyền
+
+## 10) Lưu ý triển khai
+
+- Nếu deploy SPA và bị 404 khi vào route trực tiếp, cần cấu hình server rewrite về `index.html`.
+- Khi đổi callback thanh toán, đảm bảo URL return/cancel trỏ đúng domain frontend.
+- Với môi trường production, bắt buộc thay toàn bộ tài khoản test và secret.
+
+---
+
+Nếu cần, có thể bổ sung thêm phần:
+
+- flow release/deploy,
+- checklist QA,
+- sơ đồ quyền chi tiết theo role.
