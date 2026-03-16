@@ -51,7 +51,7 @@ export default function ManageUserEdit() {
           status: (user.status ?? 1) as 0 | 1,
           roleName:
             user.roleName ||
-            user.role ||
+            (typeof user.role === "string" ? user.role : user.role?.name) ||
             (user.roles && user.roles[0]?.name) ||
             "",
           username: user.username,

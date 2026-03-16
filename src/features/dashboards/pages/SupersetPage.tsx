@@ -12,9 +12,7 @@ export default function SupersetPage() {
           <h2 className="text-2xl font-semibold tracking-tight">
             Superset Dashboard
           </h2>
-          <p className="text-sm text-muted-foreground">
-            Dashboard analytics được nhúng trực tiếp trong trang admin.
-          </p>
+          <p className="text-sm text-muted-foreground">Dashboard analytics</p>
         </div>
 
         <Button asChild variant="outline">

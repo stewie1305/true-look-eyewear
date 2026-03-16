@@ -1,305 +1,257 @@
+import { useMemo } from "react";
+import { Link } from "react-router";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card";
-import { Button } from "@/shared/components/ui/button";
-import {
+  ArrowRight,
   BarChart3,
   Users,
-  ShoppingBag,
   Eye,
   Image as ImageIcon,
-  Package,
   Glasses,
   Building2,
   Tag,
   Ruler,
-  ChevronLeft,
-  ChevronRight,
+  ShoppingBag,
+  Contact,
+  Axis3D,
+  LayoutGrid,
 } from "lucide-react";
-import { Link } from "react-router";
-import { useMemo, useRef } from "react";
 import { useAuthStore } from "@/features/auth/store";
 import { ADMIN_PAGE_ACCESS, hasAnyRole } from "@/shared/constants/roles";
 import type { UserRole } from "@/shared/types";
+import { cn } from "@/lib/utils";
+
+const ACTION_CONFIG: Array<{
+  to: string;
+  label: string;
+  description: string;
+  icon: typeof Glasses;
+  color: string;
+  bg: string;
+  allowedRoles: UserRole[];
+}> = [
+  {
+    to: "/admin/products",
+    label: "Sản phẩm",
+    description: "Quản lý biến thể kính",
+    icon: Glasses,
+    color: "text-blue-500",
+    bg: "bg-blue-500/10 group-hover:bg-blue-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/products"],
+  },
+  {
+    to: "/admin/images",
+    label: "Hình ảnh",
+    description: "Upload & quản lý ảnh",
+    icon: ImageIcon,
+    color: "text-violet-500",
+    bg: "bg-violet-500/10 group-hover:bg-violet-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/images"],
+  },
+  {
+    to: "/admin/brands",
+    label: "Thương hiệu",
+    description: "Quản lý nhãn hiệu kính",
+    icon: Building2,
+    color: "text-orange-500",
+    bg: "bg-orange-500/10 group-hover:bg-orange-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/brands"],
+  },
+  {
+    to: "/admin/categories",
+    label: "Danh mục",
+    description: "Phân loại sản phẩm",
+    icon: Tag,
+    color: "text-green-500",
+    bg: "bg-green-500/10 group-hover:bg-green-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/categories"],
+  },
+  {
+    to: "/admin/frame-specs",
+    label: "Gọng kính",
+    description: "Thông số gọng kính",
+    icon: Ruler,
+    color: "text-teal-500",
+    bg: "bg-teal-500/10 group-hover:bg-teal-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/frame-specs"],
+  },
+  {
+    to: "/admin/rx-lens-specs",
+    label: "Tròng kính",
+    description: "Thông số tròng kính Rx",
+    icon: Eye,
+    color: "text-indigo-500",
+    bg: "bg-indigo-500/10 group-hover:bg-indigo-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/rx-lens-specs"],
+  },
+  {
+    to: "/admin/contact-lens-specs",
+    label: "Kính áp tròng",
+    description: "Thông số contact lens",
+    icon: Contact,
+    color: "text-cyan-500",
+    bg: "bg-cyan-500/10 group-hover:bg-cyan-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/contact-lens-specs"],
+  },
+  {
+    to: "/admin/contact-lens-axis",
+    label: "Trục kính",
+    description: "Quản lý axis kính áp tròng",
+    icon: Axis3D,
+    color: "text-amber-500",
+    bg: "bg-amber-500/10 group-hover:bg-amber-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/contact-lens-axis"],
+  },
+  {
+    to: "/admin/promotions",
+    label: "Khuyến mãi",
+    description: "Mã giảm giá & ưu đãi",
+    icon: Tag,
+    color: "text-rose-500",
+    bg: "bg-rose-500/10 group-hover:bg-rose-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/promotions"],
+  },
+  {
+    to: "/admin/orders",
+    label: "Đơn hàng",
+    description: "Theo dõi & xử lý đơn",
+    icon: ShoppingBag,
+    color: "text-emerald-500",
+    bg: "bg-emerald-500/10 group-hover:bg-emerald-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/orders"],
+  },
+  {
+    to: "/admin/users",
+    label: "Nhân viên",
+    description: "Quản lý tài khoản nội bộ",
+    icon: Users,
+    color: "text-purple-500",
+    bg: "bg-purple-500/10 group-hover:bg-purple-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/users"],
+  },
+  {
+    to: "/admin/superset",
+    label: "Analytics",
+    description: "Báo cáo & thống kê",
+    icon: BarChart3,
+    color: "text-slate-400",
+    bg: "bg-slate-500/10 group-hover:bg-slate-500/20",
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/superset"],
+  },
+];
 
 export default function DashboardPage() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { role, roles } = useAuthStore();
   const effectiveRoles = useMemo(
     () => (roles?.length ? roles : role ? [role] : []),
     [role, roles],
   );
 
-  const quickActions: Array<{
-    to: string;
-    label: string;
-    icon: typeof Glasses;
-    allowedRoles: UserRole[];
-  }> = [
-    {
-      to: "/admin/products",
-      label: "Quản lý Sản phẩm",
-      icon: Glasses,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/products"],
-    },
-    {
-      to: "/admin/images",
-      label: "Quản lý Ảnh",
-      icon: ImageIcon,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/images"],
-    },
-    {
-      to: "/admin/brands",
-      label: "Quản lý Thương hiệu",
-      icon: Building2,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/brands"],
-    },
-    {
-      to: "/admin/categories",
-      label: "Quản lý Danh mục",
-      icon: Tag,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/categories"],
-    },
-    {
-      to: "/admin/frame-specs",
-      label: "Quản lý Gọng kính",
-      icon: Ruler,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/frame-specs"],
-    },
-    {
-      to: "/admin/rx-lens-specs",
-      label: "Quản lý Tròng kính",
-      icon: Eye,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/rx-lens-specs"],
-    },
-    {
-      to: "/admin/contact-lens-specs",
-      label: "Quản lý Lens",
-      icon: Eye,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/contact-lens-specs"],
-    },
-    {
-      to: "/admin/contact-lens-axis",
-      label: "Quản lý Axis",
-      icon: Eye,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/contact-lens-axis"],
-    },
-    {
-      to: "/admin/promotions",
-      label: "Quản lý Khuyến mãi",
-      icon: Tag,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/promotions"],
-    },
-    {
-      to: "/admin/users",
-      label: "Quản lý Users",
-      icon: Users,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/users"],
-    },
-    {
-      to: "/admin/superset",
-      label: "View Analytics",
-      icon: BarChart3,
-      allowedRoles: ADMIN_PAGE_ACCESS["/admin/superset"],
-    },
-  ];
-
-  const visibleQuickActions = useMemo(
+  const visibleActions = useMemo(
     () =>
-      quickActions.filter((item) =>
+      ACTION_CONFIG.filter((item) =>
         hasAnyRole(effectiveRoles, item.allowedRoles),
       ),
     [effectiveRoles],
   );
 
-  const scroll = (direction: "left" | "right") => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = scrollContainerRef.current.clientWidth;
-      const newScrollPosition =
-        scrollContainerRef.current.scrollLeft +
-        (direction === "left" ? -scrollAmount : scrollAmount);
-      scrollContainerRef.current.scrollTo({
-        left: newScrollPosition,
-        behavior: "smooth",
-      });
-    }
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting =
+    hour < 12
+      ? "Chào buổi sáng"
+      : hour < 18
+        ? "Chào buổi chiều"
+        : "Chào buổi tối";
+
+  const roleLabel: Record<string, string> = {
+    admin: "Admin",
+    system_admin: "System Admin",
+    manager: "Manager",
+    sales_staff: "Sales Staff",
+    operation_staff: "Operation Staff",
+    user: "User",
   };
 
-  const stats = [
-    {
-      title: "Total Products",
-      value: "500+",
-      icon: Package,
-      description: "Eyewear collection",
-      trend: "+12% from last month",
-    },
-    {
-      title: "Active Users",
-      value: "10K+",
-      icon: Users,
-      description: "Happy customers",
-      trend: "+8% from last month",
-    },
-    {
-      title: "Total Sales",
-      value: "$45.2K",
-      icon: ShoppingBag,
-      description: "Revenue this month",
-      trend: "+15% from last month",
-    },
-    {
-      title: "Store Visits",
-      value: "23K",
-      icon: Eye,
-      description: "Page views",
-      trend: "+20% from last month",
-    },
-  ];
+  const displayRole = role ? (roleLabel[role] ?? role) : "";
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-background via-muted/20 to-background p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen p-6 md:p-10">
+      <div className="max-w-6xl mx-auto space-y-10">
         {/* Header */}
-        <div className="space-y-2">
-          <h1 className="text-4xl font-black tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground text-lg">
-            Welcome back! Here's what's happening with your store today.
-          </p>
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <p className="text-sm text-muted-foreground font-medium">
+              {now.toLocaleDateString("vi-VN", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {greeting}! 👋
+            </h1>
+            {displayRole && (
+              <p className="text-muted-foreground text-sm">
+                Đăng nhập với quyền{" "}
+                <span className="font-semibold text-foreground">
+                  {displayRole}
+                </span>
+              </p>
+            )}
+          </div>
+          <div className="hidden md:flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 shadow-sm">
+            <LayoutGrid className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium">
+              {visibleActions.length} chức năng
+            </span>
+          </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
+        {/* Divider */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Truy cập nhanh
+          </span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
+        {/* Action Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {visibleActions.map((item) => {
+            const Icon = item.icon;
             return (
-              <Card
-                key={index}
-                className="border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              <Link
+                key={item.to}
+                to={item.to}
+                className="group relative flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary/40 hover:-translate-y-0.5"
               >
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {stat.title}
-                  </CardTitle>
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-black">{stat.value}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {stat.description}
+                {/* Icon */}
+                <div
+                  className={cn(
+                    "w-11 h-11 rounded-xl flex items-center justify-center transition-colors",
+                    item.bg,
+                  )}
+                >
+                  <Icon className={cn("h-5 w-5", item.color)} />
+                </div>
+
+                {/* Text */}
+                <div className="space-y-0.5 flex-1">
+                  <p className="font-semibold text-sm leading-tight">
+                    {item.label}
                   </p>
-                  <p className="text-xs text-primary font-semibold mt-2">
-                    {stat.trend}
+                  <p className="text-xs text-muted-foreground leading-snug">
+                    {item.description}
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+
+                {/* Arrow */}
+                <ArrowRight className="absolute right-4 top-4 h-4 w-4 text-muted-foreground/30 transition-all duration-200 group-hover:text-primary group-hover:translate-x-0.5" />
+              </Link>
             );
           })}
         </div>
-
-        {/* Quick Actions */}
-        <Card className="border-border/50 shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-2xl">Quick Actions</CardTitle>
-            <CardDescription>
-              Manage your eyewear store efficiently
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="relative">
-              {/* Left Arrow Button */}
-              <button
-                onClick={() => scroll("left")}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center hover:bg-accent transition-colors"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-
-              {/* Scrollable Content */}
-              <div
-                ref={scrollContainerRef}
-                className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth hide-scrollbar px-12"
-              >
-                {visibleQuickActions.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className="snap-start shrink-0 w-[calc(33.333%-0.667rem)] md:w-[calc(33.333%-0.667rem)]"
-                    >
-                      <Button
-                        variant="outline"
-                        className="w-full h-24 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:border-primary transition-all"
-                      >
-                        <Icon className="h-6 w-6" />
-                        <span className="font-semibold">{item.label}</span>
-                      </Button>
-                    </Link>
-                  );
-                })}
-              </div>
-
-              {/* Right Arrow Button */}
-              <button
-                onClick={() => scroll("right")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center hover:bg-accent transition-colors"
-                aria-label="Scroll right"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Recent Activity */}
-        <Card className="border-border/50 shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-2xl">Recent Activity</CardTitle>
-            <CardDescription>Latest updates from your store</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[
-                {
-                  text: "New order received for Classic Aviator",
-                  time: "2 minutes ago",
-                },
-                {
-                  text: "Product 'Round Vintage Frames' added",
-                  time: "1 hour ago",
-                },
-                {
-                  text: "Customer review posted for Blue Light Glasses",
-                  time: "3 hours ago",
-                },
-                {
-                  text: "Inventory updated for Sports Sunglasses",
-                  time: "5 hours ago",
-                },
-              ].map((activity, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between py-3 border-b border-border/50 last:border-0"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                    <span className="text-sm">{activity.text}</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {activity.time}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

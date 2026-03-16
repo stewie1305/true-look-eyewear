@@ -224,7 +224,9 @@ export function UserForm({
             <Label htmlFor="status">Trạng thái</Label>
             <Select
               value={String(watch("status"))}
-              onValueChange={(value) => setValue("status", Number(value) as 0 | 1)}
+              onValueChange={(value) =>
+                setValue("status", Number(value) as 0 | 1)
+              }
             >
               <SelectTrigger>
                 <SelectValue />
