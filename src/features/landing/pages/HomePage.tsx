@@ -89,13 +89,8 @@ function EyewearShowcase({
   const STACK_GAP = 5.0;
 
   const yOffsets = useMemo(
-    () => [
-      -0.2 - t1.center.y,
-      -0.2 - STACK_GAP - t2.center.y,
-      -0.2 - STACK_GAP * 2 - t3.center.y,
-      -0.2 - STACK_GAP * 3 - t4.center.y,
-    ],
-    [t1.center.y, t2.center.y, t3.center.y, t4.center.y],
+    () => [0, -STACK_GAP, -STACK_GAP * 2, -STACK_GAP * 3],
+    [],
   );
 
   const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -107,12 +102,7 @@ function EyewearShowcase({
   useFrame(() => {
     const p = Number(smoothProgress.get());
 
-    const shifts = [
-      0,
-      yOffsets[0] - yOffsets[1],
-      yOffsets[0] - yOffsets[2],
-      yOffsets[0] - yOffsets[3],
-    ];
+    const shifts = [0, STACK_GAP, STACK_GAP * 2, STACK_GAP * 3];
 
     let stackY = 0;
     if (p < 0.15) stackY = shifts[0];
@@ -143,29 +133,25 @@ function EyewearShowcase({
 
   return (
     <group ref={stackRef}>
-      <group
-        ref={groups[0]}
-        position={[-t1.center.x, yOffsets[0], -t1.center.z]}
-      >
-        <Clone object={m1.scene} />
+      <group ref={groups[0]} position={[0, yOffsets[0], 0]}>
+        <group position={[-t1.center.x, -t1.center.y, -t1.center.z]}>
+          <Clone object={m1.scene} />
+        </group>
       </group>
-      <group
-        ref={groups[1]}
-        position={[-t2.center.x, yOffsets[1], -t2.center.z]}
-      >
-        <Clone object={m2.scene} />
+      <group ref={groups[1]} position={[0, yOffsets[1], 0]}>
+        <group position={[-t2.center.x, -t2.center.y, -t2.center.z]}>
+          <Clone object={m2.scene} />
+        </group>
       </group>
-      <group
-        ref={groups[2]}
-        position={[-t3.center.x, yOffsets[2], -t3.center.z]}
-      >
-        <Clone object={m3.scene} />
+      <group ref={groups[2]} position={[0, yOffsets[2], 0]}>
+        <group position={[-t3.center.x, -t3.center.y, -t3.center.z]}>
+          <Clone object={m3.scene} />
+        </group>
       </group>
-      <group
-        ref={groups[3]}
-        position={[-t4.center.x, yOffsets[3], -t4.center.z]}
-      >
-        <Clone object={m4.scene} />
+      <group ref={groups[3]} position={[0, yOffsets[3], 0]}>
+        <group position={[-t4.center.x, -t4.center.y, -t4.center.z]}>
+          <Clone object={m4.scene} />
+        </group>
       </group>
     </group>
   );
@@ -322,7 +308,8 @@ export default function HomePage() {
         className="relative w-full bg-background transition-colors duration-500"
       >
         <div className="sticky top-0 h-screen w-full max-w-screen-2xl mx-auto flex flex-col md:flex-row items-center justify-between overflow-hidden px-6 md:px-12">
-          <div className="relative w-full md:w-1/2 h-[40vh] md:h-full flex items-center justify-start z-20">
+          {/* CỘT TRÁI: TEXT */}
+          <div className="relative w-full md:w-1/2 h-[40vh] md:h-full flex items-center justify-start z-20 pointer-events-none">
             {/* TEXT 1 (k1) */}
             <motion.div
               style={{
@@ -408,14 +395,13 @@ export default function HomePage() {
             </motion.div>
           </div>
 
+          {/* CỘT PHẢI: BACKGROUND & MODEL 3D */}
           <div className="relative w-full md:w-1/2 h-[60vh] md:h-full flex items-center justify-center pointer-events-none">
+            {/* Khối nền xám ĐỨNG YÊN và ĐƯỢC KÉO XUỐNG DƯỚI */}
             <div className="absolute w-full h-full flex items-center justify-center opacity-[0.03] dark:opacity-[0.05] pointer-events-none">
               <motion.div
-                style={{
-                  rotate: useTransform(sectionScroll, [0, 1], [0, 360]),
-                  scale: 1.5,
-                }}
-                className="w-[70vmin] h-[70vmin] md:w-[75vh] md:h-[75vh]"
+                style={{ scale: 1.5 }}
+                className="w-[70vmin] h-[70vmin] md:w-[75vh] md:h-[75vh] translate-y-[15vh] md:translate-y-[20%]"
               >
                 <svg
                   viewBox="0 0 200 200"
@@ -429,6 +415,7 @@ export default function HomePage() {
               </motion.div>
             </div>
 
+            {/* Mô hình 3D */}
             <div className="absolute inset-0 z-10 pointer-events-none">
               <Canvas
                 dpr={[1, 2]}
