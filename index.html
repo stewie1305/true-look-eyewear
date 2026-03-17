@@ -3,25 +3,64 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-
-    <!-- Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Montserrat:wght@400;500&display=swap"
       rel="stylesheet"
     />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>True Look</title>
+    <title>true-look-fe</title>
   </head>
-
   <body>
-    <!-- React root -->
     <div id="root"></div>
-
-    <!-- Coze Chat SDK -->
     <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
-
-    <!-- React App -->
+    <script>
+      function initializeCozeChat() {
+        if (typeof CozeWebSDK !== 'undefined') {
+          new CozeWebSDK.WebChatClient({
+            config: {
+              type: 'bot',
+              bot_id: '7617975548819931141',
+              isIframe: false,
+            },
+            auth: {
+              type: 'token',
+              token: window.__COZE_TOKEN__,
+              onRefreshToken: async () => window.__COZE_TOKEN__
+            },
+            userInfo: {
+              id: 'user',
+              url: 'https://sf-coze-web-cdn.coze.com/obj/eden-sg/lm-lgvj/ljhwZthlaukjlkulzlp/coze/coze-logo.png',
+              nickname: 'User',
+            },
+            ui: {
+              base: {
+                icon: 'https://sf-coze-web-cdn.coze.com/obj/eden-sg/lm-lgvj/ljhwZthlaukjlkulzlp/coze/chatsdk-logo.png',
+                layout: 'pc',
+                lang: 'en',
+                zIndex: 1000
+              },
+              header: {
+                isShow: true,
+                isNeedClose: true,
+              },
+              asstBtn: {
+                isNeed: true
+              },
+              footer: {
+                isShow: true,
+                expressionText: 'Powered by Coze',
+              },
+              chatBot: {
+                title: 'True Look Support',
+                uploadable: true,
+                width: 390,
+              },
+            },
+          });
+        }
+      }
+      window.initializeCozeChat = initializeCozeChat;
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
