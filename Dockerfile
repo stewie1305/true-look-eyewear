@@ -32,4 +32,4 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 3010
 
 # Chạy server
-CMD ["serve", "-s", "dist", "-l", "3010"]
+CMD ["serve", "-s", "dist", "-l", "3000"]
