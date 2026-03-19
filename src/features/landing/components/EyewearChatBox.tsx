@@ -1,10 +1,8 @@
-import { useMemo, useRef, useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { MessageCircle, Send, Sparkles, X } from "lucide-react";
+import { Loader2, MessageCircle, Send, Sparkles, X } from "lucide-react";
 
-import { productService } from "@/features/products/services";
-import type { ProductVariant } from "@/features/products/types";
+import { sendChatMessage, type ChatRecommendation } from "@/lib/coze";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 
@@ -12,7 +10,8 @@ type ChatMessage = {
   id: string;
   role: "bot" | "user";
   text: string;
-  recommendations?: ProductVariant[];
+  recommendations?: ChatRecommendation[];
+  action?: string;
 };
 
 const QUICK_PROMPTS = [
@@ -30,221 +29,77 @@ const CURRENCY = new Intl.NumberFormat("vi-VN", {
 
 const CHATBOX_Z_INDEX = 2147483000;
 
-function normalize(text: string) {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d");
-}
-
-function parseBudget(input: string) {
-  const normalized = normalize(input);
-  const match = normalized.match(
-    /(\d+[\d.,]*)\s*(trieu|tr|m|k|nghin|ngan|vnd|d)?/,
-  );
-
-  if (!match) return null;
-
-  const raw = Number(match[1].replace(/[.,]/g, ""));
-  if (Number.isNaN(raw)) return null;
-
-  const unit = match[2] ?? "";
-  if (["trieu", "tr", "m"].includes(unit)) return raw * 1_000_000;
-  if (["k", "nghin", "ngan"].includes(unit)) return raw * 1_000;
-
-  if (raw < 1000) return raw * 1_000_000;
-  return raw;
-}
-
-function getSearchableText(item: ProductVariant) {
-  const product = item.product;
-  return normalize(
-    [
-      item.name,
-      item.color,
-      item.description,
-      product.name,
-      product.description,
-      product.product_type,
-      product.brand?.name,
-      ...product.categories.map((c) => c.name),
-    ]
-      .filter(Boolean)
-      .join(" "),
-  );
-}
-
-function suggestProducts(query: string, products: ProductVariant[]) {
-  if (!products.length) {
-    return {
-      text: "Hiện chưa có dữ liệu sản phẩm để gợi ý. Bạn thử lại sau nhé.",
-      recommendations: [] as ProductVariant[],
-    };
-  }
-
-  const q = normalize(query);
-  const budget = parseBudget(query);
-
-  const ranked = products
-    .map((item) => {
-      const searchable = getSearchableText(item);
-      let score = 0;
-
-      if (q.includes("kinh ram") || q.includes("sunglass")) {
-        if (searchable.includes("sun") || searchable.includes("ram"))
-          score += 4;
-      }
-
-      if (
-        q.includes("kinh can") ||
-        q.includes("can") ||
-        q.includes("blue light") ||
-        q.includes("di lam")
-      ) {
-        if (
-          searchable.includes("rx") ||
-          searchable.includes("frame") ||
-          searchable.includes("optical")
-        ) {
-          score += 3;
-        }
-      }
-
-      if (q.includes("tron") || q.includes("round")) {
-        if (
-          searchable.includes("square") ||
-          searchable.includes("chu nhat") ||
-          searchable.includes("cat eye")
-        ) {
-          score += 2;
-        }
-      }
-
-      if (q.includes("vuong") || q.includes("square")) {
-        if (searchable.includes("oval") || searchable.includes("round")) {
-          score += 2;
-        }
-      }
-
-      if (q.includes("toi gian") || q.includes("minimal")) {
-        if (
-          searchable.includes("minimal") ||
-          searchable.includes("classic") ||
-          searchable.includes("basic")
-        ) {
-          score += 2;
-        }
-      }
-
-      if (q.includes("nhe") || q.includes("lightweight")) {
-        if (
-          searchable.includes("titanium") ||
-          searchable.includes("light") ||
-          searchable.includes("ultralight")
-        ) {
-          score += 2;
-        }
-      }
-
-      const colorTokens = [
-        "den",
-        "bac",
-        "vang",
-        "xam",
-        "nau",
-        "trong",
-        "black",
-        "silver",
-        "gold",
-        "brown",
-        "gray",
-      ];
-      for (const token of colorTokens) {
-        if (q.includes(token) && searchable.includes(token)) score += 2;
-      }
-
-      const price = Number(item.price) || 0;
-      if (budget) {
-        if (price <= budget) score += 3;
-        else score -= 1;
-      }
-
-      if (item.quantity > 0) score += 1;
-
-      return { item, score };
-    })
-    .sort((a, b) => b.score - a.score)
-    .map((entry) => entry.item);
-
-  const recommendations = ranked.slice(0, 3);
-  const budgetText = budget ? ` trong tầm ${CURRENCY.format(budget)}` : "";
-
-  return {
-    text: `Mình đã chọn ${recommendations.length} mẫu phù hợp${budgetText}. Bạn xem nhanh bên dưới nha 👇`,
-    recommendations,
-  };
-}
-
 export default function EyewearChatBox() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [isSending, setIsSending] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
       role: "bot",
-      text: "Xin chào 👋 Mình là trợ lý gợi ý kính. Bạn mô tả nhu cầu (gương mặt, phong cách, màu sắc, ngân sách), mình sẽ chọn mẫu phù hợp.",
+      text: "Xin chào 👋 Mình là trợ lý tư vấn kính True Look. Bạn cứ mô tả nhu cầu, mình sẽ gửi câu trả lời và mẫu phù hợp từ hệ thống AI.",
     },
   ]);
 
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["chatbox-product-suggestions"],
-    queryFn: async () => {
-      const response = await productService.getAll({
-        page: 1,
-        limit: 60,
-        status: "active",
-      });
-
-      return Array.isArray(response) ? response : (response?.data ?? []);
-    },
-  });
-
-  const products = useMemo(() => (Array.isArray(data) ? data : []), [data]);
+  const messageCounterRef = useRef(0);
 
   useEffect(() => {
     if (!containerRef.current) return;
     containerRef.current.scrollTop = containerRef.current.scrollHeight;
   }, [messages, isOpen]);
 
-  const sendMessage = (text: string) => {
+  const nextMessageId = (prefix: string) => {
+    messageCounterRef.current += 1;
+    return `${prefix}-${Date.now()}-${messageCounterRef.current}`;
+  };
+
+  const sendMessage = async (text: string) => {
     const trimmed = text.trim();
-    if (!trimmed) return;
+    if (!trimmed || isSending) return;
 
     setMessages((prev) => [
       ...prev,
       {
-        id: `u-${Date.now()}`,
+        id: nextMessageId("user"),
         role: "user",
         text: trimmed,
       },
     ]);
 
-    const result = suggestProducts(trimmed, products);
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `b-${Date.now()}`,
-        role: "bot",
-        text: result.text,
-        recommendations: result.recommendations,
-      },
-    ]);
-
     setInput("");
+
+    try {
+      setIsSending(true);
+      const response = await sendChatMessage(trimmed);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: nextMessageId("bot"),
+          role: "bot",
+          text: response.reply,
+          recommendations: response.products,
+          action: response.action,
+        },
+      ]);
+    } catch (error) {
+      const fallbackMessage =
+        error instanceof Error
+          ? error.message
+          : "Không thể gửi tin nhắn tới trợ lý. Bạn thử lại sau nhé.";
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: nextMessageId("bot-error"),
+          role: "bot",
+          text: fallbackMessage,
+        },
+      ]);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -291,45 +146,73 @@ export default function EyewearChatBox() {
                       : "bg-muted text-foreground"
                   }`}
                 >
-                  {message.text}
+                  <p className="whitespace-pre-line">{message.text}</p>
+
+                  {message.action && (
+                    <div className="mt-2 inline-flex rounded-full bg-background/80 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                      {message.action}
+                    </div>
+                  )}
                 </div>
 
                 {message.recommendations &&
                   message.recommendations.length > 0 && (
                     <div className="space-y-2">
-                      {message.recommendations.map((item) => (
+                      {message.recommendations.map((item, index) => (
                         <div
-                          key={item.id}
+                          key={item.id ?? `${item.name}-${index}`}
                           className="rounded-md border border-border bg-card p-2"
                         >
+                          {item.image && (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="mb-2 h-28 w-full rounded-md object-cover"
+                            />
+                          )}
+
                           <p className="text-sm font-medium line-clamp-1">
                             {item.name}
                           </p>
                           <p className="text-xs text-muted-foreground line-clamp-1">
-                            {item.product?.brand?.name} • {item.color}
+                            {[item.brandName, item.color]
+                              .filter(Boolean)
+                              .join(" • ") || "Sản phẩm gợi ý"}
                           </p>
                           <div className="mt-1 flex items-center justify-between text-xs">
                             <span className="font-medium text-primary">
-                              {CURRENCY.format(Number(item.price) || 0)}
+                              {typeof item.price === "number"
+                                ? CURRENCY.format(item.price)
+                                : "Liên hệ"}
                             </span>
                             <span className="text-muted-foreground">
-                              Kho: {item.quantity}
+                              {typeof item.quantity === "number"
+                                ? `Kho: ${item.quantity}`
+                                : "Xem thêm chi tiết"}
                             </span>
                           </div>
 
-                          <Button
-                            asChild
-                            size="xs"
-                            variant="outline"
-                            className="mt-2 w-full"
-                          >
-                            <Link
-                              to={`/products/${item.id}`}
-                              onClick={() => setIsOpen(false)}
+                          {item.description && (
+                            <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                              {item.description}
+                            </p>
+                          )}
+
+                          {item.routeId ? (
+                            <Button
+                              asChild
+                              size="xs"
+                              variant="outline"
+                              className="mt-2 w-full"
                             >
-                              Xem chi tiết sản phẩm
-                            </Link>
-                          </Button>
+                              <Link
+                                to={`/products/${item.routeId}`}
+                                onClick={() => setIsOpen(false)}
+                              >
+                                Xem chi tiết sản phẩm
+                              </Link>
+                            </Button>
+                          ) : null}
                         </div>
                       ))}
                     </div>
@@ -337,10 +220,11 @@ export default function EyewearChatBox() {
               </div>
             ))}
 
-            {isLoading && (
-              <p className="text-xs text-muted-foreground">
-                Đang tải danh sách sản phẩm...
-              </p>
+            {isSending && (
+              <div className="flex max-w-[85%] items-center gap-2 rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
+                <Loader2 className="size-4 animate-spin" />
+                <span>Trợ lý đang trả lời...</span>
+              </div>
             )}
           </div>
 
@@ -351,7 +235,10 @@ export default function EyewearChatBox() {
                   key={prompt}
                   type="button"
                   className="rounded-full border border-border px-2 py-1 text-[11px] text-muted-foreground hover:bg-muted"
-                  onClick={() => sendMessage(prompt)}
+                  onClick={() => {
+                    void sendMessage(prompt);
+                  }}
+                  disabled={isSending}
                 >
                   {prompt}
                 </button>
@@ -363,17 +250,27 @@ export default function EyewearChatBox() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") sendMessage(input);
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    void sendMessage(input);
+                  }
                 }}
                 placeholder="Ví dụ: Mình cần kính râm màu đen dưới 2tr"
+                disabled={isSending}
               />
               <Button
                 type="button"
                 size="icon-sm"
-                onClick={() => sendMessage(input)}
-                disabled={!input.trim()}
+                onClick={() => {
+                  void sendMessage(input);
+                }}
+                disabled={!input.trim() || isSending}
               >
-                <Send className="size-4" />
+                {isSending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Send className="size-4" />
+                )}
               </Button>
             </div>
           </div>

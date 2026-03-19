@@ -6,6 +6,9 @@ if (!API_URL) {
   );
 }
 
+const CHATBOX_URL = import.meta.env.VITE_QUEN_URL ?? API_URL;
+
 export const env = {
   API_URL,
+  CHATBOX_URL,
 } as const;

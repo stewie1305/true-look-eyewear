@@ -90,6 +90,9 @@ export const API_ENDPOINTS = {
     MESSAGES: (ticketId: string | number) => `/support/messages/${ticketId}`,
     SEND_MESSAGE: "/support/messages",
   },
+  CHAT: {
+    BASE: "/chat",
+  },
 };
 
 export const QUERY_KEYS = {
