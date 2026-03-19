@@ -26,6 +26,7 @@ interface ProductFormProps {
   onSubmit: (data: CreateProductDto) => void;
   isPending?: boolean;
   submitLabel?: string;
+  lockProductId?: boolean;
 }
 
 export function ProductForm({
@@ -33,6 +34,7 @@ export function ProductForm({
   onSubmit,
   isPending = false,
   submitLabel = "Lưu",
+  lockProductId = false,
 }: ProductFormProps) {
   const {
     register,
@@ -93,23 +95,25 @@ export function ProductForm({
           </div>
 
           {/* Product ID */}
-          <div className="space-y-2">
-            <Label htmlFor="product_id">
-              Product ID <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="product_id"
-              {...register("product_id", {
-                required: "Product ID là bắt buộc",
-              })}
-              placeholder="Nhập product id"
-            />
-            {errors.product_id && (
-              <p className="text-sm text-destructive">
-                {errors.product_id.message}
-              </p>
-            )}
-          </div>
+          {!lockProductId && (
+            <div className="space-y-2">
+              <Label htmlFor="product_id">
+                Product ID <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="product_id"
+                {...register("product_id", {
+                  required: "Product ID là bắt buộc",
+                })}
+                placeholder="Nhập product id"
+              />
+              {errors.product_id && (
+                <p className="text-sm text-destructive">
+                  {errors.product_id.message}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Price, Color, Quantity */}
           <div className="grid gap-4 md:grid-cols-2">

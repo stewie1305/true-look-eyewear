@@ -6,11 +6,16 @@ import { ProductForm } from "../components/ProductForm";
 import { useCreateProduct } from "../hooks/useProducts";
 import type { CreateProductDto } from "../types";
 
+const FIXED_PRODUCT_ID = "1";
+
 export function ManageProductCreate() {
   const { mutate: createProduct, isPending } = useCreateProduct();
 
   const handleSubmit = (data: CreateProductDto) => {
-    createProduct(data);
+    createProduct({
+      ...data,
+      product_id: FIXED_PRODUCT_ID,
+    });
   };
 
   return (
@@ -25,6 +30,8 @@ export function ManageProductCreate() {
       <h2 className="mb-6 text-2xl font-bold">Tạo sản phẩm mới</h2>
 
       <ProductForm
+        defaultValues={{ product_id: FIXED_PRODUCT_ID }}
+        lockProductId
         onSubmit={handleSubmit}
         isPending={isPending}
         submitLabel="Tạo sản phẩm"
