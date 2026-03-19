@@ -12,55 +12,11 @@
   </head>
   <body>
     <div id="root"></div>
-    <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
-    <script>
-      function initializeCozeChat() {
-        if (typeof CozeWebSDK !== 'undefined') {
-          new CozeWebSDK.WebChatClient({
-            config: {
-              type: 'bot',
-              bot_id: '7617975548819931141',
-              isIframe: false,
-            },
-            auth: {
-              type: 'token',
-              token: window.__COZE_TOKEN__,
-              onRefreshToken: async () => window.__COZE_TOKEN__
-            },
-            userInfo: {
-              id: 'user',
-              url: 'https://sf-coze-web-cdn.coze.com/obj/eden-sg/lm-lgvj/ljhwZthlaukjlkulzlp/coze/coze-logo.png',
-              nickname: 'User',
-            },
-            ui: {
-              base: {
-                icon: 'https://sf-coze-web-cdn.coze.com/obj/eden-sg/lm-lgvj/ljhwZthlaukjlkulzlp/coze/chatsdk-logo.png',
-                layout: 'pc',
-                lang: 'en',
-                zIndex: 1000
-              },
-              header: {
-                isShow: true,
-                isNeedClose: true,
-              },
-              asstBtn: {
-                isNeed: true
-              },
-              footer: {
-                isShow: true,
-                expressionText: 'Powered by Coze',
-              },
-              chatBot: {
-                title: 'True Look Support',
-                uploadable: true,
-                width: 390,
-              },
-            },
-          });
-        }
-      }
-      window.initializeCozeChat = initializeCozeChat;
-    </script>
+    <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
+    <script
+      src="https://files.bpcontent.cloud/2026/03/18/10/20260318102553-13E1QCCN.js"
+      defer
+    ></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

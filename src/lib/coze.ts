@@ -43,7 +43,7 @@ export const initializeCozeSDK = () => {
     if ((window as any).CozeWebSDK) {
       try {
         console.log('Initializing Coze SDK...');
-        console.log('Bot ID: 7617975548819931141');
+        console.log('Bot ID: 7618553889940029493');
         console.log('Token (first 20 chars):', token.substring(0, 20) + '...');
         console.log('isIframe: true');
         
@@ -53,7 +53,7 @@ export const initializeCozeSDK = () => {
         
         const client = new sdk.WebChatClient({
           config: {
-            bot_id: '7617975548819931141',
+            bot_id: '7618553889940029493',
           },
           componentProps: {
             title: 'Coze Chat',

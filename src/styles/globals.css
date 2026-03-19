@@ -134,3 +134,27 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+/* Allow scrolling in Coze chatbot */
+.coze-web-sdk-chat-container,
+.coze-web-sdk-chat-container * {
+  scrollbar-width: auto !important;
+  -ms-overflow-style: auto !important;
+}
+
+.coze-web-sdk-chat-container ::-webkit-scrollbar {
+  display: revert !important;
+  width: 6px;
+}
+
+.coze-web-sdk-chat-container ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.coze-web-sdk-chat-container ::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.coze-web-sdk-chat-container ::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
