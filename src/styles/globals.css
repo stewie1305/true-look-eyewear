@@ -134,7 +134,17 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
-/* Allow scrolling in Coze chatbot */
+/* Allow scrolling in embedded chat widgets (Botpress/Coze) */
+#bp-web-widget,
+#bp-web-widget-container,
+iframe[src*="botpress"],
+iframe[src*="bpcontent.cloud"],
+.coze-web-sdk-chat-container {
+  overscroll-behavior: contain !important;
+  touch-action: pan-y !important;
+  pointer-events: auto !important;
+}
+
 .coze-web-sdk-chat-container,
 .coze-web-sdk-chat-container * {
   scrollbar-width: auto !important;

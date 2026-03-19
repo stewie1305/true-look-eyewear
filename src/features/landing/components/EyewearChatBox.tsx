@@ -280,7 +280,9 @@ export default function EyewearChatBox() {
 
           <div
             ref={containerRef}
-            className="h-96 space-y-3 overflow-y-auto p-3"
+            className="h-96 space-y-3 overflow-y-auto overscroll-contain p-3"
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
           >
             {messages.map((message) => (
               <div key={message.id} className="space-y-2">

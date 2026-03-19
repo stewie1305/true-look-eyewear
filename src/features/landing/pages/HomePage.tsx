@@ -9,7 +9,6 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { useEffect, useRef, useState, useMemo, Suspense } from "react";
-import Lenis from "@studio-freight/lenis";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   useGLTF,
@@ -159,9 +158,8 @@ function EyewearShowcase({
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const prefersReducedMotion = useReducedMotion();
+  useReducedMotion();
   const [isLoading, setIsLoading] = useState(true);
-  const rafRef = useRef<number | null>(null);
 
   const { scrollYProgress: globalScroll } = useScroll();
 
@@ -178,27 +176,11 @@ export default function HomePage() {
       document.body.style.overflow = "auto";
     }, 1600);
 
-    let lenis: Lenis | null = null;
-    if (!prefersReducedMotion) {
-      lenis = new Lenis({
-        duration: 1.4,
-        lerp: 0.05,
-        smoothWheel: true,
-        wheelMultiplier: 0.9,
-      });
-      const raf = (time: number) => {
-        lenis?.raf(time);
-        rafRef.current = requestAnimationFrame(raf);
-      };
-      rafRef.current = requestAnimationFrame(raf);
-    }
     return () => {
       clearTimeout(timer);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      lenis?.destroy();
       document.body.style.overflow = "auto";
     };
-  }, [prefersReducedMotion]);
+  }, []);
 
   const text1Op = useTransform(sectionScroll, [0, 0.15, 0.22], [1, 1, 0]);
   const text1Blur = useTransform(
