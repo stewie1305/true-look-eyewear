@@ -12,6 +12,12 @@ export default defineConfig({
     },
   },
   server: {
+<<<<<<< HEAD
     port: 3010,
   },
 });
+=======
+    port: 5173,
+  },
+});
+>>>>>>> 53e77e8ca40df7d6d368ca3ae92eb5aaf03b42d1
