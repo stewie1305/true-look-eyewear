@@ -252,6 +252,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "charts",
+        element: (
+          <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/charts"]}>
+            <Navigate to="/admin/superset#ai-chart-analyst" replace />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "user-roles",
         element: (
           <ProtectedRoute allowedRoles={ADMIN_PAGE_ACCESS["/admin/user-roles"]}>

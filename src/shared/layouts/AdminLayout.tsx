@@ -153,6 +153,13 @@ export default function AdminLayout() {
     navigate("/login");
   };
 
+  const isItemActive = (href: string) => {
+    const pathOnly = href.split("#")[0];
+    return pathOnly === "/admin"
+      ? location.pathname === pathOnly
+      : location.pathname.startsWith(pathOnly);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {sidebarOpen && (
@@ -186,10 +193,7 @@ export default function AdminLayout() {
 
           <nav className="flex-1 space-y-1 px-3 py-4">
             {visibleNavigation.map((item) => {
-              const isActive =
-                item.href === "/admin"
-                  ? location.pathname === item.href
-                  : location.pathname.startsWith(item.href);
+              const isActive = isItemActive(item.href);
               return (
                 <Link
                   key={item.name}
@@ -233,11 +237,8 @@ export default function AdminLayout() {
             <Menu className="h-5 w-5" />
           </Button>
           <h1 className="text-xl font-semibold">
-            {visibleNavigation.find((item) =>
-              item.href === "/admin"
-                ? location.pathname === item.href
-                : location.pathname.startsWith(item.href),
-            )?.name || "Admin"}
+            {visibleNavigation.find((item) => isItemActive(item.href))?.name ||
+              "Admin"}
           </h1>
         </header>
 
