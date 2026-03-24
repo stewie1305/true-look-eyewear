@@ -4,14 +4,14 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { UserForm } from "../components/UserForm";
 import { useCreateUser, useRoles } from "../hooks/useUsers";
-import type { CreateUserDto } from "../types";
+import type { CreateUserDto, UpdateUserDto } from "../types";
 
 export function ManageUserCreate() {
   const { mutate: createUser, isPending } = useCreateUser();
   const { data: roles = [] } = useRoles();
 
-  const handleSubmit = (data: CreateUserDto) => {
-    createUser(data);
+  const handleSubmit = (data: CreateUserDto | UpdateUserDto) => {
+    createUser(data as CreateUserDto);
   };
 
   return (

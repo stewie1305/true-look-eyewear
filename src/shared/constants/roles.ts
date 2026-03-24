@@ -50,6 +50,7 @@ export const ADMIN_PAGE_ACCESS: Record<string, UserRole[]> = {
   "/admin/users": MANAGER_ROLES,
   "/admin/user-roles": MANAGER_ROLES,
   "/admin/superset": FULL_ADMIN_ROLES,
+  "/admin/charts": FULL_ADMIN_ROLES,
 };
 
 export const getUniqueRoles = (roles: Array<UserRole | null | undefined>) =>

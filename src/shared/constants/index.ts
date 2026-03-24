@@ -93,6 +93,14 @@ export const API_ENDPOINTS = {
   CHAT: {
     BASE: "/chat",
   },
+  SUPERSET_CHARTS: {
+    BASE: "/superset/charts",
+    DATA: (id: number) => `/superset/chart/${id}/data`,
+  },
+  AI_SUPERSET: {
+    MODELS: "/ai-superset/models",
+    ANALYZE: "/ai-superset/analyze-charts",
+  },
 };
 
 export const QUERY_KEYS = {
@@ -153,4 +161,7 @@ export const QUERY_KEYS = {
     "support-messages",
     String(ticketId),
   ],
+  SUPERSET_CHARTS: ["superset-charts"],
+  SUPERSET_CHART_DATA: (id: number) => ["superset-chart-data", id],
+  AI_SUPERSET_MODELS: ["ai-superset-models"],
 };
