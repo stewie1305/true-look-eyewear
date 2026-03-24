@@ -23,7 +23,7 @@ const EMPTY_FORM: CreateNhanhOrderDto = {
   carrierName: "SPX Express",
   serviceId: 186,
   serviceName: "Tiêu chuẩn",
-  depotId: 230531,
+  depotId: 230895,
   customerName: "",
   customerMobile: "",
   customerAddress: "",
