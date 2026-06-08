@@ -1,4 +1,4 @@
-import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, CheckCircle2, Circle } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/shared/components/ui/button";
@@ -159,26 +159,25 @@ export default function CartPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="rounded-2xl bg-linear-to-br from-primary/25 via-primary/10 to-transparent p-2.5 ring-1 ring-primary/20 shadow-sm">
-            <ShoppingCart className="h-7 w-7 text-primary" />
-          </div>
-
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
+      <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-foreground">
               Giỏ hàng của bạn
             </h1>
-            <p className="text-muted-foreground">
-              {totalItems} sản phẩm trong giỏ
-            </p>
+            <Badge variant="default" className="text-sm md:text-base px-3 py-1 rounded-full shadow-sm mt-3">
+              {totalItems} items
+            </Badge>
           </div>
+          <p className="text-muted-foreground text-base font-medium">
+            Sẵn sàng để chốt đơn chưa? 🔥
+          </p>
         </div>
 
-        <Button variant="ghost" size="sm" asChild>
+        <Button variant="secondary" className="rounded-full shadow-sm px-6 py-5 font-semibold text-sm hover:scale-105 transition-transform" asChild>
           <Link to="/products">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Tiếp tục mua sắm
+            Tiếp tục khám phá
           </Link>
         </Button>
       </div>
@@ -197,32 +196,38 @@ export default function CartPage() {
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center justify-between rounded-lg border p-3">
-              <label className="flex items-center gap-2 text-sm font-medium">
-                <input
-                  type="checkbox"
-                  checked={isAllSelected}
-                  onChange={(e) => toggleSelectAll(e.target.checked)}
-                />
+            <div className="flex items-center justify-between rounded-xl border border-border/40 bg-card p-4 shadow-sm">
+              <button 
+                type="button"
+                className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors focus:outline-none"
+                onClick={() => toggleSelectAll(!isAllSelected)}
+              >
+                {isAllSelected ? (
+                  <CheckCircle2 className="h-5 w-5 text-primary fill-primary/10" />
+                ) : (
+                  <Circle className="h-5 w-5 text-muted-foreground" />
+                )}
                 Chọn tất cả sản phẩm
-              </label>
+              </button>
               <span className="text-sm text-muted-foreground">
                 Đã chọn {selectedItemIds.length}/{items.length}
               </span>
             </div>
 
             {items.map((item) => (
-              <Card key={item.id} className="p-4">
+              <Card key={item.id} className="p-4 rounded-xl border-border/40 shadow-sm transition-all hover:bg-muted/10">
                 <div className="flex gap-4">
-                  <div className="pt-1">
-                    <input
-                      type="checkbox"
-                      checked={selectedItemIds.includes(item.id)}
-                      onChange={(e) =>
-                        toggleSelectItem(item.id, e.target.checked)
-                      }
-                    />
-                  </div>
+                  <button
+                    type="button"
+                    className="pt-1 h-fit focus:outline-none hover:opacity-80 transition-opacity"
+                    onClick={() => toggleSelectItem(item.id, !selectedItemIds.includes(item.id))}
+                  >
+                    {selectedItemIds.includes(item.id) ? (
+                      <CheckCircle2 className="h-5 w-5 text-primary fill-primary/10" />
+                    ) : (
+                      <Circle className="h-5 w-5 text-muted-foreground" />
+                    )}
+                  </button>
 
                   {/* Image */}
                   <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-muted">
@@ -262,11 +267,11 @@ export default function CartPage() {
 
                     {/* Quantity */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 rounded-full border border-border/50 bg-background/50 p-1">
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-7 w-7 rounded-full hover:bg-background"
                           onClick={() =>
                             handleUpdateQuantity(item.id, item.quantity - 1)
                           }
@@ -282,9 +287,9 @@ export default function CartPage() {
                         </span>
 
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-7 w-7 rounded-full hover:bg-background"
                           onClick={() =>
                             handleUpdateQuantity(item.id, item.quantity + 1)
                           }
@@ -320,7 +325,7 @@ export default function CartPage() {
 
           {/* Summary */}
           <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-4">
+            <Card className="p-6 sticky top-28 rounded-xl border-border/40 shadow-sm bg-card/80 backdrop-blur-sm">
               <h3 className="text-lg font-semibold mb-4">Tổng đơn hàng</h3>
 
               <div className="space-y-3 mb-4">

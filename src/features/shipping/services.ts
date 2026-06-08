@@ -342,6 +342,65 @@ export const shippingService = {
     );
     return normalizeNhanhOrders(response);
   },
+
+  async autocompleteAddress(text: string): Promise<any> {
+    const response = await apiClient.post(API_ENDPOINTS.SHIPPING.AUTOCOMPLETE, {
+      extraPayload: { text },
+    });
+    return response;
+  },
+
+  async getAhamoveFee(params: import("./types").AhamoveFeeParams): Promise<import("./types").ShippingFeeResult> {
+    const response = await apiClient.post<unknown>(
+      API_ENDPOINTS.SHIPPING.AHAMOVE_FEE,
+      { extraPayload: params }
+    );
+
+    const responsePayload =
+      (response as unknown as { data?: unknown })?.data ?? response;
+
+    const resolvedFee = getNumericValue(responsePayload, [
+      "shipping_fee",
+      "fee",
+      "shipFee",
+      "total_fee",
+      "totalFee",
+      "distance_fee",
+      "total_pay"
+    ]);
+
+    if (!Number.isFinite(resolvedFee ?? NaN)) {
+      throw new Error("Không tính được phí vận chuyển từ Ahamove");
+    }
+
+    return {
+      fee: Math.max(0, Number(resolvedFee)),
+      raw: responsePayload,
+    };
+  },
+
+  async checkoutAhamoveOrder(payload: any): Promise<any> {
+    const response = await apiClient.post(
+      API_ENDPOINTS.SHIPPING.AHAMOVE_CHECKOUT,
+      payload
+    );
+    return response;
+  },
+
+  async getAhamoveOrders(): Promise<import("./types").AhamoveOrder[]> {
+    const response = await apiClient.get(
+      API_ENDPOINTS.SHIPPING.AHAMOVE_ORDERS
+    );
+    return response as unknown as import("./types").AhamoveOrder[];
+  },
+
+  async cancelAhamoveOrder(payload: { order_id: string; comment: string }): Promise<any> {
+    const response = await apiClient.post(
+      API_ENDPOINTS.SHIPPING.AHAMOVE_CANCEL,
+      payload
+    );
+    return response;
+  },
 };
 
 export type { ShippingLocationType };

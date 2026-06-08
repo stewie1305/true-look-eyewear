@@ -10,7 +10,7 @@ export function UserLayout() {
 
       {/* MAIN */}
 
-      <main className="flex-1 w-full flex flex-col">
+      <main className="flex-1 w-full flex flex-col pt-28">
         <Outlet />
       </main>
 

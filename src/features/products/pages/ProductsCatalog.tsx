@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Search, Filter, X, Glasses } from "lucide-react";
+import { Search, Filter, X } from "lucide-react";
 
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
@@ -15,6 +15,7 @@ import { useProducts } from "../hooks/useProducts";
 import { ProductCard } from "../components/ProductCard";
 import { useBrands } from "@/features/brands/hooks/useBrands";
 import { useActiveCategories } from "@/features/categories/hooks/useCategories";
+import trueLookBanner from "@/shared/pictures/trueLook1.jpg";
 
 export function ProductsCatalog() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -105,23 +106,40 @@ export function ProductsCatalog() {
     !!searchParams.get("search");
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8 space-y-2">
-        <div className="flex items-center gap-3">
-          <div className="rounded-2xl bg-gradient-to-br from-primary/25 via-primary/10 to-transparent p-2.5 ring-1 ring-primary/20 shadow-sm">
-            <Glasses className="h-7 w-7 text-primary" />
+    <div className="flex flex-col w-full">
+      <div className="container mx-auto px-4 pt-28 pb-4">
+        {/* Premium Header */}
+        <div className="flex flex-col items-center justify-center text-center space-y-4 mb-4">
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold tracking-widest uppercase">
+            Sản phẩm cao cấp
           </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Eyewear Collection
-            </h1>
-            <p className="mt-0.5 text-muted-foreground">
-              Discover premium eyewear products
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+            Bộ Sưu Tập Mắt Kính
+          </h1>
+          <p className="max-w-[600px] text-lg text-muted-foreground">
+            Khám phá thế giới kính mắt thời trang, nơi phong cách thiết kế hiện đại hòa quyện cùng chất lượng tuyệt hảo.
+          </p>
+          <div className="max-w-[800px] mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-sm flex items-start text-left gap-3">
+            <span className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0">⚠️</span>
+            <p>
+              <strong>Khuyến cáo y tế:</strong> Mắt kính này không thể đeo thay thế mắt kính thuốc do bác sĩ kê đơn. Khuyến nghị chỉ nên sử dụng như một phụ kiện thời trang và không được đeo dài hạn để tránh các ảnh hưởng không tốt về mắt.
             </p>
           </div>
         </div>
       </div>
+
+      {/* Full-width Banner */}
+      <div className="w-full">
+        <img 
+          src={trueLookBanner} 
+          alt="Eyewear Collection Banner" 
+          className="w-full h-[400px] md:h-[600px] object-cover" 
+        />
+      </div>
+
+      <div className="container mx-auto px-4 py-8">
+
+
 
       {/* Search & Filters */}
       <div className="mb-8 space-y-4">
@@ -262,6 +280,7 @@ export function ProductsCatalog() {
           )}
         </>
       )}
+      </div>
     </div>
   );
 }

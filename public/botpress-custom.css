@@ -1,0 +1,19 @@
+/* Botpress custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px !important;
+  display: block !important;
+  background-color: transparent !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a0a0a0 !important;
+  border-radius: 4px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #707070 !important;
+}

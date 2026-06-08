@@ -28,35 +28,40 @@ export function LoginForm() {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="username">Username</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="username" className="text-sm font-semibold">Tên đăng nhập hoặc Email</Label>
         <Input
           id="username"
           type="text"
-          placeholder="abc123"
+          placeholder="example@gmail.com"
           {...register("username")}
-          className={errors.username ? "border-destructive" : ""}
+          className={`h-11 rounded-xl transition-all ${errors.username ? "border-destructive focus-visible:ring-destructive/30" : "border-border/60 hover:border-border/80 focus-visible:ring-primary/20"}`}
         />
         {errors.username && (
           <p className="text-xs text-destructive">{errors.username.message}</p>
         )}
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="password" className="text-sm font-semibold">Mật khẩu</Label>
         <Input
           id="password"
           type="password"
           placeholder="••••••••"
           {...register("password")}
-          className={errors.password ? "border-destructive" : ""}
+          className={`h-11 rounded-xl transition-all ${errors.password ? "border-destructive focus-visible:ring-destructive/30" : "border-border/60 hover:border-border/80 focus-visible:ring-primary/20"}`}
         />
         {errors.password && (
           <p className="text-xs text-destructive">{errors.password.message}</p>
         )}
-        <div className="text-right">
+        
+        <div className="flex items-center justify-between pt-1">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" className="rounded border-border/50 text-primary focus:ring-primary/30 w-4 h-4 cursor-pointer" />
+            <span className="text-sm text-muted-foreground select-none">Ghi nhớ đăng nhập</span>
+          </label>
           <Link
             to="/forgot-password"
-            className="text-xs text-primary hover:underline"
+            className="text-sm text-primary hover:underline font-medium"
           >
             Quên mật khẩu?
           </Link>
@@ -64,7 +69,7 @@ export function LoginForm() {
       </div>
       <Button
         type="submit"
-        className="w-full"
+        className="w-full h-11 rounded-xl text-base font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] mt-2"
         disabled={loginMutation.isPending || isSubmitting}
       >
         {loginMutation.isPending || isSubmitting ? (
@@ -73,10 +78,10 @@ export function LoginForm() {
             Đang đăng nhập...
           </>
         ) : (
-          "Login"
+          "Đăng nhập"
         )}
       </Button>
-      <div className="text-center text-sm">
+      <div className="text-center text-sm pt-2">
         <span className="text-muted-foreground">Chưa có tài khoản? </span>
         <Link
           to="/register"

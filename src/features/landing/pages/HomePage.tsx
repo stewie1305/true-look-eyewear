@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+
 import {
   motion,
   useScroll,
@@ -25,7 +25,6 @@ import lookbook1Image from "@/shared/pictures/h5.jpg";
 import lookbook2Image from "@/shared/pictures/h6.jpg";
 import material1Image from "@/shared/pictures/h10.jpg";
 import material2Image from "@/shared/pictures/h11.jpg";
-import EyewearChatBox from "@/features/landing/components/EyewearChatBox";
 
 const ASSETS = {
   hero: heroImage,
@@ -158,7 +157,6 @@ function EyewearShowcase({
 }
 
 export default function HomePage() {
-  const navigate = useNavigate();
   const prefersReducedMotion = useReducedMotion();
   const [isLoading, setIsLoading] = useState(true);
   const rafRef = useRef<number | null>(null);
@@ -185,6 +183,12 @@ export default function HomePage() {
         lerp: 0.05,
         smoothWheel: true,
         wheelMultiplier: 0.9,
+        // Ngăn Lenis chiếm quyền scroll của các phần tử Botpress (hoặc các webchat nói chung)
+        // @ts-expect-error - prevent might not exist in this version's LenisOptions type
+        prevent: (node: any) => 
+          (node.id && typeof node.id === 'string' && node.id.includes('bp')) || 
+          (node.className && typeof node.className === 'string' && node.className.includes('bp')) ||
+          node.closest?.('#bp-web-widget, .bpw-layout, [id*="botpress"]') !== null,
       });
       const raf = (time: number) => {
         lenis?.raf(time);
@@ -526,26 +530,6 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
-
-      {/* 6. FOOTER */}
-      <footer className="py-40 text-center border-t border-border bg-muted/20 relative overflow-hidden z-30">
-        <h2 className="text-[25vw] opacity-[0.02] font-serif italic absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap pointer-events-none uppercase">
-          TRUE LOOK
-        </h2>
-        <div className="relative z-10 space-y-12">
-          <button
-            onClick={() => navigate("/products")}
-            className="border border-primary px-16 py-6 uppercase tracking-[0.5em] text-[10px] hover:bg-foreground hover:text-background transition-all duration-700 bg-transparent"
-          >
-            Enter Collection
-          </button>
-          <p className="text-[10px] uppercase tracking-[0.4em] opacity-30 italic pt-10">
-            © 2026 True Look Eyewear. Engineered for the Visionaries.
-          </p>
-        </div>
-      </footer>
-
-      <EyewearChatBox />
     </div>
   );
 }

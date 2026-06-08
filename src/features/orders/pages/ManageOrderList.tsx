@@ -14,6 +14,9 @@ import { EmptyState, LoadingSpinner } from "@/shared/components/common";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { OrderTable } from "../components/OrderTable";
 import { useOrdersAdmin, useUpdateOrderStatus } from "../hooks/useOrders";
+import { shippingService } from "@/features/shipping/services";
+import { toast } from "sonner";
+import type { OrderStatus } from "../types";
 
 export default function ManageOrderList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,6 +55,47 @@ export default function ManageOrderList() {
       params.set("status", value);
     }
     setSearchParams(params);
+  };
+
+  const handleUpdateStatus = async (id: string, status: OrderStatus) => {
+    if (status === "Confirm") {
+      const order = orders.find((o) => o.id === id);
+      if (order?.customer?.addresses && order.customer.addresses.length > 0) {
+        try {
+          const address = order.customer.addresses[0];
+          const fullAddress = [
+            address.street,
+            address.ward,
+            address.district,
+            address.city,
+          ]
+            .filter(Boolean)
+            .join(", ");
+
+          const payload = {
+            orderId: order.id,
+            providerId: "AHAMOVE",
+            serviceId: "SGN-BIKE",
+            extraPayload: {
+              ref_id: order.ref_id,
+              drop_name: address.name_recipient,
+              drop_mobile: address.phone_recipient,
+              drop_address: fullAddress,
+              service_id: "SGN-BIKE",
+              remarks: (address as any).note || "",
+            },
+          };
+
+          await shippingService.checkoutAhamoveOrder(payload);
+          toast.success("Lên đơn Ahamove thành công!");
+        } catch (error: any) {
+          toast.error(error?.message || "Lỗi khi tạo đơn giao hàng Ahamove");
+        }
+      } else {
+        toast.error("Không tìm thấy địa chỉ giao hàng của khách hàng");
+      }
+    }
+    updateStatusMutation.mutate({ id, status });
   };
 
   return (
@@ -106,9 +150,7 @@ export default function ManageOrderList() {
       ) : (
         <OrderTable
           orders={orders}
-          onUpdateStatus={(id, status) =>
-            updateStatusMutation.mutate({ id, status })
-          }
+          onUpdateStatus={handleUpdateStatus}
           isUpdating={updateStatusMutation.isPending}
         />
       )}

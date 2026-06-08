@@ -10,8 +10,8 @@ export function ManageUserCreate() {
   const { mutate: createUser, isPending } = useCreateUser();
   const { data: roles = [] } = useRoles();
 
-  const handleSubmit = (data: CreateUserDto) => {
-    createUser(data);
+  const handleSubmit = (data: any) => {
+    createUser(data as CreateUserDto);
   };
 
   return (

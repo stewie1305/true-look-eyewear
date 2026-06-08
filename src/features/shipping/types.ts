@@ -75,3 +75,28 @@ export interface NhanhOrder {
   productList?: NhanhOrderProduct[];
   raw?: unknown;
 }
+
+export interface AhamoveFeeParams {
+  cart_item_ids: string[];
+  service_id: string;
+  drop_address: string;
+  drop_name: string;
+  drop_mobile: string;
+  payment_method: string;
+  remarks?: string;
+  ref_id?: string;
+}
+
+export interface AhamoveOrder {
+  id: string;
+  order_id: string;
+  ship_fee: number;
+  cod_amount: number;
+  create_at: string;
+  update_at: string;
+  status: string;
+  provider_id: string;
+  service_id: string;
+  nhanh_id: string | null;
+  tracking_url: string | null;
+}

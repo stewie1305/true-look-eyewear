@@ -11,6 +11,7 @@ export interface Address {
   street: string;
   note?: string;
   role?: string;
+  ref_id?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -24,6 +25,7 @@ export interface CreateAddressDto {
   street: string;
   note?: string;
   role?: string;
+  ref_id?: string;
 }
 
 export interface UpdateAddressDto {
@@ -35,6 +37,7 @@ export interface UpdateAddressDto {
   street?: string;
   note?: string;
   role?: string;
+  ref_id?: string;
 }
 
 export interface AddressFilterParams extends BaseFilterParams {

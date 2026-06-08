@@ -1,10 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  useCities,
-  useDistricts,
-  useWards,
-} from "@/features/shipping/hooks/useShippingLocations";
-
+import { useEffect, useState, useRef } from "react";
+import { useAddressAutocomplete } from "@/features/shipping/hooks/useShippingLocations";
+import { useDebounce } from "@/shared/hooks/useDebounce";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
@@ -15,34 +11,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { MapPin, Search, Loader2 } from "lucide-react";
 import type { Address, CreateAddressDto, UpdateAddressDto } from "../types";
 
 type AddressFormState = {
   name_recipient: string;
   phone_recipient: string;
-  cityId: string;
   city: string;
-  districtId: string;
   district: string;
-  wardId: string;
   ward: string;
   street: string;
   note: string;
   role: string;
+  ref_id: string;
 };
 
 const EMPTY_FORM: AddressFormState = {
   name_recipient: "",
   phone_recipient: "",
-  cityId: "",
   city: "",
-  districtId: "",
   district: "",
-  wardId: "",
   ward: "",
   street: "",
   note: "",
   role: "",
+  ref_id: "",
 };
 
 interface AddressFormProps {
@@ -64,115 +57,98 @@ export function AddressForm({
 }: AddressFormProps) {
   const [form, setForm] = useState<AddressFormState>(EMPTY_FORM);
   const [error, setError] = useState("");
-  const [districtKeyword, setDistrictKeyword] = useState("");
-  const [wardKeyword, setWardKeyword] = useState("");
-  const { data: cities = [], isLoading: isLoadingCities } = useCities();
-  const { data: districts = [], isLoading: isLoadingDistricts } = useDistricts(
-    form.cityId,
-  );
-  const { data: wards = [], isLoading: isLoadingWards } = useWards(
-    form.districtId,
-  );
 
-  const normalizeText = (value: string) =>
-    value
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const autocompleteRef = useRef<HTMLDivElement>(null);
 
-  const filteredDistricts = useMemo(() => {
-    if (!districtKeyword.trim()) return districts;
-    const keyword = normalizeText(districtKeyword.trim());
-    return districts.filter((item) =>
-      normalizeText(item.name).includes(keyword),
-    );
-  }, [districtKeyword, districts]);
+  const { data: suggestionsRaw, isLoading: isLoadingSuggestions } = useAddressAutocomplete(debouncedSearchTerm);
 
-  const filteredWards = useMemo(() => {
-    if (!wardKeyword.trim()) return wards;
-    const keyword = normalizeText(wardKeyword.trim());
-    return wards.filter((item) => normalizeText(item.name).includes(keyword));
-  }, [wardKeyword, wards]);
+  const suggestions = Array.isArray(suggestionsRaw) ? suggestionsRaw : suggestionsRaw?.results || suggestionsRaw?.data || suggestionsRaw?.features || [];
 
   useEffect(() => {
-    setForm({
-      name_recipient: defaultValues?.name_recipient || "",
-      phone_recipient: defaultValues?.phone_recipient || "",
-      cityId: "",
-      city: defaultValues?.city || "",
-      districtId: "",
-      district: defaultValues?.district || "",
-      wardId: "",
-      ward: defaultValues?.ward || "",
-      street: defaultValues?.street || "",
-      note: defaultValues?.note || "",
-      role: defaultValues?.role || "",
-    });
+    if (defaultValues) {
+      setForm({
+        name_recipient: defaultValues.name_recipient || "",
+        phone_recipient: defaultValues.phone_recipient || "",
+        city: defaultValues.city || "",
+        district: defaultValues.district || "",
+        ward: defaultValues.ward || "",
+        street: defaultValues.street || "",
+        note: defaultValues.note || "",
+        role: defaultValues.role || "",
+        ref_id: defaultValues.ref_id || "",
+      });
+      // Build a full address for the search term if it's an edit
+      if (defaultValues.street && defaultValues.city) {
+        setSearchTerm(`${defaultValues.street}, ${defaultValues.ward}, ${defaultValues.district}, ${defaultValues.city}`);
+      }
+    }
   }, [defaultValues]);
 
+  // Click outside to close suggestions
   useEffect(() => {
-    if (form.cityId || !form.city || !cities.length) return;
-    const matchedCity = cities.find(
-      (item) => item.name.toLowerCase() === form.city.toLowerCase(),
-    );
-    if (!matchedCity) return;
-    setForm((prev) => ({ ...prev, cityId: matchedCity.id }));
-  }, [cities, form.city, form.cityId]);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (autocompleteRef.current && !autocompleteRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  useEffect(() => {
-    if (form.districtId || !form.district || !districts.length) return;
-    const matchedDistrict = districts.find(
-      (item) => item.name.toLowerCase() === form.district.toLowerCase(),
-    );
-    if (!matchedDistrict) return;
-    setForm((prev) => ({ ...prev, districtId: matchedDistrict.id }));
-  }, [districts, form.district, form.districtId]);
+  const getAddressText = (item: any) => item.display || item.address || item.name || item.text || String(item);
 
-  useEffect(() => {
-    if (form.wardId || !form.ward || !wards.length) return;
-    const matchedWard = wards.find(
-      (item) => item.name.toLowerCase() === form.ward.toLowerCase(),
-    );
-    if (!matchedWard) return;
-    setForm((prev) => ({ ...prev, wardId: matchedWard.id }));
-  }, [wards, form.ward, form.wardId]);
+  const handleSelectAddress = (item: any) => {
+    const addressString = getAddressText(item);
+    let city = "";
+    let district = "";
+    let ward = "";
+    let street = "";
 
-  const handleCityChange = (cityId: string) => {
-    const selected = cities.find((item) => item.id === cityId);
-    setDistrictKeyword("");
-    setWardKeyword("");
-    setForm((prev) => ({
-      ...prev,
-      cityId,
-      city: selected?.name || "",
-      districtId: "",
-      district: "",
-      wardId: "",
-      ward: "",
+    if (item.boundaries && Array.isArray(item.boundaries)) {
+      // Parse from boundaries if available (VietMap format)
+      // type 0: City, type 1: District, type 2: Ward
+      const cityObj = item.boundaries.find((b: any) => b.type === 0);
+      const districtObj = item.boundaries.find((b: any) => b.type === 1);
+      const wardObj = item.boundaries.find((b: any) => b.type === 2);
+
+      if (cityObj) city = cityObj.full_name || cityObj.name;
+      if (districtObj) district = districtObj.full_name || districtObj.name;
+      if (wardObj) ward = wardObj.full_name || wardObj.name;
+      
+      // The street is usually item.name
+      street = item.name || addressString;
+    } else {
+      // Fallback to string splitting
+      const parts = addressString.split(",").map((p: string) => p.trim());
+      if (parts.length >= 4) {
+         city = parts[parts.length - 1];
+         district = parts[parts.length - 2];
+         ward = parts[parts.length - 3];
+         street = parts.slice(0, parts.length - 3).join(", ");
+      } else if (parts.length === 3) {
+         city = parts[2];
+         district = parts[1]; // might be district or ward
+         ward = parts[1]; // fallback, we don't know for sure
+         street = parts[0];
+      } else if (parts.length === 2) {
+         city = parts[1];
+         district = parts[0];
+         ward = "";
+         street = parts[0];
+      } else {
+         street = addressString;
+      }
+    }
+
+    setForm(prev => ({
+       ...prev,
+       city, district, ward, street, ref_id: item.ref_id || "",
     }));
-  };
-
-  const handleDistrictChange = (districtId: string) => {
-    const selected = districts.find((item) => item.id === districtId);
-    setDistrictKeyword("");
-    setWardKeyword("");
-    setForm((prev) => ({
-      ...prev,
-      districtId,
-      district: selected?.name || "",
-      wardId: "",
-      ward: "",
-    }));
-  };
-
-  const handleWardChange = (wardId: string) => {
-    const selected = wards.find((item) => item.id === wardId);
-    setWardKeyword("");
-    setForm((prev) => ({
-      ...prev,
-      wardId,
-      ward: selected?.name || "",
-    }));
+    setSearchTerm(addressString);
+    setShowSuggestions(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -183,10 +159,13 @@ export function AddressForm({
       return setError("Vui lòng nhập tên người nhận");
     if (!form.phone_recipient.trim())
       return setError("Vui lòng nhập số điện thoại");
-    if (!form.city.trim()) return setError("Vui lòng nhập tỉnh/thành phố");
-    if (!form.district.trim()) return setError("Vui lòng nhập quận/huyện");
-    if (!form.ward.trim()) return setError("Vui lòng nhập phường/xã");
-    if (!form.street.trim()) return setError("Vui lòng nhập số nhà, tên đường");
+    
+    // Ensure street is populated if we have a search term but parsing failed to get street
+    if (!form.street.trim() && searchTerm.trim()) {
+      form.street = searchTerm.trim();
+    } else if (!form.street.trim()) {
+      return setError("Vui lòng tìm kiếm và chọn một địa chỉ giao hàng hợp lệ");
+    }
 
     const payload: CreateAddressDto = {
       name_recipient: form.name_recipient.trim(),
@@ -197,6 +176,7 @@ export function AddressForm({
       street: form.street.trim(),
       note: form.note.trim(),
       role: form.role.trim() || "Nhà riêng",
+      ...(form.ref_id ? { ref_id: form.ref_id } : {}),
     };
 
     if (isEdit) {
@@ -239,172 +219,79 @@ export function AddressForm({
 
       <div className="rounded-lg border border-border/60 bg-muted/20 p-4">
         <div className="mb-3">
-          <p className="text-sm font-medium">Khu vực giao hàng</p>
+          <p className="text-sm font-medium">Tìm kiếm địa chỉ giao hàng</p>
           <p className="text-xs text-muted-foreground">
-            Chọn theo thứ tự Tỉnh/Thành → Quận/Huyện → Phường/Xã
+            Nhập số nhà, tên đường, phường/xã để tìm kiếm nhanh
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="space-y-2">
-            <Label htmlFor="city">Tỉnh/Thành phố</Label>
-            <Select
-              value={form.cityId || undefined}
-              onValueChange={handleCityChange}
-            >
-              <SelectTrigger id="city" className="w-full bg-background/80">
-                <SelectValue
-                  placeholder={
-                    isLoadingCities
-                      ? "Đang tải tỉnh/thành..."
-                      : "Chọn tỉnh/thành"
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent
-                position="popper"
-                side="bottom"
-                align="start"
-                className="h-64 max-h-[65vh] w-(--radix-select-trigger-width) overflow-hidden"
-              >
-                {cities.length === 0 ? (
-                  <SelectItem value="__empty_city" disabled>
-                    Không có dữ liệu
-                  </SelectItem>
-                ) : (
-                  cities.map((city) => (
-                    <SelectItem key={city.id} value={city.id}>
-                      {city.name}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+        <div className="relative" ref={autocompleteRef}>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              placeholder="Ví dụ: 88 Phước Thiện, Phường Long Bình..."
+              className="pl-9 bg-background"
+            />
+            {isLoadingSuggestions && (
+              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+            )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="district">Quận/Huyện</Label>
-            <Select
-              value={form.districtId || undefined}
-              onValueChange={handleDistrictChange}
-              disabled={!form.cityId || isLoadingDistricts}
-            >
-              <SelectTrigger
-                id="district"
-                className="w-full bg-background/80 disabled:opacity-60"
-              >
-                <SelectValue
-                  placeholder={
-                    !form.cityId
-                      ? "Chọn tỉnh/thành trước"
-                      : isLoadingDistricts
-                        ? "Đang tải quận/huyện..."
-                        : "Chọn quận/huyện"
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent
-                position="popper"
-                side="bottom"
-                align="start"
-                className="h-64 max-h-[65vh] w-(--radix-select-trigger-width) overflow-hidden"
-              >
-                <div className="sticky top-0 z-10 border-b bg-popover p-2">
-                  <Input
-                    value={districtKeyword}
-                    onChange={(e) => setDistrictKeyword(e.target.value)}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    placeholder="Tìm quận/huyện..."
-                    className="h-8 bg-background"
-                  />
-                </div>
-                {districts.length === 0 ? (
-                  <SelectItem value="__empty_district" disabled>
-                    Không có dữ liệu
-                  </SelectItem>
-                ) : filteredDistricts.length === 0 ? (
-                  <SelectItem value="__not_found_district" disabled>
-                    Không tìm thấy kết quả
-                  </SelectItem>
+          {/* Suggestions Dropdown */}
+          {showSuggestions && searchTerm.trim().length > 2 && (
+            <div className="absolute z-50 w-full mt-1 rounded-md border bg-popover text-popover-foreground shadow-md outline-none">
+              <ul className="max-h-60 overflow-auto p-1">
+                {isLoadingSuggestions ? (
+                  <li className="relative flex cursor-default select-none items-center rounded-sm px-2 py-3 text-sm outline-none">
+                    Đang tìm kiếm...
+                  </li>
+                ) : suggestions.length > 0 ? (
+                  suggestions.map((item: any, idx: number) => {
+                    const text = getAddressText(item);
+                    return (
+                      <li
+                        key={idx}
+                        className="relative flex cursor-pointer select-none items-start gap-2 rounded-sm px-2 py-2.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                        onClick={() => handleSelectAddress(item)}
+                      >
+                        <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-muted-foreground" />
+                        <span>{text}</span>
+                      </li>
+                    );
+                  })
                 ) : (
-                  filteredDistricts.map((district) => (
-                    <SelectItem key={district.id} value={district.id}>
-                      {district.name}
-                    </SelectItem>
-                  ))
+                  <li className="relative flex cursor-default select-none items-center rounded-sm px-2 py-3 text-sm outline-none">
+                    Không tìm thấy địa chỉ phù hợp
+                  </li>
                 )}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="ward">Phường/Xã</Label>
-            <Select
-              value={form.wardId || undefined}
-              onValueChange={handleWardChange}
-              disabled={!form.districtId || isLoadingWards}
-            >
-              <SelectTrigger
-                id="ward"
-                className="w-full bg-background/80 disabled:opacity-60"
-              >
-                <SelectValue
-                  placeholder={
-                    !form.districtId
-                      ? "Chọn quận/huyện trước"
-                      : isLoadingWards
-                        ? "Đang tải phường/xã..."
-                        : "Chọn phường/xã"
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent
-                position="popper"
-                side="bottom"
-                align="start"
-                className="h-64 max-h-[65vh] w-(--radix-select-trigger-width) overflow-hidden"
-              >
-                <div className="sticky top-0 z-10 border-b bg-popover p-2">
-                  <Input
-                    value={wardKeyword}
-                    onChange={(e) => setWardKeyword(e.target.value)}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    placeholder="Tìm phường/xã..."
-                    className="h-8 bg-background"
-                  />
-                </div>
-                {wards.length === 0 ? (
-                  <SelectItem value="__empty_ward" disabled>
-                    Không có dữ liệu
-                  </SelectItem>
-                ) : filteredWards.length === 0 ? (
-                  <SelectItem value="__not_found_ward" disabled>
-                    Không tìm thấy kết quả
-                  </SelectItem>
-                ) : (
-                  filteredWards.map((ward) => (
-                    <SelectItem key={ward.id} value={ward.id}>
-                      {ward.name}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          </div>
+              </ul>
+            </div>
+          )}
         </div>
-      </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="street">Số nhà, tên đường</Label>
-        <Input
-          id="street"
-          value={form.street}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, street: e.target.value }))
-          }
-          placeholder="123 Đường Lê Lợi"
-          className="bg-background/70"
-        />
+        {/* Display parsed fields to let user know it was recognized */}
+        {(form.city || form.district || form.ward || form.street) && (
+          <div className="mt-4 p-3 bg-background border border-border/50 rounded-md text-sm text-muted-foreground flex flex-wrap gap-x-4 gap-y-2 shadow-sm">
+            {form.street && form.street !== "Unknown" && (
+              <div><span className="font-medium text-foreground">Đường:</span> {form.street}</div>
+            )}
+            {form.ward && form.ward !== "Unknown" && (
+              <div><span className="font-medium text-foreground">Phường/Xã:</span> {form.ward}</div>
+            )}
+            {form.district && form.district !== "Unknown" && (
+              <div><span className="font-medium text-foreground">Quận/Huyện:</span> {form.district}</div>
+            )}
+            {form.city && form.city !== "Unknown" && (
+              <div><span className="font-medium text-foreground">Tỉnh/TP:</span> {form.city}</div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

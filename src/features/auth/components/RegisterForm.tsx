@@ -49,14 +49,14 @@ export function RegisterForm() {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="username">Username</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="username" className="text-sm font-semibold">Tên đăng nhập</Label>
         <Input
           id="username"
           type="text"
           placeholder="khachhang01"
           {...register("username")}
-          className={errors.username ? "border-destructive" : ""}
+          className={`h-11 rounded-xl transition-all ${errors.username ? "border-destructive focus-visible:ring-destructive/30" : "border-border/60 hover:border-border/80 focus-visible:ring-primary/20"}`}
           required
         />
         {errors.username && (
@@ -64,14 +64,14 @@ export function RegisterForm() {
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="fullName">Full name</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="fullName" className="text-sm font-semibold">Họ và tên</Label>
         <Input
           id="fullName"
           type="text"
           placeholder="Nguyễn Văn A"
           {...register("fullName")}
-          className={errors.fullName ? "border-destructive" : ""}
+          className={`h-11 rounded-xl transition-all ${errors.fullName ? "border-destructive focus-visible:ring-destructive/30" : "border-border/60 hover:border-border/80 focus-visible:ring-primary/20"}`}
           required
         />
         {errors.fullName && (
@@ -79,14 +79,14 @@ export function RegisterForm() {
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="email" className="text-sm font-semibold">Email</Label>
         <Input
           id="email"
           type="email"
           placeholder="example@gmail.com"
           {...register("email")}
-          className={errors.email ? "border-destructive" : ""}
+          className={`h-11 rounded-xl transition-all ${errors.email ? "border-destructive focus-visible:ring-destructive/30" : "border-border/60 hover:border-border/80 focus-visible:ring-primary/20"}`}
           required
         />
         {errors.email && (
@@ -94,28 +94,28 @@ export function RegisterForm() {
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="password" className="text-sm font-semibold">Mật khẩu</Label>
         <Input
           id="password"
           type="password"
           placeholder="••••••••"
           {...register("password")}
-          className={errors.password ? "border-destructive" : ""}
+          className={`h-11 rounded-xl transition-all ${errors.password ? "border-destructive focus-visible:ring-destructive/30" : "border-border/60 hover:border-border/80 focus-visible:ring-primary/20"}`}
           required
         />
         {errors.password && (
           <p className="text-destructive text-xs">{errors.password.message}</p>
         )}
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="confirmPassword" className="text-sm font-semibold">Xác nhận mật khẩu</Label>
         <Input
           id="confirmPassword"
           type="password"
           placeholder="••••••••"
           {...register("confirmPassword")}
-          className={errors.confirmPassword ? "border-destructive" : ""}
+          className={`h-11 rounded-xl transition-all ${errors.confirmPassword ? "border-destructive focus-visible:ring-destructive/30" : "border-border/60 hover:border-border/80 focus-visible:ring-primary/20"}`}
         />
         {errors.confirmPassword && (
           <p className="text-destructive text-xs">
@@ -124,12 +124,12 @@ export function RegisterForm() {
         )}
       </div>
       {/* GENDER */}
-      <div className="space-y-2">
-        <Label htmlFor="gender">Giới tính</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="gender" className="text-sm font-semibold">Giới tính</Label>
         <select
           id="gender"
           {...register("gender")}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className={`flex h-11 w-full rounded-xl border bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-0 transition-all ${errors.gender ? "border-destructive" : "border-border/60 hover:border-border/80"}`}
         >
           <option value="">Chọn giới tính</option>
           <option value="M">Nam</option>
@@ -140,16 +140,21 @@ export function RegisterForm() {
         )}
       </div>
       {/* BIRTHDAY */}
-      <div className="space-y-2">
-        <Label htmlFor="birthday">Ngày sinh</Label>
-        <Input id="birthday" type="date" {...register("birthday")} />
+      <div className="space-y-1.5">
+        <Label htmlFor="birthday" className="text-sm font-semibold">Ngày sinh</Label>
+        <Input 
+          id="birthday" 
+          type="date" 
+          {...register("birthday")} 
+          className={`h-11 rounded-xl transition-all ${errors.birthday ? "border-destructive focus-visible:ring-destructive/30" : "border-border/60 hover:border-border/80 focus-visible:ring-primary/20"}`}
+        />
         {errors.birthday && (
           <p className="text-destructive text-xs">{errors.birthday.message}</p>
         )}
       </div>
       <Button
         type="submit"
-        className="w-full flex items-center justify-center"
+        className="w-full h-11 rounded-xl text-base font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center mt-4"
         disabled={registerMutation.isPending || isSubmitting}
       >
         {registerMutation.isPending || isSubmitting ? (
@@ -158,14 +163,14 @@ export function RegisterForm() {
             Đang đăng ký...
           </>
         ) : (
-          "Register"
+          "Đăng ký"
         )}
       </Button>
 
-      <div className="text-center text-sm">
+      <div className="text-center text-sm pt-2">
         <span className="text-muted-foreground">Đã có tài khoản? </span>
         <Link to="/login" className="text-primary hover:underline font-medium">
-          Đăng nhập
+          Đăng nhập ngay
         </Link>
       </div>
     </form>

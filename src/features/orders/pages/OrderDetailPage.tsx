@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, MessageCircle, ReceiptText } from "lucide-react";
+import { ArrowLeft, MessageCircle, ReceiptText, Calendar, Hash, User, CreditCard, Package } from "lucide-react";
 
 import {
   LoadingSpinner,
@@ -29,6 +29,12 @@ const statusVariant: Record<
   Completed: "default",
 };
 
+const getDisplayStatus = (status?: string | null) => {
+  if (!status) return "Pending";
+  if (status === "SHIPPING_FAILED") return "Cancel";
+  return status;
+};
+
 export default function OrderDetailPage() {
   const { id = "" } = useParams();
   const { data: order, isLoading, error, refetch } = useOrderDetail(id);
@@ -41,7 +47,7 @@ export default function OrderDetailPage() {
     customer_id: order?.customer_id || summaryOrder?.customer_id || "",
     total: Number(order?.total || summaryOrder?.total || 0),
     extra_fee: Number(order?.extra_fee || summaryOrder?.extra_fee || 0),
-    status: order?.status || summaryOrder?.status || "Pending",
+    status: getDisplayStatus(summaryOrder?.status || order?.status),
     create_at: order?.create_at || summaryOrder?.create_at || "",
     update_at: order?.update_at || summaryOrder?.update_at || null,
   };
@@ -79,124 +85,195 @@ export default function OrderDetailPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-8 space-y-6">
-      <Button variant="ghost" size="sm" asChild>
+    <div className="container mx-auto max-w-6xl px-4 py-8 space-y-8 animate-in fade-in duration-500">
+      <Button variant="ghost" size="sm" asChild className="hover:bg-primary/5 hover:text-primary transition-colors">
         <Link to="/orders">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Quay lại đơn hàng của tôi
+          Trở về đơn hàng của tôi
         </Link>
       </Button>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ReceiptText className="h-5 w-5" />
-            Chi tiết đơn hàng #{displayOrder.id}
-          </CardTitle>
-        </CardHeader>
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Left Side: Products */}
+        <div className="flex-1 space-y-6">
+          <Card className="border-none shadow-sm bg-card/50 backdrop-blur-sm">
+            <CardHeader className="border-b bg-muted/20 pb-4">
+              <CardTitle className="flex items-center gap-3 text-xl font-bold">
+                <div className="bg-primary/10 p-2 rounded-full text-primary">
+                  <Package className="h-5 w-5" />
+                </div>
+                Sản phẩm đã mua (Đơn #{displayOrder.id})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              {Array.isArray(order?.items) && order.items.length > 0 ? (
+                <div className="space-y-4">
+                  {order.items.map((item) => (
+                    <div
+                      key={item.id || `${item.variant_id}-${item.order_id}`}
+                      className="group relative flex flex-col sm:flex-row gap-5 w-full rounded-2xl border border-transparent bg-secondary/30 p-5 transition-all duration-300 hover:border-primary/20 hover:bg-secondary/50 hover:shadow-md"
+                    >
+                      {(item.image_path || order?.images?.find((img: any) => String(img.variant_id) === String(item.variant_id))?.path) && (
+                        <div className="h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl border bg-white shadow-sm transition-transform duration-300 group-hover:scale-105 group-hover:shadow-md mx-auto sm:mx-0">
+                          <img
+                            src={`${import.meta.env.VITE_API_URL}/${(item.image_path || order?.images?.find((img: any) => String(img.variant_id) === String(item.variant_id))?.path).replace(/\\/g, "/")}`}
+                            alt={item.variant_name}
+                            className="h-full w-full object-cover object-center"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = "https://placehold.co/150x150?text=No+Image";
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div className="flex flex-1 flex-col justify-center">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                          <div>
+                            <p className="font-bold text-lg leading-tight transition-colors group-hover:text-primary">
+                              {item.variant_name}
+                            </p>
+                            <div className="mt-2 flex items-center gap-2">
+                              <Badge variant="outline" className="text-[10px] font-mono bg-background">
+                                ID: {item.variant_id}
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className="text-left sm:text-right mt-2 sm:mt-0">
+                            <p className="font-extrabold text-xl text-primary">
+                              {(
+                                Number(item.price) * Number(item.quantity)
+                              ).toLocaleString("vi-VN")}
+                              đ
+                            </p>
+                          </div>
+                        </div>
 
-        <CardContent className="space-y-4">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg border p-3">
-              <p className="text-xs text-muted-foreground">Mã đơn hàng</p>
-              <p className="mt-1 font-semibold">#{displayOrder.id}</p>
-            </div>
-            <div className="rounded-lg border p-3">
-              <p className="text-xs text-muted-foreground">Khách hàng</p>
-              <p className="mt-1 font-medium">
-                {displayOrder.customer_id || "-"}
-              </p>
-            </div>
-            <div className="rounded-lg border p-3">
-              <p className="text-xs text-muted-foreground">Ngày tạo</p>
-              <p className="mt-1 font-medium">
-                {displayOrder.create_at
-                  ? new Date(displayOrder.create_at).toLocaleString("vi-VN")
-                  : "-"}
-              </p>
-            </div>
-            <div className="rounded-lg border p-3">
-              <p className="text-xs text-muted-foreground">Cập nhật gần nhất</p>
-              <p className="mt-1 font-medium">
-                {displayOrder.update_at
-                  ? new Date(displayOrder.update_at).toLocaleString("vi-VN")
-                  : "-"}
-              </p>
-            </div>
-            <div className="rounded-lg border p-3">
-              <p className="text-xs text-muted-foreground">Trạng thái</p>
-              <div className="mt-1">
-                <Badge
-                  variant={statusVariant[displayOrder.status] ?? "outline"}
-                >
-                  {displayOrder.status}
-                </Badge>
-              </div>
-            </div>
-            <div className="rounded-lg border p-3">
-              <p className="text-xs text-muted-foreground">Phí phát sinh</p>
-              <p className="mt-1 font-medium">
-                {Number(displayOrder.extra_fee || 0).toLocaleString("vi-VN")}đ
-              </p>
-            </div>
-          </div>
-
-          <div className="rounded-lg border p-4">
-            <p className="text-sm text-muted-foreground">Tổng tiền</p>
-            <p className="mt-1 text-2xl font-bold text-primary">
-              {Number(displayOrder.total || 0).toLocaleString("vi-VN")}đ
-            </p>
-            <Button asChild className="mt-3" size="sm">
-              <Link to={`/orders/${displayOrder.id}/support`}>
-                <MessageCircle className="mr-2 h-4 w-4" />
-                Liên hệ hỗ trợ đơn hàng
-              </Link>
-            </Button>
-          </div>
-
-          <div className="rounded-lg border p-4 space-y-3">
-            <p className="text-sm font-semibold">Sản phẩm đã mua</p>
-
-            {Array.isArray(order?.items) && order.items.length > 0 ? (
-              <div className="space-y-2">
-                {order.items.map((item) => (
-                  <div
-                    key={item.id || `${item.variant_id}-${item.order_id}`}
-                    className="rounded-md border p-3"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="font-medium">{item.variant_name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          Variant ID: {item.variant_id}
-                        </p>
+                        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+                          <span className="flex items-center gap-1.5 bg-background/50 px-3 py-1.5 rounded-lg border shadow-sm">
+                            <span className="text-muted-foreground text-xs font-medium uppercase tracking-wider">Đơn giá</span> 
+                            <span className="font-bold">{Number(item.price || 0).toLocaleString("vi-VN")}đ</span>
+                          </span>
+                          <span className="flex items-center gap-1.5 bg-background/50 px-3 py-1.5 rounded-lg border shadow-sm">
+                            <span className="text-muted-foreground text-xs font-medium uppercase tracking-wider">Số lượng</span> 
+                            <span className="font-bold text-primary">x{item.quantity}</span>
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-sm font-semibold">
-                        {(
-                          Number(item.price) * Number(item.quantity)
-                        ).toLocaleString("vi-VN")}
-                        đ
-                      </p>
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-12 flex flex-col items-center justify-center text-center opacity-70">
+                  <Package className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-base text-muted-foreground">
+                    Chưa có danh sách sản phẩm trong chi tiết đơn hàng.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-                    <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                      <span>
-                        Đơn giá:{" "}
-                        {Number(item.price || 0).toLocaleString("vi-VN")}đ
-                      </span>
-                      <span>SL: {item.quantity}</span>
+        {/* Right Side: Order Info */}
+        <div className="w-full lg:w-[380px] space-y-6 flex-shrink-0">
+          <Card className="border-none shadow-sm bg-card/50 backdrop-blur-sm">
+            <CardHeader className="border-b bg-muted/20 pb-4">
+              <CardTitle className="text-lg font-bold flex items-center gap-2">
+                <ReceiptText className="w-5 h-5 text-primary" />
+                Thông tin đơn hàng
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="flex flex-col gap-6">
+                
+                <div className="flex items-center justify-between pb-4 border-b border-dashed">
+                  <span className="text-sm font-medium text-muted-foreground">Trạng thái</span>
+                  <Badge 
+                    variant={statusVariant[displayOrder.status] ?? "outline"}
+                    className="px-3 py-1 text-xs font-bold uppercase tracking-wider"
+                  >
+                    {displayOrder.status}
+                  </Badge>
+                </div>
+
+                <div className="space-y-5">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-2.5 rounded-xl text-primary mt-0.5">
+                      <Hash className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Mã đơn</p>
+                      <p className="font-bold text-sm mt-0.5">#{displayOrder.id}</p>
                     </div>
                   </div>
-                ))}
+
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-2.5 rounded-xl text-primary mt-0.5">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Khách hàng</p>
+                      <p className="font-bold text-sm mt-0.5">
+                        {displayOrder.customer_id || "Khách vãng lai"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-2.5 rounded-xl text-primary mt-0.5">
+                      <Calendar className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Ngày tạo</p>
+                      <p className="font-bold text-sm mt-0.5">
+                        {displayOrder.create_at
+                          ? new Date(displayOrder.create_at).toLocaleString("vi-VN")
+                          : "-"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-2.5 rounded-xl text-primary mt-0.5">
+                      <CreditCard className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Phí phát sinh</p>
+                      <p className="font-bold text-sm mt-0.5">
+                        {Number(displayOrder.extra_fee || 0).toLocaleString("vi-VN")}đ
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
               </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Chưa có danh sách sản phẩm trong chi tiết đơn hàng.
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-none shadow-xl relative overflow-hidden group">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+            <div className="absolute -right-10 -top-10 w-32 h-32 bg-white/20 rounded-full blur-2xl group-hover:bg-white/30 transition-all duration-500"></div>
+            
+            <CardContent className="p-8 relative z-10">
+              <p className="text-sm font-semibold opacity-90 uppercase tracking-widest mb-2">Tổng thanh toán</p>
+              <p className="text-4xl font-extrabold tracking-tight drop-shadow-sm">
+                {Number(displayOrder.total || 0).toLocaleString("vi-VN")}đ
               </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              <Button 
+                asChild 
+                className="mt-8 w-full bg-background text-primary hover:bg-background/90 font-bold shadow-md transition-transform hover:scale-[1.02]" 
+                size="lg"
+              >
+                <Link to={`/orders/${displayOrder.id}/support`}>
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  Liên hệ hỗ trợ ngay
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

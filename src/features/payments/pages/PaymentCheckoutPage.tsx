@@ -18,8 +18,9 @@ import {
 } from "@/shared/components/ui/card";
 import { toast } from "sonner";
 import { Badge } from "@/shared/components/ui/badge";
-import { useAddresses } from "@/features/address/hooks/useAddresses";
-import { useShippingFee } from "@/features/shipping/hooks/useShippingLocations";
+import { useAddresses, useCreateAddress } from "@/features/address/hooks/useAddresses";
+import { useAhamoveFee, useAddressAutocomplete } from "@/features/shipping/hooks/useShippingLocations";
+import { AddressForm } from "@/features/address/components/AddressForm";
 import { useUserMe } from "@/features/users/hooks/useUsers";
 import {
   useCreateOrder,
@@ -43,10 +44,6 @@ interface CheckoutResult {
 
 const PENDING_BANK_ORDER_KEY = "pending_bank_order_id";
 const CANCELED_BANK_ORDER_IDS_KEY = "canceled_bank_order_ids";
-const SHIPPING_ORIGIN = {
-  cityName: "Hồ Chí Minh",
-  districtName: "Thành phố Thủ Đức",
-};
 
 export default function PaymentCheckoutPage() {
   const location = useLocation();
@@ -78,6 +75,7 @@ export default function PaymentCheckoutPage() {
   const [checkoutResult, setCheckoutResult] = useState<CheckoutResult | null>(
     null,
   );
+  const [showAddressModal, setShowAddressModal] = useState(false);
 
   const payosCode = searchParams.get("code");
   const payosStatus = searchParams.get("status");
@@ -86,6 +84,7 @@ export default function PaymentCheckoutPage() {
   const { items, totalAmount, isLoading: isLoadingCart } = useCart();
   const { data: currentUser } = useUserMe();
   const { addresses, isLoading: isLoadingAddresses } = useAddresses();
+  const createAddressMutation = useCreateAddress();
   const { data: selectedOrder } = useOrderDetail(defaultOrderId);
   const createOrderMutation = useCreateOrder();
   const createPaymentMutation = useCreatePayment();
@@ -142,36 +141,48 @@ export default function PaymentCheckoutPage() {
 
   const estimatedFinalAmount = Math.max(subtotal - estimatedDiscount, 0);
 
-  const estimatedShippingWeight = useMemo(() => {
-    if (!checkoutItems.length) return 500;
-
-    const totalQuantity = checkoutItems.reduce(
-      (sum, item) => sum + Number(item.quantity || 0),
-      0,
-    );
-
-    return Math.max(500, totalQuantity * 250);
-  }, [checkoutItems]);
 
   const selectedAddress = useMemo(
     () => addresses.find((address) => address.id === selectedAddressId),
     [addresses, selectedAddressId],
   );
 
+  const fullAddressText = useMemo(() => {
+    if (!selectedAddress) return "";
+    return [
+      selectedAddress.street,
+      selectedAddress.ward,
+      selectedAddress.district,
+      selectedAddress.city,
+    ]
+      .filter(Boolean)
+      .join(", ");
+  }, [selectedAddress]);
+
+  const autocompleteQuery = useAddressAutocomplete(fullAddressText);
+  const autocompleteData = autocompleteQuery.data as any;
+  const ref_id =
+    selectedAddress?.ref_id ||
+    autocompleteData?.results?.[0]?.ref_id ||
+    autocompleteData?.data?.results?.[0]?.ref_id;
+
+
   const shippingFeeParams = useMemo(() => {
     if (defaultOrderId || !selectedAddress) return undefined;
 
     return {
-      fromCityName: SHIPPING_ORIGIN.cityName,
-      fromDistrictName: SHIPPING_ORIGIN.districtName,
-      toCityName: selectedAddress.city,
-      toDistrictName: selectedAddress.district,
-      shippingWeight: estimatedShippingWeight,
-      money: Math.max(0, subtotal),
+      cart_item_ids: selectedCartItemIds,
+      service_id: "SGN-BIKE", // Fixed as per user requirement
+      drop_address: fullAddressText,
+      drop_name: selectedAddress.name_recipient,
+      drop_mobile: selectedAddress.phone_recipient,
+      payment_method: "CASH", // Fixed as per user requirement
+      remarks: selectedAddress.note || "",
+      ref_id,
     };
-  }, [defaultOrderId, estimatedShippingWeight, selectedAddress, subtotal]);
+  }, [defaultOrderId, selectedAddress, selectedCartItemIds, fullAddressText, ref_id]);
 
-  const shippingFeeQuery = useShippingFee(shippingFeeParams);
+  const shippingFeeQuery = useAhamoveFee(shippingFeeParams);
 
   const shippingFee = defaultOrderId
     ? Number(selectedOrder?.extra_fee || 0)
@@ -285,6 +296,7 @@ export default function PaymentCheckoutPage() {
               cart_item_ids: selectedCartItemIds.length
                 ? selectedCartItemIds
                 : undefined,
+              ref_id: selectedAddress?.ref_id,
             })
           )?.id;
 
@@ -450,36 +462,41 @@ export default function PaymentCheckoutPage() {
                 <div className="rounded-lg border border-dashed p-4 text-sm">
                   Chưa có địa chỉ. Vui lòng thêm địa chỉ trước khi thanh toán.
                   <div className="mt-3">
-                    <Button asChild size="sm" variant="outline">
-                      <Link to="/addresses">Thêm địa chỉ</Link>
+                    <Button type="button" size="sm" variant="outline" onClick={() => setShowAddressModal(true)}>
+                      Thêm địa chỉ mới
                     </Button>
                   </div>
                 </div>
               ) : (
-                addresses.map((address) => {
-                  const isSelected = selectedAddressId === address.id;
+                <div className="space-y-3">
+                  {addresses.map((address) => {
+                    const isSelected = selectedAddressId === address.id;
 
-                  return (
-                    <button
-                      key={address.id}
-                      type="button"
-                      onClick={() => setSelectedAddressId(address.id)}
-                      className={`w-full rounded-lg border p-3 text-left transition ${
-                        isSelected
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/40"
-                      }`}
-                    >
-                      <p className="font-medium">
-                        {address.name_recipient} - {address.phone_recipient}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {address.street}, {address.ward}, {address.district},{" "}
-                        {address.city}
-                      </p>
-                    </button>
-                  );
-                })
+                    return (
+                      <button
+                        key={address.id}
+                        type="button"
+                        onClick={() => setSelectedAddressId(address.id)}
+                        className={`w-full rounded-lg border p-3 text-left transition ${
+                          isSelected
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/40"
+                        }`}
+                      >
+                        <p className="font-medium">
+                          {address.name_recipient} - {address.phone_recipient}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {address.street}, {address.ward}, {address.district},{" "}
+                          {address.city}
+                        </p>
+                      </button>
+                    );
+                  })}
+                  <Button type="button" variant="outline" className="w-full" onClick={() => setShowAddressModal(true)}>
+                    + Thêm địa chỉ mới
+                  </Button>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -716,6 +733,36 @@ export default function PaymentCheckoutPage() {
           </Card>
         </div>
       </div>
+
+      {showAddressModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
+          <div className="bg-background w-full max-w-3xl rounded-lg p-6 relative max-h-[90vh] overflow-y-auto">
+            <button
+              type="button"
+              onClick={() => setShowAddressModal(false)}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground p-2"
+            >
+              ✕
+            </button>
+            <h2 className="text-xl font-bold mb-4">Thêm địa chỉ mới</h2>
+            <AddressForm
+              isPending={createAddressMutation.isPending}
+              submitLabel="Thêm địa chỉ"
+              onSubmit={(data) => {
+                createAddressMutation.mutate(data as any, {
+                  onSuccess: (newAddress) => {
+                    setShowAddressModal(false);
+                    if (newAddress?.id) {
+                      setSelectedAddressId(newAddress.id);
+                    }
+                  },
+                });
+              }}
+              onCancel={() => setShowAddressModal(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

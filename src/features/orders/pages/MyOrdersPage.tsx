@@ -19,6 +19,12 @@ const statusVariant: Record<
   Completed: "default",
 };
 
+const getDisplayStatus = (status?: string | null) => {
+  if (!status) return "Pending";
+  if (status === "SHIPPING_FAILED") return "Cancel";
+  return status;
+};
+
 export default function MyOrdersPage() {
   const { data: currentUser, isLoading: isLoadingUser } = useUserMe();
   const { orders, isLoading } = useMyOrders(currentUser?.id);
@@ -81,8 +87,8 @@ export default function MyOrdersPage() {
                 </p>
               </div>
 
-              <Badge variant={statusVariant[order.status] ?? "outline"}>
-                {order.status}
+              <Badge variant={statusVariant[getDisplayStatus(order.status)] ?? "outline"}>
+                {getDisplayStatus(order.status)}
               </Badge>
             </div>
           </Card>

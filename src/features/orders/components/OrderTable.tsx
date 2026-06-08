@@ -29,6 +29,12 @@ const statusVariant: Record<
   Completed: "default",
 };
 
+const getDisplayStatus = (status?: string | null) => {
+  if (!status) return "Pending";
+  if (status === "SHIPPING_FAILED") return "Cancel";
+  return status;
+};
+
 export function OrderTable({
   orders,
   onUpdateStatus,
@@ -56,8 +62,8 @@ export function OrderTable({
                 {Number(order.total || 0).toLocaleString("vi-VN")}đ
               </TableCell>
               <TableCell>
-                <Badge variant={statusVariant[order.status] ?? "outline"}>
-                  {order.status}
+                <Badge variant={statusVariant[getDisplayStatus(order.status)] ?? "outline"}>
+                  {getDisplayStatus(order.status)}
                 </Badge>
               </TableCell>
               <TableCell>
@@ -75,7 +81,8 @@ export function OrderTable({
                       isUpdating ||
                       order.status === "Confirm" ||
                       order.status === "Shipping" ||
-                      order.status === "Cancel"
+                      order.status === "Cancel" ||
+                      order.status === "SHIPPING_FAILED"
                     }
                   >
                     <CheckCircle2 className="mr-1 h-3 w-3" />

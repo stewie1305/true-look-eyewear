@@ -4,6 +4,15 @@ import { cn } from "@/lib/utils";
 import { useLogoutMutation } from "@/features/auth/hooks/useAuthMutation";
 import { ModeToggle } from "@/shared/components/common/mode-toggle";
 import { CartIcon } from "@/features/cart/components/CartIcon";
+import truelookLogo from "@/shared/pictures/trueLookLogotachnen-removebg-preview.png";
+import { Menu } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/shared/components/ui/dropdown-menu";
+import { Button } from "@/shared/components/ui/button";
 
 const Header = () => {
   const location = useLocation();
@@ -14,133 +23,141 @@ const Header = () => {
     pathname === "/"
       ? location.pathname === pathname
       : location.pathname === pathname ||
-        location.pathname.startsWith(`${pathname}/`);
+      location.pathname.startsWith(`${pathname}/`);
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 w-full",
-        "border-b border-border/40",
-        "bg-background/95 backdrop-blur-md",
-        "supports-backdrop-filter:bg-background/60",
-        "transition-all duration-200",
-      )}
-    >
-      <div className="max-w-7xl mx-auto flex h-16 items-center gap-4 px-4">
-        {/* ================= LOGO ================= */}
-        <Link
-          to="/"
-          className="shrink-0 flex flex-col leading-none hover:opacity-80 transition"
-        >
-          {/* Main Brand */}
-          <div
-            className="flex items-center text-[34px] tracking-[4px] text-primary"
-            style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 600 }}
-          >
-            TRUE&nbsp;L
-            {/* OO thành kính */}
-            <span className="relative flex items-center mx-1">
-              <span className="w-5 h-5 border border-current rounded-full"></span>
-              <span className="w-5 h-5 border border-current rounded-full -ml-1"></span>
+    <div className="fixed top-0 left-0 right-0 z-50 p-4 pointer-events-none">
+      <header
+        className={cn(
+          "pointer-events-auto",
+          "mx-auto w-full max-w-6xl h-16 rounded-full",
+          "border border-border/50 shadow-sm",
+          "bg-background/80 backdrop-blur-md",
+          "transition-all duration-200",
+          "flex items-center justify-between px-6"
+        )}
+      >
+        {/* ================= MOBILE MENU ================= */}
+        <div className="flex md:hidden items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link to="/" className="w-full cursor-pointer">Trang chủ</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/products" className="w-full cursor-pointer">Sản phẩm</Link>
+              </DropdownMenuItem>
+              {token && (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="w-full cursor-pointer">Hồ sơ</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/orders" className="w-full cursor-pointer">Đơn hàng</Link>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-              {/* Bridge */}
-              <span className="absolute w-3 h-px bg-current left-1/2 -translate-x-1/2"></span>
-            </span>
-            K
-          </div>
-
-          {/* Subtitle */}
-          <span
-            className="text-[10px] tracking-[6px] text-muted-foreground mt-1"
-            style={{ fontFamily: "Montserrat, sans-serif" }}
-          >
-            EYEWEAR
-          </span>
-        </Link>
-
-        {/* ================= NAVIGATION ================= */}
-        <nav className="ml-auto flex min-w-0 items-center gap-0.5">
+        {/* ================= LEFT NAVIGATION ================= */}
+        <nav className="hidden md:flex items-center gap-1">
           <Link
             to="/"
             className={cn(
-              "shrink-0 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-all",
+              "shrink-0 whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all",
               isActive("/")
-                ? "bg-primary/10 text-primary underline underline-offset-4"
-                : "text-foreground hover:text-primary hover:bg-muted",
+                ? "bg-primary text-primary-foreground"
+                : "text-foreground hover:bg-muted"
             )}
           >
-            Home
+            Trang chủ
           </Link>
-
           <Link
             to="/products"
             className={cn(
-              "shrink-0 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-all",
+              "shrink-0 whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all",
               isActive("/products")
-                ? "bg-primary/10 text-primary underline underline-offset-4"
-                : "text-foreground hover:text-primary hover:bg-muted",
+                ? "bg-primary text-primary-foreground"
+                : "text-foreground hover:bg-muted"
             )}
           >
-            EyeWears
+            Sản phẩm
           </Link>
-
           {token && (
             <Link
               to="/profile"
               className={cn(
-                "shrink-0 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-all",
+                "shrink-0 whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all",
                 isActive("/profile")
-                  ? "bg-primary/10 text-primary underline underline-offset-4"
-                  : "text-foreground hover:text-primary hover:bg-muted",
+                  ? "bg-primary text-primary-foreground"
+                  : "text-foreground hover:bg-muted"
               )}
             >
-              Profile
+              Hồ sơ
             </Link>
           )}
-
           {token && (
             <Link
               to="/orders"
               className={cn(
-                "shrink-0 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-all",
+                "shrink-0 whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all",
                 isActive("/orders")
-                  ? "bg-primary/10 text-primary underline underline-offset-4"
-                  : "text-foreground hover:text-primary hover:bg-muted",
+                  ? "bg-primary text-primary-foreground"
+                  : "text-foreground hover:bg-muted"
               )}
             >
-              Orders
+              Đơn hàng
             </Link>
           )}
+        </nav>
 
+        {/* ================= CENTER LOGO ================= */}
+        <Link
+          to="/"
+          className="absolute left-1/2 top-[50%] md:top-[60%] -translate-x-1/2 -translate-y-1/2 flex items-center hover:opacity-80 transition"
+        >
+          <img 
+            src={truelookLogo} 
+            alt="True Look Logo" 
+            className="h-20 md:h-28 w-auto object-contain invert dark:invert-0 scale-125 md:scale-150" 
+          />
+        </Link>
+
+        {/* ================= RIGHT ACTIONS ================= */}
+        <div className="flex items-center gap-1 md:gap-2">
+          {token && <CartIcon />}
+          <ModeToggle />
+          
           {!token ? (
             <Link
               to="/login"
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                "ml-1 md:ml-2 px-3 py-1.5 md:px-6 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all",
                 isActive("/login")
-                  ? "bg-primary/10 text-primary underline underline-offset-4"
-                  : "text-foreground hover:text-primary hover:bg-muted",
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-primary/90 text-primary-foreground hover:bg-primary"
               )}
             >
-              Login
+              Đăng nhập
             </Link>
           ) : (
             <button
               onClick={() => logoutMutation.mutate()}
-              className="shrink-0 whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-all"
+              className="ml-1 md:ml-2 shrink-0 whitespace-nowrap px-3 py-1.5 md:px-6 md:py-2 rounded-full text-xs md:text-sm font-medium bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-all"
             >
-              Logout
+              Đăng xuất
             </button>
           )}
-
-          {/* Cart & Theme Toggle */}
-          <div className="ml-2 pl-2 border-l border-border/40 flex items-center gap-3">
-            {token && <CartIcon />}
-            <ModeToggle />
-          </div>
-        </nav>
-      </div>
-    </header>
+        </div>
+      </header>
+    </div>
   );
 };
 

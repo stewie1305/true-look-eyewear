@@ -16,7 +16,6 @@ import {
   useDeleteContactLensSpec,
 } from "@/features/contactLensSpecs/hooks";
 import { ContactLensSpecTable } from "@/features/contactLensSpecs/components/ContactLensSpecTable";
-import { useDebounce } from "@/shared/hooks/useDebounce";
 import { useSearchParams } from "react-router-dom";
 
 export default function ManageContactLensSpecList() {
@@ -24,7 +23,6 @@ export default function ManageContactLensSpecList() {
   const [searchTerm, setSearchTerm] = useState(
     searchParams.get("search") || "",
   );
-  const debouncedSearch = useDebounce(searchTerm, 500);
 
   const { contactLensSpecs, isLoading } = useContactLensSpecs();
   const { mutate: deleteSpec, isPending: isDeleting } =

@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-linear-to-b from-background to-muted/30 px-4">
-      <Card className="w-full max-w-md shadow-lg">
+      <Card className="w-full max-w-md shadow-lg border border-border/40">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold">
             {step === "email" ? "Quên mật khẩu" : "Đặt lại mật khẩu"}

@@ -157,7 +157,7 @@ export function ProductDetail() {
 
   if (error || !variant || !isActive) {
     return (
-      <div className="py-12">
+      <div className="pt-28 pb-12">
         <EmptyState
           title="Không tìm thấy sản phẩm"
           description="Sản phẩm bạn tìm kiếm không tồn tại hoặc đã bị xoá."
@@ -177,7 +177,7 @@ export function ProductDetail() {
   const price = parseFloat(variant.price).toLocaleString("vi-VN");
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 pt-28 pb-8">
       {/* Back Button */}
       <Button
         variant="outline"

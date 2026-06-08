@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import { QUERY_KEYS } from "@/shared/constants";
 import { adminProductService } from "@/features/products/services";
 import { orderService } from "../services";
+import { cartItemService } from "@/features/cart/services";
 import type {
   CreateOrderDto,
   OrderDetail,
@@ -49,11 +50,14 @@ export function useOrdersAdmin() {
   }
 
   if (filters.status) {
-    orders = orders.filter(
-      (order) =>
-        String(order.status || "").toLowerCase() ===
-        String(filters.status || "").toLowerCase(),
-    );
+    const filterStatus = String(filters.status || "").toLowerCase();
+    orders = orders.filter((order) => {
+      const orderStatus = String(order.status || "").toLowerCase();
+      if (filterStatus === "cancel") {
+        return orderStatus === "cancel" || orderStatus === "shipping_failed";
+      }
+      return orderStatus === filterStatus;
+    });
   }
 
   return {
@@ -94,6 +98,7 @@ export function useOrderDetail(id: string) {
         status?: string;
         create_at?: string;
         update_at?: string | null;
+        ref_id?: string;
         items?: Array<{
           id?: string | number;
           order_id?: string | number;
@@ -101,6 +106,7 @@ export function useOrderDetail(id: string) {
           price?: number | string;
           quantity?: number | string;
         }>;
+        images?: any[];
       };
 
       const source = response.order ?? response;
@@ -126,6 +132,7 @@ export function useOrderDetail(id: string) {
       );
 
       const variantNameMap = new Map<string, string>();
+      const variantImageMap = new Map<string, string>();
       if (variantIds.length > 0) {
         const variants = await Promise.allSettled(
           variantIds.map((variantId) => adminProductService.getById(variantId)),
@@ -139,6 +146,9 @@ export function useOrderDetail(id: string) {
               variantId,
               String(variant?.name || variant?.product?.name || variantId),
             );
+            if (variant?.images && variant.images.length > 0) {
+              variantImageMap.set(variantId, variant.images[0].path);
+            }
           }
         });
       }
@@ -146,6 +156,7 @@ export function useOrderDetail(id: string) {
       const itemsWithName = normalizedItems.map((item) => ({
         ...item,
         variant_name: variantNameMap.get(item.variant_id) || item.variant_id,
+        image_path: variantImageMap.get(item.variant_id),
       }));
 
       const itemsTotal = itemsWithName.reduce((sum, item) => {
@@ -166,7 +177,9 @@ export function useOrderDetail(id: string) {
         status: String(source.status ?? "Pending"),
         create_at: String(source.create_at ?? ""),
         update_at: (source.update_at as string | null | undefined) ?? null,
+        ref_id: (source.ref_id as string | undefined) ?? undefined,
         items: itemsWithName,
+        images: response.images || source.images || [],
       } as OrderDetail;
     },
     enabled: !!id,
@@ -177,9 +190,23 @@ export function useCreateOrder() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateOrderDto) => orderService.create(data),
+    mutationFn: async (data: CreateOrderDto) => {
+      const order = await orderService.create(data);
+      if (data.cart_item_ids && data.cart_item_ids.length > 0) {
+        try {
+          await Promise.all(
+            data.cart_item_ids.map((id) => cartItemService.remove(id))
+          );
+        } catch (e) {
+          console.error("Failed to remove cart items", e);
+        }
+      }
+      return order;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.CART });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.CART_ITEMS });
     },
     onError: (error: any) => {
       toast.error(error?.message || "Tạo đơn hàng thất bại");

@@ -3,64 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Montserrat:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>true-look-fe</title>
   </head>
   <body>
     <div id="root"></div>
-    <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
-    <script>
-      function initializeCozeChat() {
-        if (typeof CozeWebSDK !== 'undefined') {
-          new CozeWebSDK.WebChatClient({
-            config: {
-              type: 'bot',
-              bot_id: '7617975548819931141',
-              isIframe: false,
-            },
-            auth: {
-              type: 'token',
-              token: window.__COZE_TOKEN__,
-              onRefreshToken: async () => window.__COZE_TOKEN__
-            },
-            userInfo: {
-              id: 'user',
-              url: 'https://sf-coze-web-cdn.coze.com/obj/eden-sg/lm-lgvj/ljhwZthlaukjlkulzlp/coze/coze-logo.png',
-              nickname: 'User',
-            },
-            ui: {
-              base: {
-                icon: 'https://sf-coze-web-cdn.coze.com/obj/eden-sg/lm-lgvj/ljhwZthlaukjlkulzlp/coze/chatsdk-logo.png',
-                layout: 'pc',
-                lang: 'en',
-                zIndex: 1000
-              },
-              header: {
-                isShow: true,
-                isNeedClose: true,
-              },
-              asstBtn: {
-                isNeed: true
-              },
-              footer: {
-                isShow: true,
-                expressionText: 'Powered by Coze',
-              },
-              chatBot: {
-                title: 'True Look Support',
-                uploadable: true,
-                width: 390,
-              },
-            },
-          });
-        }
-      }
-      window.initializeCozeChat = initializeCozeChat;
-    </script>
     <script type="module" src="/src/main.tsx"></script>
+    <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
+    <script>
+      window.botpress.init({
+        "botId": "34fa92b7-7372-435c-94e7-0203a359fbf9",
+        "configuration": {
+          "botName": "True Look Sales Assistant",
+          "botAvatar": "https://files.bpcontent.cloud/2026/03/18/10/20260318102812-A9UWZE10.png",
+          "website": {},
+          "email": {},
+          "phone": {},
+          "termsOfService": {},
+          "privacyPolicy": {},
+          "color": "#000000",
+          "themeMode": "light",
+          "radius": 2
+        },
+        "clientId": "ef32ac89-8345-4c25-84a1-9fa7a175c14c",
+        "theme": {
+          "stylesheet": "/botpress-custom.css"
+        },
+        "stylesheet": "/botpress-custom.css"
+      });
+    </script>
   </body>
 </html>

@@ -48,3 +48,22 @@ export function useShippingFee(params?: ShippingFeeParams) {
     retry: 1,
   });
 }
+
+export function useAddressAutocomplete(text: string) {
+  return useQuery({
+    queryKey: QUERY_KEYS.SHIPPING.AUTOCOMPLETE(text),
+    queryFn: () => shippingService.autocompleteAddress(text),
+    enabled: text.trim().length > 2,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useAhamoveFee(params?: import("../types").AhamoveFeeParams) {
+  return useQuery({
+    queryKey: QUERY_KEYS.SHIPPING.AHAMOVE_FEE(params),
+    queryFn: () => shippingService.getAhamoveFee(params as import("../types").AhamoveFeeParams),
+    enabled: !!params?.drop_address && !!params?.cart_item_ids?.length && !!params?.drop_mobile && !!params?.drop_name,
+    staleTime: 60 * 1000,
+    retry: 1,
+  });
+}

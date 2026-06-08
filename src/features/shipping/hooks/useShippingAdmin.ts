@@ -16,6 +16,13 @@ export function useNhanhOrders(filters: NhanhOrdersFilter) {
   });
 }
 
+export function useAhamoveOrders() {
+  return useQuery({
+    queryKey: QUERY_KEYS.SHIPPING.AHAMOVE_ORDERS,
+    queryFn: () => shippingService.getAhamoveOrders(),
+  });
+}
+
 export function useCreateNhanhOrder() {
   const queryClient = useQueryClient();
 
@@ -28,6 +35,22 @@ export function useCreateNhanhOrder() {
     },
     onError: (error: any) => {
       toast.error(error?.message || "Tạo đơn giao hàng thất bại");
+    },
+  });
+}
+
+export function useCancelAhamoveOrder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: { order_id: string; comment: string }) =>
+      shippingService.cancelAhamoveOrder(payload),
+    onSuccess: () => {
+      toast.success("Hủy đơn Ahamove thành công");
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SHIPPING.AHAMOVE_ORDERS });
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Hủy đơn Ahamove thất bại");
     },
   });
 }

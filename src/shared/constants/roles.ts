@@ -46,6 +46,7 @@ export const ADMIN_PAGE_ACCESS: Record<string, UserRole[]> = {
   "/admin/promotions": MANAGER_ROLES,
   "/admin/orders": OPERATIONS_ROLES,
   "/admin/shipping-orders": OPERATIONS_ROLES,
+  "/admin/ahamove-orders": OPERATIONS_ROLES,
   "/admin/support": SALES_SUPPORT_ROLES,
   "/admin/users": MANAGER_ROLES,
   "/admin/user-roles": MANAGER_ROLES,

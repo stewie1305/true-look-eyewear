@@ -3,7 +3,8 @@ import { Button } from "@/shared/components/ui/button";
 import { useAddToCart } from "../hooks/useCart";
 import { useState } from "react";
 import type { AddToCartButtonProps } from "../types";
-
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/features/auth/store";
 
 export function AddToCartButton({
   variantId,
@@ -12,8 +13,15 @@ export function AddToCartButton({
 }: AddToCartButtonProps) {
   const [quantity] = useState(1);
   const addToCartMutation = useAddToCart();
+  const navigate = useNavigate();
+  const accessToken = useAuthStore((state) => state.accessToken);
 
   const handleAddToCart = () => {
+    if (!accessToken) {
+      navigate("/login");
+      return;
+    }
+
     addToCartMutation.mutate({
       variant_id: variantId,
       quantity,

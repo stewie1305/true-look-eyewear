@@ -15,6 +15,22 @@ export interface Order {
   status: OrderStatus | string;
   create_at: string;
   update_at?: string | null;
+  ref_id?: string;
+  customer?: {
+    id: string;
+    fullName: string;
+    email: string;
+    addresses?: Array<{
+      id: string;
+      street: string;
+      ward: string;
+      district: string;
+      city: string;
+      name_recipient: string;
+      phone_recipient: string;
+      ref_id?: string;
+    }>;
+  };
 }
 
 export interface OrderItem {
@@ -24,16 +40,19 @@ export interface OrderItem {
   price: number;
   quantity: number;
   variant_name?: string;
+  image_path?: string;
 }
 
 export interface OrderDetail extends Order {
   items: OrderItem[];
+  images?: any[];
 }
 
 export interface CreateOrderDto {
   customer_id: string;
   extra_fee: number;
   cart_item_ids?: string[];
+  ref_id?: string;
 }
 
 export interface UpdateOrderStatusDto {

@@ -9,11 +9,9 @@ import {
   Building2,
   Tag,
   Ruler,
-  Eye,
   Image as ImageIcon,
   Users,
   Shield,
-  ChartNoAxesCombined,
   ClipboardList,
   Truck,
   MessageSquare,
@@ -68,24 +66,7 @@ const navigation: Array<{
     icon: Ruler,
     allowedRoles: ADMIN_PAGE_ACCESS["/admin/frame-specs"],
   },
-  {
-    name: "Quản lý Tròng kính",
-    href: "/admin/rx-lens-specs",
-    icon: Eye,
-    allowedRoles: ADMIN_PAGE_ACCESS["/admin/rx-lens-specs"],
-  },
-  {
-    name: "Quản lý Lens",
-    href: "/admin/contact-lens-specs",
-    icon: Eye,
-    allowedRoles: ADMIN_PAGE_ACCESS["/admin/contact-lens-specs"],
-  },
-  {
-    name: "Quản lý Axis",
-    href: "/admin/contact-lens-axis",
-    icon: Eye,
-    allowedRoles: ADMIN_PAGE_ACCESS["/admin/contact-lens-axis"],
-  },
+
   {
     name: "Quản lý Khuyến mãi",
     href: "/admin/promotions",
@@ -105,11 +86,12 @@ const navigation: Array<{
     allowedRoles: ADMIN_PAGE_ACCESS["/admin/support"],
   },
   {
-    name: "Đơn giao Nhanh.vn",
-    href: "/admin/shipping-orders",
+    name: "Quản lý Giao hàng Ahamove",
+    href: "/admin/ahamove-orders",
     icon: Truck,
-    allowedRoles: ADMIN_PAGE_ACCESS["/admin/shipping-orders"],
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/ahamove-orders"],
   },
+
   {
     name: "Quản lý Nhân viên",
     href: "/admin/users",
@@ -121,12 +103,6 @@ const navigation: Array<{
     href: "/admin/user-roles",
     icon: Shield,
     allowedRoles: ADMIN_PAGE_ACCESS["/admin/user-roles"],
-  },
-  {
-    name: "Superset BI",
-    href: "/admin/superset",
-    icon: ChartNoAxesCombined,
-    allowedRoles: ADMIN_PAGE_ACCESS["/admin/superset"],
   },
 ];
 

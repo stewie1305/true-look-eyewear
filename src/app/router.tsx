@@ -60,6 +60,7 @@ import ManageShippingLookupOrdersPage from "@/features/shipping/pages/ManageShip
 import SupportChatPage from "@/features/supports/pages/SupportChatPage";
 import ManageSupportList from "@/features/supports/pages/ManageSupportList";
 import ManageSupportChat from "@/features/supports/pages/ManageSupportChat";
+import ManageAhamoveOrders from "@/features/shipping/pages/ManageAhamoveOrders";
 import { ADMIN_PAGE_ACCESS, ADMIN_PANEL_ROLES } from "@/shared/constants/roles";
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -534,6 +535,16 @@ export const router = createBrowserRouter([
             allowedRoles={ADMIN_PAGE_ACCESS["/admin/shipping-orders"]}
           >
             <ManageShippingLookupOrdersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "ahamove-orders",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/ahamove-orders"]}
+          >
+            <ManageAhamoveOrders />
           </ProtectedRoute>
         ),
       },
