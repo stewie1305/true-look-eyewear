@@ -47,18 +47,20 @@ export function ImageTable({ images, onDelete, isDeleting }: ImageTableProps) {
               <TableCell>
                 <div className="space-y-1">
                   <p className="font-medium">
-                    {image.variant?.name || image.variant_id || "—"}
+                    {image.variant?.code
+                      ? `${image.variant.code} • ${image.variant?.name}`
+                      : image.variant_id || "—"}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {image.variant?.code || "Không có mã variant"}
+                    {image.variant?.product?.name || "Không có sản phẩm"}
                   </p>
-                  {image.variant?.product?.name && (
-                    <p className="text-xs text-muted-foreground">
-                      {image.variant.product.name}
+                  {image.variant_id && (
+                    <p className="text-[10px] font-mono text-muted-foreground">
+                      Variant ID: {image.variant_id}
                     </p>
                   )}
-                  <p className="text-[11px] font-mono text-muted-foreground">
-                    ID: {image.id}
+                  <p className="text-[10px] font-mono text-muted-foreground">
+                    Image ID: {image.id}
                   </p>
                 </div>
               </TableCell>

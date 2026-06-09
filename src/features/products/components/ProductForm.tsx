@@ -42,7 +42,7 @@ export function ProductForm({
     watch,
   } = useForm<CreateProductDto>({
     defaultValues: {
-      product_id: "",
+      product_id: "1781032553741",
       code: "",
       name: "",
       price: 0,
@@ -53,6 +53,7 @@ export function ProductForm({
       ...defaultValues,
     },
   });
+  const isCreateMode = !defaultValues;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -92,24 +93,22 @@ export function ProductForm({
             )}
           </div>
 
-          {/* Product ID */}
-          <div className="space-y-2">
-            <Label htmlFor="product_id">
-              Product ID <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="product_id"
-              {...register("product_id", {
-                required: "Product ID là bắt buộc",
-              })}
-              placeholder="Nhập product id"
-            />
-            {errors.product_id && (
-              <p className="text-sm text-destructive">
-                {errors.product_id.message}
-              </p>
-            )}
-          </div>
+          {/* Product ID: hidden in create mode, show disabled in edit mode */}
+          {isCreateMode ? (
+            <input type="hidden" {...register("product_id")} />
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="product_id">Product ID</Label>
+              <Input
+                id="product_id"
+                {...register("product_id", {
+                  required: "Product ID là bắt buộc",
+                })}
+                placeholder="Product ID"
+                disabled
+              />
+            </div>
+          )}
 
           {/* Price, Color, Quantity */}
           <div className="grid gap-4 md:grid-cols-2">

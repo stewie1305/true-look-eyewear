@@ -7,17 +7,15 @@ import { QUERY_KEYS } from "@/shared/constants";
 import {
   adminContactLensAxisService,
   contactLensAxisService,
-} from "@/features/ContactLensAxis/services";
+} from "@/features/contactLensAxis/services";
 import type {
   CreateContactLensAxisDto,
   UpdateContactLensAxisDto,
   ContactLensAxisFilterParams,
-} from "@/features/ContactLensAxis/types";
-
+} from "@/features/contactLensAxis/types";
 
 export function useContactLensAxis(options?: { forceActive?: boolean }) {
   const [searchParams] = useSearchParams();
-
 
   const filters = useMemo<ContactLensAxisFilterParams>(() => {
     return {
@@ -44,7 +42,6 @@ export function useContactLensAxis(options?: { forceActive?: boolean }) {
   const rawData = Array.isArray(query.data)
     ? query.data
     : (query.data?.data ?? []);
-
 
   let contactLensAxis = rawData;
 
@@ -87,7 +84,6 @@ export function useCreateContactLensAxis() {
     },
   });
 }
-
 
 export function useUpdateContactLensAxis() {
   const navigate = useNavigate();
@@ -133,7 +129,6 @@ export function useDeleteContactLensAxis() {
     },
   });
 }
-
 
 export function useContactLensAxisDetail(id: string) {
   return useQuery({

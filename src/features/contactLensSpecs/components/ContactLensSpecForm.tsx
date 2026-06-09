@@ -21,7 +21,7 @@ import {
 } from "@/shared/components/ui/select";
 import type { CreateContactLensSpecDto } from "../types";
 import { useQuery } from "@tanstack/react-query";
-import { contactLensAxisService } from "@/features/ContactLensAxis/services";
+import { contactLensAxisService } from "@/features/contactLensAxis/services";
 import { QUERY_KEYS } from "@/shared/constants";
 
 interface ContactLensSpecFormProps {
@@ -78,7 +78,6 @@ export function ContactLensSpecForm({
   const availableAxisValues = Array.from(
     new Set(contactLensAxis.map((item) => item.axis_value)),
   ).sort((a, b) => a - b);
-
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

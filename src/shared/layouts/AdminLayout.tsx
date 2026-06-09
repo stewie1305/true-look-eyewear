@@ -6,9 +6,7 @@ import {
   LogOut,
   Menu,
   X,
-  Building2,
   Tag,
-  Ruler,
   Image as ImageIcon,
   Users,
   Shield,
@@ -48,24 +46,7 @@ const navigation: Array<{
     icon: ImageIcon,
     allowedRoles: ADMIN_PAGE_ACCESS["/admin/images"],
   },
-  {
-    name: "Quản lý Thương hiệu",
-    href: "/admin/brands",
-    icon: Building2,
-    allowedRoles: ADMIN_PAGE_ACCESS["/admin/brands"],
-  },
-  {
-    name: "Quản lý Danh mục",
-    href: "/admin/categories",
-    icon: Tag,
-    allowedRoles: ADMIN_PAGE_ACCESS["/admin/categories"],
-  },
-  {
-    name: "Quản lý Gọng kính",
-    href: "/admin/frame-specs",
-    icon: Ruler,
-    allowedRoles: ADMIN_PAGE_ACCESS["/admin/frame-specs"],
-  },
+  // Note: Brands, Categories, and Frame Specs removed from admin sidebar display per request
 
   {
     name: "Quản lý Khuyến mãi",

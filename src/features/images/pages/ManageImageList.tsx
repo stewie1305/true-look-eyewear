@@ -106,7 +106,7 @@ export default function ManageImageList() {
           }
           disabled={isLoadingVariants}
         >
-          <SelectTrigger className="w-[260px]">
+          <SelectTrigger className="w-65">
             <SelectValue
               placeholder={
                 isLoadingVariants ? "Đang tải variants..." : "Tất cả variant"

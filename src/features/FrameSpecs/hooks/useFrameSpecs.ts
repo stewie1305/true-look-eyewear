@@ -7,12 +7,12 @@ import { QUERY_KEYS } from "@/shared/constants";
 import {
   adminFrameSpecService,
   frameSpecService,
-} from "@/features/FrameSpecs/services";
+} from "@/features/frameSpecs/services";
 import type {
   CreateFrameSpecDto,
   FrameSpecFilterParams,
   UpdateFrameSpecDto,
-} from "@/features/FrameSpecs/types";
+} from "@/features/frameSpecs/types";
 
 export function useFrameSpecs(options?: { forceActive?: boolean }) {
   const [searchParams] = useSearchParams();

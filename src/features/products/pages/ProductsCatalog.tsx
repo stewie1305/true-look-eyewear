@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search, Filter, X } from "lucide-react";
 
@@ -13,8 +13,6 @@ import {
 } from "@/shared/components/common";
 import { useProducts } from "../hooks/useProducts";
 import { ProductCard } from "../components/ProductCard";
-import { useBrands } from "@/features/brands/hooks/useBrands";
-import { useActiveCategories } from "@/features/categories/hooks/useCategories";
 import trueLookBanner from "@/shared/pictures/trueLook1.jpg";
 
 export function ProductsCatalog() {
@@ -24,31 +22,12 @@ export function ProductsCatalog() {
   const { products, pagination, isLoading } = useProducts({
     forceActive: true,
   });
-  const { categories: activeCategories } = useActiveCategories();
-
-  // Fetch tất cả brands active cho dropdown
-  const { brands } = useBrands({ forceActive: true });
-
-  const productTypeOptions = useMemo(() => {
-    const set = new Set<string>();
-    products?.forEach((item) => {
-      const value = item.product?.product_type;
-      if (value) set.add(value);
-    });
-    return Array.from(set);
-  }, [products]);
-
-  const categoryNameOptions = useMemo(() => {
-    return Array.from(
-      new Set(activeCategories.map((category) => category.name).filter(Boolean)),
-    );
-  }, [activeCategories]);
+  // Note: product type / brand / category filters removed per request
 
   const [searchInput, setSearchInput] = useState(
     searchParams.get("search") || "",
   );
   const debouncedSearch = useDebounce(searchInput, 500);
-
 
   const updateSearchParam = useCallback(
     (value: string) => {
@@ -64,12 +43,11 @@ export function ProductsCatalog() {
     [searchParams, setSearchParams],
   );
 
- 
   useEffect(() => {
     if (debouncedSearch !== searchParams.get("search")) {
       updateSearchParam(debouncedSearch);
     }
-  }, [debouncedSearch]); 
+  }, [debouncedSearch]);
 
   const handleFilterChange = (key: string, value: string | undefined) => {
     const params = new URLSearchParams(searchParams);
@@ -82,25 +60,19 @@ export function ProductsCatalog() {
     setSearchParams(params);
   };
 
- 
   const clearFilters = () => {
     const params = new URLSearchParams();
     setSearchParams(params);
     setSearchInput("");
   };
 
- 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", String(page));
     setSearchParams(params);
   };
 
-
   const hasActiveFilters =
-    !!searchParams.get("product_type") ||
-    !!searchParams.get("brand_name") ||
-    !!searchParams.get("category_name") ||
     !!searchParams.get("min_price") ||
     !!searchParams.get("max_price") ||
     !!searchParams.get("search");
@@ -114,15 +86,21 @@ export function ProductsCatalog() {
             Sản phẩm cao cấp
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-            Bộ Sưu Tập Mắt Kính
+            Bộ Sưu Tập Gọng Kính
           </h1>
-          <p className="max-w-[600px] text-lg text-muted-foreground">
-            Khám phá thế giới kính mắt thời trang, nơi phong cách thiết kế hiện đại hòa quyện cùng chất lượng tuyệt hảo.
+          <p className="max-w-150 text-lg text-muted-foreground">
+            Khám phá thế giới gọng kính thời trang, nơi phong cách thiết kế hiện
+            đại hòa quyện cùng chất lượng tuyệt hảo.
           </p>
-          <div className="max-w-[800px] mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-sm flex items-start text-left gap-3">
-            <span className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0">⚠️</span>
+          <div className="max-w-200 mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-sm flex items-start text-left gap-3">
+            <span className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0">
+              ⚠️
+            </span>
             <p>
-              <strong>Khuyến cáo y tế:</strong> Mắt kính này không thể đeo thay thế mắt kính thuốc do bác sĩ kê đơn. Khuyến nghị chỉ nên sử dụng như một phụ kiện thời trang và không được đeo dài hạn để tránh các ảnh hưởng không tốt về mắt.
+              <strong>Khuyến cáo y tế:</strong> Mắt kính này không thể đeo thay
+              thế mắt kính thuốc do bác sĩ kê đơn. Khuyến nghị chỉ nên sử dụng
+              như một phụ kiện thời trang và không được đeo dài hạn để tránh các
+              ảnh hưởng không tốt về mắt.
             </p>
           </div>
         </div>
@@ -130,156 +108,110 @@ export function ProductsCatalog() {
 
       {/* Full-width Banner */}
       <div className="w-full">
-        <img 
-          src={trueLookBanner} 
-          alt="Eyewear Collection Banner" 
-          className="w-full h-[400px] md:h-[600px] object-cover" 
+        <img
+          src={trueLookBanner}
+          alt="Eyewear Collection Banner"
+          className="w-full h-100 md:h-150 object-cover"
         />
       </div>
 
       <div className="container mx-auto px-4 py-8">
-
-
-
-      {/* Search & Filters */}
-      <div className="mb-8 space-y-4">
-        {/* Search bar */}
-        <div className="relative max-w-xl">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Search products by name, code, brand..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="pl-10 h-11"
-          />
-        </div>
-
-        {/* Filter row */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-            <Filter className="h-4 w-4" />
-            Filters:
-          </div>
-
-          <select
-            value={searchParams.get("product_type") || ""}
-            onChange={(e) =>
-              handleFilterChange("product_type", e.target.value || undefined)
-            }
-            className="h-9 w-44 rounded-lg border border-input bg-background px-3 text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <option value="">Product type</option>
-            {productTypeOptions.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={searchParams.get("brand_name") || ""}
-            onChange={(e) =>
-              handleFilterChange("brand_name", e.target.value || undefined)
-            }
-            className="h-9 w-44 rounded-lg border border-input bg-background px-3 text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <option value="">Brand</option>
-            {brands?.map((brand) => (
-              <option key={brand.id} value={brand.name}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={searchParams.get("category_name") || ""}
-            onChange={(e) =>
-              handleFilterChange("category_name", e.target.value || undefined)
-            }
-            className="h-9 w-44 rounded-lg border border-input bg-background px-3 text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <option value="">Category</option>
-            {categoryNameOptions.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-
-          <Input
-            type="number"
-            min={0}
-            value={searchParams.get("min_price") || ""}
-            onChange={(e) =>
-              handleFilterChange("min_price", e.target.value || undefined)
-            }
-            placeholder="Min price"
-            className="h-9 w-32"
-          />
-
-          <Input
-            type="number"
-            min={0}
-            value={searchParams.get("max_price") || ""}
-            onChange={(e) =>
-              handleFilterChange("max_price", e.target.value || undefined)
-            }
-            placeholder="Max price"
-            className="h-9 w-32"
-          />
-
-          {/* Clear filters */}
-          {hasActiveFilters && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearFilters}
-              className="rounded-lg"
-            >
-              <X className="mr-1.5 h-3.5 w-3.5" />
-              Clear filters
-            </Button>
-          )}
-
-          {/* Result count */}
-          {pagination && (
-            <Badge
-              variant="secondary"
-              className="ml-auto rounded-full px-3 py-1 text-xs font-medium"
-            >
-              {pagination.totalItems} products
-            </Badge>
-          )}
-        </div>
-      </div>
-
-      {/* Results */}
-      {isLoading ? (
-        <LoadingSpinner className="py-20" size="lg" />
-      ) : !products?.length ? (
-        <EmptyState
-          title="No products found"
-          description="Try changing your search keyword or filters to see more products."
-        />
-      ) : (
-        <>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-
-          {/* Pagination */}
-          {pagination && (
-            <Pagination
-              meta={pagination}
-              onPageChange={handlePageChange}
-              className="mt-10"
+        {/* Search & Filters */}
+        <div className="mb-8 space-y-4">
+          {/* Search bar */}
+          <div className="relative max-w-xl">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search products by name, code, brand..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="pl-10 h-11"
             />
-          )}
-        </>
-      )}
+          </div>
+
+          {/* Filter row */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+              <Filter className="h-4 w-4" />
+              Filters:
+            </div>
+
+            {/* Removed Product type, Brand, Category filters */}
+
+            <Input
+              type="number"
+              min={0}
+              value={searchParams.get("min_price") || ""}
+              onChange={(e) =>
+                handleFilterChange("min_price", e.target.value || undefined)
+              }
+              placeholder="Min price"
+              className="h-9 w-32"
+            />
+
+            <Input
+              type="number"
+              min={0}
+              value={searchParams.get("max_price") || ""}
+              onChange={(e) =>
+                handleFilterChange("max_price", e.target.value || undefined)
+              }
+              placeholder="Max price"
+              className="h-9 w-32"
+            />
+
+            {/* Clear filters */}
+            {hasActiveFilters && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearFilters}
+                className="rounded-lg"
+              >
+                <X className="mr-1.5 h-3.5 w-3.5" />
+                Clear filters
+              </Button>
+            )}
+
+            {/* Result count */}
+            {pagination && (
+              <Badge
+                variant="secondary"
+                className="ml-auto rounded-full px-3 py-1 text-xs font-medium"
+              >
+                {pagination.totalItems} products
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Results */}
+        {isLoading ? (
+          <LoadingSpinner className="py-20" size="lg" />
+        ) : !products?.length ? (
+          <EmptyState
+            title="No products found"
+            description="Try changing your search keyword or filters to see more products."
+          />
+        ) : (
+          <>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {pagination && (
+              <Pagination
+                meta={pagination}
+                onPageChange={handlePageChange}
+                className="mt-10"
+              />
+            )}
+          </>
+        )}
       </div>
     </div>
   );

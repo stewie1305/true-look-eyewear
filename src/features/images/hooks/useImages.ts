@@ -11,6 +11,7 @@ import { QUERY_KEYS } from "@/shared/constants";
 
 export function useImages() {
   const [searchParams] = useSearchParams();
+  const { variants } = useImageVariantOptions();
 
   const filters = useMemo<ImageFilterParams>(
     () => ({
@@ -26,7 +27,17 @@ export function useImages() {
     placeholderData: (prev) => prev,
   });
 
-  let images = Array.isArray(query.data) ? query.data : [];
+  let images = Array.isArray(query.data)
+    ? query.data.map((image) => {
+        const variant = variants.find(
+          (v) => String(v.id) === String(image.variant_id),
+        );
+        return {
+          ...image,
+          variant: variant || image.variant,
+        };
+      })
+    : [];
 
   if (filters.search) {
     const searchValue = filters.search.trim();

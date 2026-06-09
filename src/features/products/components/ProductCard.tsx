@@ -16,12 +16,9 @@ export function ProductCard({ product }: ProductCardProps) {
   const price = anyProduct.price || anyProduct.min_price || null;
 
   return (
-    <Link 
-      to={`/products/${product.id}`} 
-      className="group flex flex-col"
-    >
+    <Link to={`/products/${product.id}`} className="group flex flex-col">
       {/* Product Image */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#fafafa] dark:bg-white/10 flex items-center justify-center transition-opacity hover:opacity-90">
+      <div className="relative aspect-4/3 w-full overflow-hidden bg-[#fafafa] dark:bg-white/10 flex items-center justify-center transition-opacity hover:opacity-90">
         {imageSrc ? (
           <img
             src={imageSrc}
@@ -31,13 +28,8 @@ export function ProductCard({ product }: ProductCardProps) {
         ) : (
           <ImageOff className="h-10 w-10 text-muted-foreground/60 dark:text-muted-foreground/40" />
         )}
-        
-        {/* Optional Badge for New products */}
-        {product.status === "Active" && (
-          <span className="absolute right-2 top-2 bg-primary/10 text-primary text-[10px] px-2 py-0.5 font-medium rounded-sm">
-            Mới
-          </span>
-        )}
+
+        {/* Badge removed as requested */}
       </div>
 
       {/* Product Details */}
@@ -46,10 +38,12 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.name}, mã hàng: {product.code}
         </h3>
         <p className="text-[13px] font-semibold text-foreground">
-          {price 
-            ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(price))
-            : "Giá liên hệ"
-          }
+          {price
+            ? new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(Number(price))
+            : "Giá liên hệ"}
         </p>
       </div>
     </Link>

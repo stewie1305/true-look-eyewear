@@ -48,6 +48,35 @@ function ImageBlobImg({
   );
 }
 
+function ImageBlobThumbnail({
+  imageId,
+  alt,
+  selected,
+  onClick,
+}: {
+  imageId: string;
+  alt: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  const blobUrl = useImageBlobUrl(imageId);
+  if (!blobUrl) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "shrink-0 h-16 w-16 overflow-hidden rounded-md border-2 transition-colors",
+        selected ? "border-primary" : "border-transparent",
+      )}
+      aria-label={alt}
+    >
+      <img src={blobUrl} alt={alt} className="h-full w-full object-cover" />
+    </button>
+  );
+}
+
 // Gallery: ảnh lớn + thumbnail strip
 function ProductImageGallery({
   images,
@@ -62,12 +91,12 @@ function ProductImageGallery({
   return (
     <div className="flex flex-col gap-3">
       {/* Ảnh chính + nút prev/next */}
-      <div className="relative flex items-center justify-center rounded-lg bg-muted p-8 min-h-64">
+      <div className="relative flex aspect-16/10 w-full items-center justify-center overflow-hidden rounded-lg">
         {selectedImage ? (
           <ImageBlobImg
             imageId={selectedImage.id}
             alt={name}
-            className="max-h-96 w-full object-contain"
+            className="h-full w-full object-contain"
           />
         ) : (
           <div className="flex flex-col items-center justify-center gap-2 py-20 text-muted-foreground">
@@ -114,20 +143,13 @@ function ProductImageGallery({
       {images.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1">
           {images.map((img, idx) => (
-            <div
+            <ImageBlobThumbnail
               key={img.id}
-              className={`shrink-0 w-16 h-16 rounded-md overflow-hidden bg-muted border-2 transition-colors ${
-                idx === selectedIdx ? "border-primary" : "border-transparent"
-              }`}
-            >
-              <ImageBlobImg
-                imageId={img.id}
-                alt={`${name} ${idx + 1}`}
-                className="w-full h-full object-cover"
-                onClick={() => setSelectedIdx(idx)}
-                selected={idx === selectedIdx}
-              />
-            </div>
+              imageId={img.id}
+              alt={`${name} ${idx + 1}`}
+              selected={idx === selectedIdx}
+              onClick={() => setSelectedIdx(idx)}
+            />
           ))}
         </div>
       )}
