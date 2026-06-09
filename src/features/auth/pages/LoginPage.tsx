@@ -9,7 +9,7 @@ import truelookLogo from "@/shared/pictures/trueLookLogotachnen-removebg-preview
 export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-muted/20 px-4">
-      <Card className="w-full max-w-[500px] shadow-sm border border-border/40 rounded-3xl p-2 bg-card">
+      <Card className="w-full max-w-125 shadow-sm border border-border/40 rounded-3xl p-2 bg-card">
         <CardHeader className="text-center space-y-4 pt-8 pb-4">
           <div className="flex justify-center mb-6">
             <img

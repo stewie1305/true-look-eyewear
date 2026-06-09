@@ -12,7 +12,10 @@ import {
   TableRow,
 } from "@/shared/components/ui/table";
 import { EmptyState, LoadingSpinner } from "@/shared/components/common";
-import { useAhamoveOrders, useCancelAhamoveOrder } from "../hooks/useShippingAdmin";
+import {
+  useAhamoveOrders,
+  useCancelAhamoveOrder,
+} from "../hooks/useShippingAdmin";
 
 export default function ManageAhamoveOrders() {
   const { data: orders, isLoading, error } = useAhamoveOrders();
@@ -74,7 +77,7 @@ export default function ManageAhamoveOrders() {
               <TableRow>
                 <TableHead>Mã đơn</TableHead>
                 <TableHead>Mã Ahamove / Tracking</TableHead>
-                <TableHead className="text-right">Tiền thu hộ (COD)</TableHead>
+                <TableHead className="text-right">Tiền Hàng</TableHead>
                 <TableHead className="text-right">Phí Ship</TableHead>
                 <TableHead>Trạng thái</TableHead>
                 <TableHead>Ngày tạo</TableHead>
@@ -94,9 +97,13 @@ export default function ManageAhamoveOrders() {
                   </TableCell>
                   <TableCell>
                     {order.nhanh_id ? (
-                      <span className="font-mono text-sm">{order.nhanh_id}</span>
+                      <span className="font-mono text-sm">
+                        {order.nhanh_id}
+                      </span>
                     ) : (
-                      <span className="text-muted-foreground italic">Đang cập nhật</span>
+                      <span className="text-muted-foreground italic">
+                        Đang cập nhật
+                      </span>
                     )}
                     {order.tracking_url && (
                       <a
@@ -131,16 +138,20 @@ export default function ManageAhamoveOrders() {
                           Chi tiết đơn gốc
                         </Link>
                       </Button>
-                      {order.status !== "CANCELLED" && order.status !== "COMPLETED" && order.nhanh_id && (
-                        <Button 
-                          variant="destructive" 
-                          size="sm"
-                          disabled={cancelMutation.isPending}
-                          onClick={() => handleCancelOrder(order.id, order.nhanh_id)}
-                        >
-                          Hủy đơn
-                        </Button>
-                      )}
+                      {order.status !== "CANCELLED" &&
+                        order.status !== "COMPLETED" &&
+                        order.nhanh_id && (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            disabled={cancelMutation.isPending}
+                            onClick={() =>
+                              handleCancelOrder(order.id, order.nhanh_id)
+                            }
+                          >
+                            Hủy đơn
+                          </Button>
+                        )}
                     </div>
                   </TableCell>
                 </TableRow>

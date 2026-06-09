@@ -29,11 +29,11 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="username" className="text-sm font-semibold">Tên đăng nhập hoặc Email</Label>
+        <Label htmlFor="username" className="text-sm font-semibold">Tên đăng nhập</Label>
         <Input
           id="username"
           type="text"
-          placeholder="example@gmail.com"
+          placeholder="example123"
           {...register("username")}
           className={`h-11 rounded-xl transition-all ${errors.username ? "border-destructive focus-visible:ring-destructive/30" : "border-border/60 hover:border-border/80 focus-visible:ring-primary/20"}`}
         />
