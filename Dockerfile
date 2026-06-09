@@ -28,8 +28,8 @@ RUN npm install -g serve
 # Lấy cục code tĩnh đã build xong qua
 COPY --from=builder /app/dist ./dist
 
-# Mở port 3010
-EXPOSE 3010
+# Mở port 5173
+EXPOSE 5173
 
 # Chạy server
-CMD ["serve", "-s", "dist", "-l", "3000"]
+CMD ["serve", "-s", "dist", "-l", "5173"]

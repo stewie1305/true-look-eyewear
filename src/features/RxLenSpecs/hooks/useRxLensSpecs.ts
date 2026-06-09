@@ -7,12 +7,12 @@ import { QUERY_KEYS } from "@/shared/constants";
 import {
   adminRxLensSpecService,
   rxLensSpecService,
-} from "@/features/rxLenSpecs/pages/services";
+} from "@/features/RxLenSpecs/pages/services";
 import type {
   CreateRxLensSpecDto,
   RxLensSpecFilterParams,
   UpdateRxLensSpecDto,
-} from "@/features/rxLenSpecs/pages/types";
+} from "@/features/RxLenSpecs/pages/types";
 
 export function useRxLensSpecs(options?: { forceActive?: boolean }) {
   const [searchParams] = useSearchParams();

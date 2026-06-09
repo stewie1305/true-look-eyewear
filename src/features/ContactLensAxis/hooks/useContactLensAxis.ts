@@ -7,12 +7,12 @@ import { QUERY_KEYS } from "@/shared/constants";
 import {
   adminContactLensAxisService,
   contactLensAxisService,
-} from "@/features/contactLensAxis/services";
+} from "@/features/ContactLensAxis/services";
 import type {
   CreateContactLensAxisDto,
   UpdateContactLensAxisDto,
   ContactLensAxisFilterParams,
-} from "@/features/contactLensAxis/types";
+} from "@/features/ContactLensAxis/types";
 
 
 export function useContactLensAxis(options?: { forceActive?: boolean }) {

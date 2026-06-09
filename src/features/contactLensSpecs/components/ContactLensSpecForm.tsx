@@ -21,7 +21,7 @@ import {
 } from "@/shared/components/ui/select";
 import type { CreateContactLensSpecDto } from "../types";
 import { useQuery } from "@tanstack/react-query";
-import { contactLensAxisService } from "@/features/contactLensAxis/services";
+import { contactLensAxisService } from "@/features/ContactLensAxis/services";
 import { QUERY_KEYS } from "@/shared/constants";
 
 interface ContactLensSpecFormProps {
