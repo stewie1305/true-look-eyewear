@@ -8,6 +8,7 @@ import {
   Package,
   Palette,
   Package2,
+  ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
@@ -15,8 +16,12 @@ import { LoadingSpinner, EmptyState } from "@/shared/components/common";
 import { useProductDetail } from "../hooks/useProducts";
 import { useImageBlobUrl } from "@/features/images/hooks/useImages";
 import type { ProductVariant, VariantImage } from "../types";
-import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
 import { cn } from "@/lib/utils";
+import { useAddToCart } from "@/features/cart/hooks/useCart";
+import { useQuery } from "@tanstack/react-query";
+import { productService } from "@/features/products/services";
+import { QUERY_KEYS } from "@/shared/constants";
+import { useAuthStore } from "@/features/auth/store";
 
 // Component con load blob URL cho từng ảnh riêng lẻ
 function ImageBlobImg({
@@ -164,6 +169,24 @@ export function ProductDetail() {
   const rawData = data as ProductVariant | ProductVariant[] | undefined;
   const variant = Array.isArray(rawData) ? rawData[0] : rawData;
   const isActive = String(variant?.status || "").toLowerCase() === "active";
+
+  const addToCartMutation = useAddToCart();
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const [selectedStrapId, setSelectedStrapId] = useState<string | null>(null);
+
+  // Fetch straps
+  const { data: strapsData } = useQuery({
+    queryKey: [...QUERY_KEYS.PRODUCTS, { search: "Dây đeo giữ kính", status: "active" }],
+    queryFn: async () => {
+      const response = await productService.getAll({ search: "Dây đeo giữ kính", status: "active" });
+      const items = Array.isArray(response) ? response : (response?.data ?? []);
+      return items;
+    },
+  });
+  
+  const straps = strapsData as ProductVariant[] || [];
+  const hasStraps = straps.length > 0;
+  const isStrap = variant?.name?.toLowerCase().includes("dây đeo");
 
   const handleBackToPrevious = () => {
     if (window.history.length > 1) {
@@ -340,13 +363,66 @@ export function ProductDetail() {
             </div>
           )}
 
+          {/* Accessories (Straps) */}
+          {!isStrap && hasStraps && (
+            <div className="space-y-3 border-t pt-4">
+              <h3 className="font-semibold text-sm">Mua kèm phụ kiện</h3>
+              <div className="space-y-2">
+                {straps.map((strap) => (
+                  <div key={strap.id} className="flex items-center space-x-3 border rounded-md p-3 hover:bg-muted/50 transition-colors">
+                    <input 
+                      type="checkbox"
+                      id={`strap-${strap.id}`}
+                      checked={selectedStrapId === strap.id}
+                      onChange={(e) => {
+                        setSelectedStrapId(e.target.checked ? strap.id : null);
+                      }}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                    />
+                    <label
+                      htmlFor={`strap-${strap.id}`}
+                      className="text-sm font-medium leading-none cursor-pointer flex-1 flex justify-between items-center"
+                    >
+                      <div className="flex flex-col gap-1">
+                        <span>{strap.name} - {strap.color}</span>
+                      </div>
+                      <span className="text-primary font-bold">
+                        +₫{parseFloat(strap.price).toLocaleString("vi-VN")}
+                      </span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="space-y-2 border-t pt-4">
-            <AddToCartButton
-              variantId={variant.id}
+            <Button
               size="lg"
               className="w-full"
-            />
+              disabled={addToCartMutation.isPending}
+              onClick={async () => {
+                if (!accessToken) {
+                  navigate("/login");
+                  return;
+                }
+                
+                try {
+                  // Add main item
+                  await addToCartMutation.mutateAsync({ variant_id: variant.id, quantity: 1 });
+                  // Add strap if selected
+                  if (selectedStrapId) {
+                    await addToCartMutation.mutateAsync({ variant_id: selectedStrapId, quantity: 1 });
+                  }
+                } catch (err) {
+                  console.error(err);
+                }
+              }}
+            >
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              {addToCartMutation.isPending ? "Đang thêm..." : "Thêm vào giỏ"}
+            </Button>
           </div>
         </div>
       </div>

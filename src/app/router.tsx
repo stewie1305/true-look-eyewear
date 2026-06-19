@@ -61,6 +61,7 @@ import SupportChatPage from "@/features/supports/pages/SupportChatPage";
 import ManageSupportList from "@/features/supports/pages/ManageSupportList";
 import ManageSupportChat from "@/features/supports/pages/ManageSupportChat";
 import ManageAhamoveOrders from "@/features/shipping/pages/ManageAhamoveOrders";
+import AhamoveDashboard from "@/features/shipping/pages/AhamoveDashboard";
 import { ADMIN_PAGE_ACCESS, ADMIN_PANEL_ROLES } from "@/shared/constants/roles";
 export const router = createBrowserRouter([
   //Public layout (User)
@@ -545,6 +546,16 @@ export const router = createBrowserRouter([
             allowedRoles={ADMIN_PAGE_ACCESS["/admin/ahamove-orders"]}
           >
             <ManageAhamoveOrders />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "ahamove-dashboard",
+        element: (
+          <ProtectedRoute
+            allowedRoles={ADMIN_PAGE_ACCESS["/admin/ahamove-orders"]}
+          >
+            <AhamoveDashboard />
           </ProtectedRoute>
         ),
       },

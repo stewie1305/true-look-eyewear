@@ -18,8 +18,14 @@ import {
 } from "@/shared/components/ui/card";
 import { toast } from "sonner";
 import { Badge } from "@/shared/components/ui/badge";
-import { useAddresses, useCreateAddress } from "@/features/address/hooks/useAddresses";
-import { useAhamoveFee, useAddressAutocomplete } from "@/features/shipping/hooks/useShippingLocations";
+import {
+  useAddresses,
+  useCreateAddress,
+} from "@/features/address/hooks/useAddresses";
+import {
+  useAhamoveFee,
+  useAddressAutocomplete,
+} from "@/features/shipping/hooks/useShippingLocations";
 import { AddressForm } from "@/features/address/components/AddressForm";
 import { useUserMe } from "@/features/users/hooks/useUsers";
 import {
@@ -91,11 +97,16 @@ export default function PaymentCheckoutPage() {
 
   const checkoutItems = useMemo(() => {
     if (defaultOrderId) return [];
-    if (!selectedCartItemIds.length) return items;
+    if (!selectedCartItemIds.length) return [];
     return items.filter((item) =>
       selectedCartItemIds.includes(String(item.id)),
     );
   }, [defaultOrderId, items, selectedCartItemIds]);
+
+  const checkoutItemIds = useMemo(
+    () => checkoutItems.map((item) => String(item.id)).filter(Boolean),
+    [checkoutItems],
+  );
 
   const checkoutItemsAmount = useMemo(
     () =>
@@ -141,7 +152,6 @@ export default function PaymentCheckoutPage() {
 
   const estimatedFinalAmount = Math.max(subtotal - estimatedDiscount, 0);
 
-
   const selectedAddress = useMemo(
     () => addresses.find((address) => address.id === selectedAddressId),
     [addresses, selectedAddressId],
@@ -166,12 +176,11 @@ export default function PaymentCheckoutPage() {
     autocompleteData?.results?.[0]?.ref_id ||
     autocompleteData?.data?.results?.[0]?.ref_id;
 
-
   const shippingFeeParams = useMemo(() => {
     if (defaultOrderId || !selectedAddress) return undefined;
 
     return {
-      cart_item_ids: selectedCartItemIds,
+      cart_item_ids: checkoutItemIds,
       service_id: "SGN-BIKE", // Fixed as per user requirement
       drop_address: fullAddressText,
       drop_name: selectedAddress.name_recipient,
@@ -180,7 +189,13 @@ export default function PaymentCheckoutPage() {
       remarks: selectedAddress.note || "",
       ref_id,
     };
-  }, [defaultOrderId, selectedAddress, selectedCartItemIds, fullAddressText, ref_id]);
+  }, [
+    defaultOrderId,
+    selectedAddress,
+    checkoutItemIds,
+    fullAddressText,
+    ref_id,
+  ]);
 
   const shippingFeeQuery = useAhamoveFee(shippingFeeParams);
 
@@ -293,8 +308,8 @@ export default function PaymentCheckoutPage() {
             await createOrderMutation.mutateAsync({
               customer_id: String(currentUser?.id),
               extra_fee: shippingFee,
-              cart_item_ids: selectedCartItemIds.length
-                ? selectedCartItemIds
+              selected_cart_item_ids: checkoutItemIds.length
+                ? checkoutItemIds
                 : undefined,
               ref_id: selectedAddress?.ref_id,
             })
@@ -462,7 +477,12 @@ export default function PaymentCheckoutPage() {
                 <div className="rounded-lg border border-dashed p-4 text-sm">
                   Chưa có địa chỉ. Vui lòng thêm địa chỉ trước khi thanh toán.
                   <div className="mt-3">
-                    <Button type="button" size="sm" variant="outline" onClick={() => setShowAddressModal(true)}>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setShowAddressModal(true)}
+                    >
                       Thêm địa chỉ mới
                     </Button>
                   </div>
@@ -493,7 +513,12 @@ export default function PaymentCheckoutPage() {
                       </button>
                     );
                   })}
-                  <Button type="button" variant="outline" className="w-full" onClick={() => setShowAddressModal(true)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setShowAddressModal(true)}
+                  >
                     + Thêm địa chỉ mới
                   </Button>
                 </div>

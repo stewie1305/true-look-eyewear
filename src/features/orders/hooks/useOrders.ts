@@ -147,7 +147,8 @@ export function useOrderDetail(id: string) {
               String(variant?.name || variant?.product?.name || variantId),
             );
             if (variant?.images && variant.images.length > 0) {
-              variantImageMap.set(variantId, variant.images[0].path);
+              // store image id (not path) so frontend can fetch blob via authenticated endpoint
+              variantImageMap.set(variantId, String(variant.images[0].id));
             }
           }
         });
@@ -156,7 +157,7 @@ export function useOrderDetail(id: string) {
       const itemsWithName = normalizedItems.map((item) => ({
         ...item,
         variant_name: variantNameMap.get(item.variant_id) || item.variant_id,
-        image_path: variantImageMap.get(item.variant_id),
+        image_id: variantImageMap.get(item.variant_id),
       }));
 
       const itemsTotal = itemsWithName.reduce((sum, item) => {
@@ -191,17 +192,48 @@ export function useCreateOrder() {
 
   return useMutation({
     mutationFn: async (data: CreateOrderDto) => {
-      const order = await orderService.create(data);
-      if (data.cart_item_ids && data.cart_item_ids.length > 0) {
-        try {
+      const selectedCartItemIds = (data.selected_cart_item_ids || [])
+        .map((id) => String(id))
+        .filter(Boolean);
+
+      const cartItemsToRestore = selectedCartItemIds.length
+        ? (await cartItemService.getMyItems()).filter(
+            (item) => !selectedCartItemIds.includes(String(item.id)),
+          )
+        : [];
+
+      let orderCreated = false;
+
+      try {
+        if (cartItemsToRestore.length > 0) {
           await Promise.all(
-            data.cart_item_ids.map((id) => cartItemService.remove(id))
+            cartItemsToRestore.map((item) => cartItemService.remove(item.id)),
           );
-        } catch (e) {
-          console.error("Failed to remove cart items", e);
+        }
+
+        const order = await orderService.create(data);
+        orderCreated = true;
+        return order;
+      } finally {
+        if (cartItemsToRestore.length > 0) {
+          await Promise.allSettled(
+            cartItemsToRestore.map((item) =>
+              cartItemService.add({
+                variant_id: item.variant_id,
+                quantity: item.quantity,
+              }),
+            ),
+          );
+        }
+
+        if (!orderCreated && selectedCartItemIds.length > 0) {
+          // Keep the cart consistent if order creation fails before the selected items are removed.
+          await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.CART });
+          await queryClient.invalidateQueries({
+            queryKey: QUERY_KEYS.CART_ITEMS,
+          });
         }
       }
-      return order;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS });

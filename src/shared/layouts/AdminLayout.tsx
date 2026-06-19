@@ -13,6 +13,7 @@ import {
   ClipboardList,
   Truck,
   MessageSquare,
+  BarChart3,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
@@ -70,6 +71,12 @@ const navigation: Array<{
     name: "Quản lý Giao hàng Ahamove",
     href: "/admin/ahamove-orders",
     icon: Truck,
+    allowedRoles: ADMIN_PAGE_ACCESS["/admin/ahamove-orders"],
+  },
+  {
+    name: "Thống kê Ahamove",
+    href: "/admin/ahamove-dashboard",
+    icon: BarChart3,
     allowedRoles: ADMIN_PAGE_ACCESS["/admin/ahamove-orders"],
   },
 

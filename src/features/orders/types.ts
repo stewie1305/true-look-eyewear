@@ -51,7 +51,7 @@ export interface OrderDetail extends Order {
 export interface CreateOrderDto {
   customer_id: string;
   extra_fee: number;
-  cart_item_ids?: string[];
+  selected_cart_item_ids?: string[];
   ref_id?: string;
 }
 
