@@ -1,4 +1,4 @@
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
@@ -16,6 +16,7 @@ interface OrderTableProps {
   orders: Order[];
   onUpdateStatus: (id: string, status: OrderStatus) => void;
   isUpdating?: boolean;
+  updatingId?: string | null;
 }
 
 const statusVariant: Record<
@@ -39,6 +40,7 @@ export function OrderTable({
   orders,
   onUpdateStatus,
   isUpdating,
+  updatingId,
 }: OrderTableProps) {
   return (
     <div className="overflow-x-auto rounded-lg border">
@@ -73,21 +75,35 @@ export function OrderTable({
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-end gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onUpdateStatus(order.id, "Confirm")}
-                    disabled={
-                      isUpdating ||
-                      order.status === "Confirm" ||
-                      order.status === "Shipping" ||
-                      order.status === "Cancel" ||
-                      order.status === "SHIPPING_FAILED"
-                    }
-                  >
-                    <CheckCircle2 className="mr-1 h-3 w-3" />
-                    Confirm
-                  </Button>
+                  {order.status !== "Complete" &&
+                   order.status !== "Completed" &&
+                   order.status !== "Shipping_Failed" &&
+                   order.status !== "SHIPPING_FAILED" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onUpdateStatus(order.id, "Confirm")}
+                      disabled={
+                        isUpdating ||
+                        !!updatingId ||
+                        order.status === "Confirm" ||
+                        order.status === "Shipping" ||
+                        order.status === "Cancel"
+                      }
+                    >
+                      {updatingId === order.id ? (
+                        <>
+                          <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                          Đang xử lý
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="mr-1 h-3 w-3" />
+                          Confirm
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>

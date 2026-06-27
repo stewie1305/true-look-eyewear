@@ -18,26 +18,27 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link to={`/products/${product.id}`} className="group flex flex-col">
       {/* Product Image */}
-      <div className="relative aspect-4/3 w-full overflow-hidden bg-[#fafafa] dark:bg-white/10 flex items-center justify-center transition-opacity hover:opacity-90">
+      <div className="relative aspect-square w-full overflow-hidden bg-secondary/40 dark:bg-secondary/20 flex items-center justify-center transition-all duration-300 border border-border/40 hover:shadow-md">
         {imageSrc ? (
           <img
             src={imageSrc}
             alt={product.name}
-            className="h-[80%] w-[80%] object-contain transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
-          <ImageOff className="h-10 w-10 text-muted-foreground/60 dark:text-muted-foreground/40" />
+          <ImageOff className="h-10 w-10 text-muted-foreground/40" />
         )}
-
-        {/* Badge removed as requested */}
       </div>
 
       {/* Product Details */}
-      <div className="mt-4 flex flex-col space-y-1">
-        <h3 className="text-[13px] text-foreground font-medium leading-relaxed line-clamp-2">
-          {product.name}, mã hàng: {product.code}
+      <div className="mt-4 flex flex-col space-y-1.5 px-1">
+        <h3 className="text-sm text-foreground/90 font-medium leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          {product.name}
         </h3>
-        <p className="text-[13px] font-semibold text-foreground">
+        <p className="text-xs text-muted-foreground font-normal">
+          Mã hàng: {product.code}
+        </p>
+        <p className="text-[15px] font-semibold text-foreground pt-1">
           {price
             ? new Intl.NumberFormat("vi-VN", {
                 style: "currency",

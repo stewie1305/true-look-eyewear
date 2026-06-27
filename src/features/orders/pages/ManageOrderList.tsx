@@ -24,6 +24,7 @@ export default function ManageOrderList() {
     searchParams.get("search") || "",
   );
   const debouncedSearch = useDebounce(searchInput, 500);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const { orders, isLoading } = useOrdersAdmin();
   const updateStatusMutation = useUpdateOrderStatus();
@@ -58,6 +59,7 @@ export default function ManageOrderList() {
   };
 
   const handleUpdateStatus = async (id: string, status: OrderStatus) => {
+    setUpdatingId(id);
     if (status === "Confirm") {
       const order = orders.find((o) => o.id === id);
       if (order?.customer?.addresses && order.customer.addresses.length > 0) {
@@ -95,7 +97,12 @@ export default function ManageOrderList() {
         toast.error("Không tìm thấy địa chỉ giao hàng của khách hàng");
       }
     }
-    updateStatusMutation.mutate({ id, status });
+    updateStatusMutation.mutate(
+      { id, status },
+      {
+        onSettled: () => setUpdatingId(null),
+      }
+    );
   };
 
   return (
@@ -152,6 +159,7 @@ export default function ManageOrderList() {
           orders={orders}
           onUpdateStatus={handleUpdateStatus}
           isUpdating={updateStatusMutation.isPending}
+          updatingId={updatingId}
         />
       )}
     </div>

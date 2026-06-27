@@ -311,224 +311,234 @@ export default function HomePage() {
         style={{ height: "500vh" }}
         className="relative w-full bg-background transition-colors duration-500"
       >
-        <div className="sticky top-0 h-screen w-full max-w-screen-2xl mx-auto flex flex-col md:flex-row items-center justify-between overflow-hidden px-6 md:px-12">
-          {/* CỘT TRÁI: TEXT */}
-          <div className="relative w-full md:w-1/2 h-[40vh] md:h-full flex items-center justify-start z-20 pointer-events-none">
-            {/* TEXT 1 (k1) */}
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
+          
+          {/* MINIMALIST APPLE-STYLE CIRCLE BACKGROUND */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden md:translate-x-[20%]">
             <motion.div
-              style={{
-                opacity: text1Op,
-                filter: text1Blur,
-                y: useTransform(sectionScroll, [0, 0.22], [0, -40]),
-              }}
-              className="absolute text-left flex flex-col items-start"
-            >
-              <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
-                Edition 1
-              </p>
-              <h2 className="text-[12vw] md:text-[5vw] font-serif italic leading-none drop-shadow-lg">
-                Pure Titanium
-              </h2>
-              <p className="mt-8 text-muted-foreground max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
-                Chế tác từ nguyên khối hợp kim hàng không. Nhẹ hơn không khí,
-                vững chãi hơn thời gian.
-              </p>
-            </motion.div>
-
-            {/* TEXT 2 (Gamot 02) */}
-            <motion.div
-              style={{
-                opacity: text2Op,
-                filter: text2Blur,
-                y: useTransform(sectionScroll, [0.18, 0.47], [40, -40]),
-              }}
-              className="absolute text-left flex flex-col items-start"
-            >
-              <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
-                Bouquet Collection
-              </p>
-              <h2 className="text-[12vw] md:text-[5vw] font-serif italic leading-none drop-shadow-lg">
-                Gamot 02
-              </h2>
-              <p className="mt-8 text-muted-foreground max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
-                Gọng kim loại bạc sáng bóng với tròng kính vuông trong suốt.
-                Điểm nhấn chi tiết thắt nút lấy cảm hứng từ thực vật.
-              </p>
-            </motion.div>
-
-            {/* TEXT 3 (Goxx 02) */}
-            <motion.div
-              style={{
-                opacity: text3Op,
-                filter: text3Blur,
-                y: useTransform(sectionScroll, [0.43, 0.72], [40, -40]),
-              }}
-              className="absolute text-left flex flex-col items-start"
-            >
-              <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
-                2025 Bold Collection
-              </p>
-              <h2 className="text-[12vw] md:text-[5vw] font-serif italic leading-none drop-shadow-lg">
-                Goxx 02
-              </h2>
-              <p className="mt-8 text-muted-foreground max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
-                Kính râm dáng Wraparound phá cách với gọng kim loại bạc. Dấu ấn
-                biểu tượng BOLD đặc trưng trên càng kính.
-              </p>
-            </motion.div>
-
-            {/* TEXT 4 (Manifesto 02) */}
-            <motion.div
-              style={{
-                opacity: text4Op,
-                filter: text4Blur,
-                y: useTransform(sectionScroll, [0.68, 1], [40, 0]),
-              }}
-              className="absolute text-left flex flex-col items-start"
-            >
-              <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
-                2025 Bold Collection
-              </p>
-              <h2 className="text-[12vw] md:text-[5vw] font-serif italic leading-none drop-shadow-lg">
-                Manifesto 02
-              </h2>
-              <p className="mt-8 text-muted-foreground max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
-                Sự giao thoa của chất liệu bạc cao cấp và tròng kính tráng gương
-                xám. Trải nghiệm thị giác vượt chuẩn.
-              </p>
-            </motion.div>
+              style={{ scale: useTransform(sectionScroll, [0, 1], [1, 1.2]) }}
+              className="w-[65vmin] h-[65vmin] md:w-[65vh] md:h-[65vh] shrink-0 rounded-full bg-secondary/20 dark:bg-white/5 transition-colors duration-500"
+            />
           </div>
 
-          {/* CỘT PHẢI: BACKGROUND & MODEL 3D */}
-          <div className="relative w-full md:w-1/2 h-[60vh] md:h-full flex items-center justify-center pointer-events-none">
-            {/* Khối nền xám ĐỨNG YÊN và ĐƯỢC KÉO XUỐNG DƯỚI */}
-            <div className="absolute w-full h-full flex items-center justify-center opacity-[0.03] dark:opacity-[0.05] pointer-events-none">
-              <motion.div
-                style={{ scale: 1.5 }}
-                className="w-[70vmin] h-[70vmin] md:w-[75vh] md:h-[75vh] translate-y-[15vh] md:translate-y-[20%]"
-              >
-                <svg
-                  viewBox="0 0 200 200"
-                  className="fill-current text-foreground"
-                >
-                  <path
-                    d="M47.5,-76.3C59.6,-69.1,66.4,-52.4,72.1,-36.8C77.7,-21.2,82.2,-6.6,80.1,7.4C78,21.4,69.2,34.8,59.3,46.5C49.4,58.2,38.3,68.2,25,73.8C11.7,79.4,-3.8,80.7,-18.9,77.5C-34,74.3,-48.7,66.6,-59.6,55.5C-70.5,44.4,-77.6,30,-80.7,14.8C-83.8,-0.4,-82.9,-16.4,-76.4,-30.5C-69.9,-44.6,-57.8,-56.8,-43.9,-63.3C-30,-69.8,-15,-70.6,1.4,-72.7C17.7,-74.8,35.4,-83.4,47.5,-76.3Z"
-                    transform="translate(100 100)"
-                  />
-                </svg>
-              </motion.div>
-            </div>
+          {/* FULL SCREEN 3D CANVAS (Shifted right on desktop) */}
+          <div className="absolute inset-0 z-10 pointer-events-none md:translate-x-[20%]">
+            <Canvas
+              dpr={[1, 2]}
+              gl={{
+                alpha: true,
+                antialias: true,
+                powerPreference: "high-performance",
+              }}
+              camera={{ position: [0, 0, 6], fov: 35 }}
+            >
+              <PerspectiveCamera makeDefault position={[0, 0, 6]} fov={35} />
+              <ambientLight intensity={3} />
+              <directionalLight position={[0, 5, 10]} intensity={5} />
+              <Environment preset="city" />
+              <Float speed={2.5} rotationIntensity={0.3} floatIntensity={0.6}>
+                <Suspense fallback={null}>
+                  <EyewearShowcase scrollProgress={sectionScroll} />
+                </Suspense>
+              </Float>
+              <ContactShadows
+                position={[0, -1.5, 0]}
+                opacity={0.3}
+                scale={15}
+                blur={3}
+                far={4}
+              />
+            </Canvas>
+          </div>
 
-            {/* Mô hình 3D */}
-            <div className="absolute inset-0 z-10 pointer-events-none">
-              <Canvas
-                dpr={[1, 2]}
-                gl={{
-                  alpha: true,
-                  antialias: true,
-                  powerPreference: "high-performance",
+          {/* TEXT OVERLAYS */}
+          <div className="relative z-20 w-full h-full max-w-screen-2xl mx-auto flex items-center px-6 md:px-12 pointer-events-none">
+            <div className="relative w-full md:w-1/2 h-full flex items-center justify-start">
+              {/* TEXT 1 (k1) */}
+              <motion.div
+                style={{
+                  opacity: text1Op,
+                  filter: text1Blur,
+                  y: useTransform(sectionScroll, [0, 0.22], [0, -40]),
                 }}
-                camera={{ position: [0, 0, 6], fov: 35 }}
+                className="absolute text-left flex flex-col items-start"
               >
-                <PerspectiveCamera makeDefault position={[0, 0, 6]} fov={35} />
-                <ambientLight intensity={3} />
-                <directionalLight position={[0, 5, 10]} intensity={5} />
-                <Environment preset="city" />
-                <Float speed={2.5} rotationIntensity={0.3} floatIntensity={0.6}>
-                  <Suspense fallback={null}>
-                    <EyewearShowcase scrollProgress={sectionScroll} />
-                  </Suspense>
-                </Float>
-                <ContactShadows
-                  position={[0, -1.5, 0]}
-                  opacity={0.3}
-                  scale={15}
-                  blur={3}
-                  far={4}
-                />
-              </Canvas>
+                <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
+                  Edition 1
+                </p>
+                <h2 className="text-[12vw] md:text-[6vw] font-serif italic leading-none drop-shadow-2xl">
+                  Pure Titanium
+                </h2>
+                <p className="mt-8 text-foreground/80 max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
+                  Chế tác từ nguyên khối hợp kim hàng không. Nhẹ hơn không khí,
+                  vững chãi hơn thời gian.
+                </p>
+              </motion.div>
+
+              {/* TEXT 2 (Gamot 02) */}
+              <motion.div
+                style={{
+                  opacity: text2Op,
+                  filter: text2Blur,
+                  y: useTransform(sectionScroll, [0.18, 0.47], [40, -40]),
+                }}
+                className="absolute text-left flex flex-col items-start"
+              >
+                <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
+                  Bouquet Collection
+                </p>
+                <h2 className="text-[12vw] md:text-[6vw] font-serif italic leading-none drop-shadow-2xl">
+                  Gamot 02
+                </h2>
+                <p className="mt-8 text-foreground/80 max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
+                  Gọng kim loại bạc sáng bóng với tròng kính vuông trong suốt.
+                  Điểm nhấn chi tiết thắt nút lấy cảm hứng từ thực vật.
+                </p>
+              </motion.div>
+
+              {/* TEXT 3 (Goxx 02) */}
+              <motion.div
+                style={{
+                  opacity: text3Op,
+                  filter: text3Blur,
+                  y: useTransform(sectionScroll, [0.43, 0.72], [40, -40]),
+                }}
+                className="absolute text-left flex flex-col items-start"
+              >
+                <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
+                  2025 Bold Collection
+                </p>
+                <h2 className="text-[12vw] md:text-[6vw] font-serif italic leading-none drop-shadow-2xl">
+                  Goxx 02
+                </h2>
+                <p className="mt-8 text-foreground/80 max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
+                  Kính râm dáng Wraparound phá cách với gọng kim loại bạc. Dấu ấn
+                  biểu tượng BOLD đặc trưng trên càng kính.
+                </p>
+              </motion.div>
+
+              {/* TEXT 4 (Manifesto 02) */}
+              <motion.div
+                style={{
+                  opacity: text4Op,
+                  filter: text4Blur,
+                  y: useTransform(sectionScroll, [0.68, 1], [40, 0]),
+                }}
+                className="absolute text-left flex flex-col items-start"
+              >
+                <p className="text-[10px] uppercase tracking-[0.6em] mb-6 opacity-50 drop-shadow-md">
+                  2025 Bold Collection
+                </p>
+                <h2 className="text-[12vw] md:text-[6vw] font-serif italic leading-none drop-shadow-2xl">
+                  Manifesto 02
+                </h2>
+                <p className="mt-8 text-foreground/80 max-w-md text-sm font-sans tracking-widest uppercase leading-loose border-t border-border pt-8 drop-shadow-md">
+                  Sự giao thoa của chất liệu bạc cao cấp và tròng kính tráng gương
+                  xám. Trải nghiệm thị giác vượt chuẩn.
+                </p>
+              </motion.div>
             </div>
           </div>
         </div>
       </section>
 
       {/* 4. MATERIALS */}
-      <section className="py-60 border-t border-border bg-muted/10 relative z-30">
-        <div className="max-w-screen-2xl mx-auto px-10 grid grid-cols-1 md:grid-cols-2 gap-32 items-center">
-          <div className="space-y-16">
-            <h2 className="text-7xl md:text-8xl font-serif italic leading-[0.9]">
-              Art of <br /> Engineering.
-            </h2>
-            <div className="flex gap-20 pt-12 border-t border-border/50">
-              <div>
-                <p className="text-5xl font-serif mb-2">12g</p>
-                <p className="text-[9px] uppercase tracking-widest opacity-40 italic">
-                  Ultralight
-                </p>
-              </div>
-              <div>
-                <p className="text-5xl font-serif mb-2">Zeiss</p>
-                <p className="text-[9px] uppercase tracking-widest opacity-40 italic">
-                  Optics
-                </p>
-              </div>
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden z-30 border-y border-border">
+        {/* Background Images */}
+        <div className="absolute inset-0 flex">
+          <div className="w-1/2 h-full relative group overflow-hidden">
+            <img 
+              src={ASSETS.mat1} 
+              className="w-full h-full object-cover grayscale brightness-50 md:brightness-75 transition-transform duration-[2s] group-hover:scale-105" 
+              alt="Material 1" 
+            />
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-700" />
+            <div className="absolute bottom-10 left-0 right-0 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+              <span className="text-white font-sans font-bold tracking-[0.2em] text-2xl md:text-4xl uppercase">Celine</span>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-8 h-[75vh]">
-            <div className="rounded-sm overflow-hidden bg-muted shadow-2xl">
-              <img
-                src={ASSETS.mat1}
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-[2s]"
-                alt=""
-              />
+          <div className="w-1/2 h-full relative group overflow-hidden">
+            <img 
+              src={ASSETS.mat2} 
+              className="w-full h-full object-cover grayscale brightness-50 md:brightness-75 transition-transform duration-[2s] group-hover:scale-105" 
+              alt="Material 2" 
+            />
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-700" />
+            <div className="absolute bottom-10 left-0 right-0 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+              <span className="text-white font-sans font-bold tracking-[0.2em] text-2xl md:text-4xl uppercase">Celine</span>
             </div>
-            <div className="rounded-sm overflow-hidden mt-24 bg-muted shadow-2xl">
-              <img
-                src={ASSETS.mat2}
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-[2s]"
-                alt=""
-              />
+          </div>
+        </div>
+
+        {/* Overlaid Content */}
+        <div className="relative z-10 text-white flex flex-col items-center text-center pointer-events-none px-6">
+          <h2 className="text-6xl md:text-[8rem] font-serif italic leading-[0.9] drop-shadow-2xl mix-blend-overlay">
+            Art of <br /> Engineering.
+          </h2>
+          <div className="flex gap-16 md:gap-32 pt-12 md:pt-16 mt-12 md:mt-16 border-t border-white/30 mix-blend-overlay">
+            <div>
+              <p className="text-4xl md:text-6xl font-serif mb-2 drop-shadow-lg">12g</p>
+              <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] opacity-80 italic drop-shadow-lg">
+                Ultralight
+              </p>
+            </div>
+            <div>
+              <p className="text-4xl md:text-6xl font-serif mb-2 drop-shadow-lg">Zeiss</p>
+              <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] opacity-80 italic drop-shadow-lg">
+                Optics
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 5. GALLERY */}
-      <section className="py-40 px-10 border-t border-border bg-background relative z-30">
-        <div className="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-24">
-          <motion.div
-            whileInView={{ opacity: [0, 1], y: [40, 0] }}
-            viewport={{ once: true }}
-          >
-            <div className="aspect-3/4 overflow-hidden rounded-sm bg-muted shadow-2xl">
-              <img
-                src={ASSETS.lookbook1}
-                className="w-full h-full object-cover hover:scale-110 transition-transform duration-[3s]"
-                alt=""
-              />
+      {/* 5. GALLERY (EXPANDABLE FULL SCREEN) */}
+      <section className="w-full h-[80vh] md:h-screen bg-background relative z-30 flex flex-col md:flex-row">
+        {/* Card 1 */}
+        <div className="relative flex-1 group md:hover:flex-[2.5] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] cursor-pointer bg-secondary/10">
+            <img
+              src={ASSETS.lookbook1}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              alt="A-Series 2026"
+            />
+            {/* Soft gradient to ensure text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-700" />
+            
+            {/* Content */}
+            <div className="absolute bottom-8 left-8 text-white z-10">
+              <h3 className="text-2xl md:text-4xl font-serif italic mb-1 opacity-90 group-hover:opacity-100 transition-opacity duration-700">
+                A-Series 2026
+              </h3>
+              <div className="h-0 overflow-hidden group-hover:h-6 transition-all duration-700 ease-in-out opacity-0 group-hover:opacity-100">
+                <p className="text-xs font-light uppercase tracking-widest text-white/70">
+                  Khám phá bộ sưu tập
+                </p>
+              </div>
             </div>
-            <h3 className="mt-8 text-3xl font-serif italic opacity-70">
-              A-Series 2026
-            </h3>
-          </motion.div>
-          <motion.div
-            whileInView={{ opacity: [0, 1], y: [40, 0] }}
-            transition={{ delay: 0.2 }}
-            viewport={{ once: true }}
-            className="md:mt-48"
-          >
-            <div className="aspect-3/4 overflow-hidden rounded-sm bg-muted shadow-2xl">
-              <img
-                src={ASSETS.lookbook2}
-                className="w-full h-full object-cover hover:scale-110 transition-transform duration-[3s]"
-                alt=""
-              />
+          </div>
+
+          {/* Card 2 */}
+          <div className="relative flex-1 group md:hover:flex-[2.5] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] cursor-pointer bg-secondary/10">
+            <img
+              src={ASSETS.lookbook2}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              alt="Obsidian Edition"
+            />
+            {/* Soft gradient to ensure text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-700" />
+            
+            {/* Content */}
+            <div className="absolute bottom-8 left-8 text-white z-10">
+              <h3 className="text-2xl md:text-4xl font-serif italic mb-1 opacity-90 group-hover:opacity-100 transition-opacity duration-700">
+                Obsidian Edition
+              </h3>
+              <div className="h-0 overflow-hidden group-hover:h-6 transition-all duration-700 ease-in-out opacity-0 group-hover:opacity-100">
+                <p className="text-xs font-light uppercase tracking-widest text-white/70">
+                  Khám phá bộ sưu tập
+                </p>
+              </div>
             </div>
-            <h3 className="mt-8 text-3xl font-serif italic opacity-70">
-              Obsidian Edition
-            </h3>
-          </motion.div>
-        </div>
+          </div>
       </section>
     </div>
   );
