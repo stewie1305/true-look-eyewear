@@ -13,11 +13,17 @@ export default function AhamoveDashboard() {
     if (!orders) return { totalCod: 0, totalShip: 0, totalOrders: 0 };
 
     // Filter orders from June 3, 2026 onwards
-    const filterDate = new Date("2026-06-09T00:00:00+07:00");
+    const filterDate = new Date("2026-07-01T00:00:00+07:00");
 
     const filteredOrders = orders.filter((order) => {
       const orderDate = new Date(order.create_at);
-      return orderDate >= filterDate && order.status === "COMPLETED";
+      const appOrder = appOrders?.find((o: any) => o.id === order.order_id);
+      const status = appOrder ? appOrder.status : order.status;
+
+      return (
+        orderDate >= filterDate &&
+        (status?.toLowerCase() === "completed" || status?.toLowerCase() === "complete")
+      );
     });
 
     return filteredOrders.reduce(
@@ -29,7 +35,7 @@ export default function AhamoveDashboard() {
       },
       { totalCod: 0, totalShip: 0, totalOrders: 0 }
     );
-  }, [orders]);
+  }, [orders, appOrders]);
 
   const itemStats = useMemo(() => {
     let totalGlasses = 0;
@@ -38,12 +44,14 @@ export default function AhamoveDashboard() {
 
     if (!appOrders) return { totalGlasses, totalCords, glassesBreakdown };
 
-    const completedOrders = appOrders.filter(
-      (o) =>
-        o.status === "Complete" ||
-        o.status === "Completed" ||
-        o.status === "COMPLETED"
-    );
+    const filterDate = new Date("2026-07-01T00:00:00+07:00");
+    const ahamoveOrderIds = new Set(orders?.map((o) => o.order_id) || []);
+
+    const completedOrders = appOrders.filter((o: any) => {
+      const isCompleted = o.status?.toLowerCase() === "completed" || o.status?.toLowerCase() === "complete";
+      const orderDate = new Date(o.create_at);
+      return isCompleted && orderDate >= filterDate && ahamoveOrderIds.has(o.id);
+    });
 
     completedOrders.forEach((order: any) => {
       if (order.orderDetails && Array.isArray(order.orderDetails)) {
@@ -63,7 +71,7 @@ export default function AhamoveDashboard() {
     });
 
     return { totalGlasses, totalCords, glassesBreakdown };
-  }, [appOrders]);
+  }, [appOrders, orders]);
 
   if (isAhamoveLoading || isOrdersLoading) return <LoadingSpinner className="py-20" size="lg" />;
 
