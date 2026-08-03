@@ -295,6 +295,7 @@ export default function OrderDetailPage() {
                         {displayOrder.create_at
                           ? new Date(displayOrder.create_at).toLocaleString(
                               "vi-VN",
+                              { timeZone: "UTC" }
                             )
                           : "-"}
                       </p>

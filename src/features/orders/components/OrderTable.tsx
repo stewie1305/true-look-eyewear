@@ -70,7 +70,7 @@ export function OrderTable({
               </TableCell>
               <TableCell>
                 {order.create_at
-                  ? new Date(order.create_at).toLocaleString("vi-VN")
+                  ? new Date(order.create_at).toLocaleString("vi-VN", { timeZone: "UTC" })
                   : "-"}
               </TableCell>
               <TableCell>

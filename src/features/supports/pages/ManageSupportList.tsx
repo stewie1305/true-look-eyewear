@@ -62,7 +62,7 @@ export default function ManageSupportList() {
                     Order: {ticket.orderId} • Customer: {ticket.customerId}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {new Date(ticket.createdAt).toLocaleString("vi-VN")}
+                    {new Date(ticket.createdAt).toLocaleString("vi-VN", { timeZone: "UTC" })}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

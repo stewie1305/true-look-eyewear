@@ -75,7 +75,7 @@ export default function MyOrdersPage() {
                 <p className="text-sm text-muted-foreground">Ngày tạo</p>
                 <p className="font-medium">
                   {order.create_at
-                    ? new Date(order.create_at).toLocaleString("vi-VN")
+                    ? new Date(order.create_at).toLocaleString("vi-VN", { timeZone: "UTC" })
                     : "-"}
                 </p>
               </div>
